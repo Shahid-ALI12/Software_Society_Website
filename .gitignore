@@ -1,0 +1,28 @@
+# Dependencies and generated output
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Local settings and service credentials
+.env
+.env.*
+!.env.example
+.vercel/
+.firebase/
+service-account*.json
+serviceAccount*.json
+*-firebase-adminsdk-*.json
+*-service-account*.json
+*.pem
+*.key
+
+# Diagnostics and local editor files
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
