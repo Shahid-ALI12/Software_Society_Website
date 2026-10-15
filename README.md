@@ -2,13 +2,15 @@
 
 Design baseline and production planning for the Software Engineering Society website.
 
-**Status: browser-only prototype. Firebase, Redis, real authentication, server APIs, and production deployment are not implemented in this commit.**
+**Status: browser-only prototype plus tested server security building blocks. Firebase, Redis, live authentication, server API routes, and production deployment are not connected.**
 
 ## What is included
 
 - `index.html`: the supplied design, preserved byte for byte under a conventional entry filename.
 - [Prototype audit](docs/PROTOTYPE_AUDIT.md): screens, data flows, existing behavior, and verified implementation gaps.
 - [Production plan](docs/PRODUCTION_PLAN.md): proposed Firebase, Redis, permissions, API, caching, and Vercel architecture for discussion.
+- [Firebase setup](docs/FIREBASE_SETUP.md): console steps, implemented security helpers, test instructions, and exact remaining integration work.
+- `server/security/`: authorization and bounded form-validation helpers for the future server routes; `npm test` runs their dependency-free unit tests.
 
 The initial scope is to understand and version the design before building the production application. No framework migration or visual redesign has been performed.
 
