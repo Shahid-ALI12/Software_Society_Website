@@ -266,22 +266,33 @@
         /* ===== Message cards (HOD + Convenier) ===== */
         .message-card {
             position: relative;
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.75) 100%);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
             box-shadow: var(--se-shadow-md);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
-        .dark .message-card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-        .message-card:hover { transform: translateY(-3px); box-shadow: var(--se-shadow-lg); }
+        .dark .message-card {
+            background: linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.75) 100%);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .message-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 30px 60px -15px rgba(15,23,42,.25), 0 15px 30px -10px rgba(15,23,42,.12); }
         .message-card .photo-frame {
-            position: relative; padding: 6px;
-            border-radius: 24px;
+            position: relative; padding: 5px;
+            border-radius: 50%;
             background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%);
-            box-shadow: var(--se-shadow-amber);
+            box-shadow: var(--se-shadow-amber), 0 0 0 4px rgba(255,255,255,0.6);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
-        .message-card.convenier .photo-frame { background: var(--se-gradient-emerald); box-shadow: var(--se-shadow-emerald); }
+        .dark .message-card .photo-frame { box-shadow: var(--se-shadow-amber), 0 0 0 4px rgba(15,23,42,0.6); }
+        .message-card:hover .photo-frame { transform: scale(1.05) rotate(-2deg); box-shadow: var(--se-shadow-amber), 0 0 0 6px rgba(96,165,250,0.3); }
+        .message-card.convenier .photo-frame { background: var(--se-gradient-emerald); box-shadow: var(--se-shadow-emerald), 0 0 0 4px rgba(255,255,255,0.6); }
+        .dark .message-card.convenier .photo-frame { box-shadow: var(--se-shadow-emerald), 0 0 0 4px rgba(15,23,42,0.6); }
+        .message-card.convenier:hover .photo-frame { box-shadow: var(--se-shadow-emerald), 0 0 0 6px rgba(52,211,153,0.3); }
         .message-card .photo-frame img {
-            border-radius: 18px; display: block;
+            border-radius: 50%; display: block;
             width: 100%; height: 100%; object-fit: cover;
         }
         .message-card .quote-mark {
@@ -298,40 +309,54 @@
         /* ===== Profile cards (Core Executive Body, Cabinet, Featured) ===== */
         .profile-card {
             position: relative;
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.75) 100%);
+            backdrop-filter: blur(14px) saturate(160%);
+            -webkit-backdrop-filter: blur(14px) saturate(160%);
             box-shadow: var(--se-shadow-sm);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
-        .dark .profile-card { background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); }
+        .dark .profile-card {
+            background: linear-gradient(180deg, rgba(30,41,59,0.85) 0%, rgba(15,23,42,0.75) 100%);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
         .profile-card::before {
             content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
             background: var(--se-gradient-blue);
             transform: scaleX(0); transform-origin: left;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease;
         }
-        .profile-card:hover { transform: translateY(-6px); box-shadow: var(--se-shadow-lg); }
+        .profile-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 25px 50px -12px rgba(15,23,42,.22), 0 12px 24px -8px rgba(15,23,42,.1); }
         .profile-card:hover::before { transform: scaleX(1); }
         .profile-card .avatar-ring {
-            padding: 3px; border-radius: 20px;
+            padding: 3px; border-radius: 50%;
             background: linear-gradient(135deg, #60a5fa 0%, #1d4ed8 100%);
             box-shadow: var(--se-shadow-sm);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
-        .profile-card .avatar-ring img { border-radius: 17px; display: block; width: 100%; height: 100%; object-fit: cover; }
+        .profile-card:hover .avatar-ring { transform: scale(1.08); box-shadow: 0 8px 20px -4px rgba(37,99,235,0.4); }
+        .profile-card .avatar-ring img { border-radius: 50%; display: block; width: 100%; height: 100%; object-fit: cover; }
 
-        /* ===== Blog card polish ===== */
+        /* ===== Blog card polish (also glass) ===== */
         .blog-card {
             position: relative;
-            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.75) 100%);
+            backdrop-filter: blur(14px) saturate(160%);
+            -webkit-backdrop-filter: blur(14px) saturate(160%);
             box-shadow: var(--se-shadow-sm);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
-        .dark .blog-card { background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); }
-        .blog-card:hover { transform: translateY(-6px); box-shadow: var(--se-shadow-lg); }
+        .dark .blog-card {
+            background: linear-gradient(180deg, rgba(30,41,59,0.85) 0%, rgba(15,23,42,0.75) 100%);
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+        .blog-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 25px 50px -12px rgba(15,23,42,.22), 0 12px 24px -8px rgba(15,23,42,.1); }
         .blog-card .blog-image { overflow: hidden; border-radius: 12px; }
-        .blog-card .blog-image img { transition: transform 0.5s ease; }
-        .blog-card:hover .blog-image img { transform: scale(1.06); }
+        .blog-card .blog-image img { transition: transform 0.6s ease; }
+        .blog-card:hover .blog-image img { transform: scale(1.08); }
 
         /* ===== Pill badge (HOD Message / Convenier Message) ===== */
         .pill-badge {
@@ -355,7 +380,14 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white relative">
+    <!-- Subtle decorative background blobs so the glass cards have something
+         to refract. Fixed position so they don't scroll with content. -->
+    <div aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;">
+        <div style="position:absolute;top:-10%;left:-5%;width:40vw;height:40vw;background:radial-gradient(circle,rgba(59,130,246,0.12) 0%,transparent 60%);filter:blur(60px);"></div>
+        <div style="position:absolute;bottom:-15%;right:-5%;width:45vw;height:45vw;background:radial-gradient(circle,rgba(16,185,129,0.10) 0%,transparent 60%);filter:blur(60px);"></div>
+        <div style="position:absolute;top:40%;right:10%;width:30vw;height:30vw;background:radial-gradient(circle,rgba(245,158,11,0.08) 0%,transparent 60%);filter:blur(50px);"></div>
+    </div>
 
     <!-- Brand logo loader overlay (hidden once content is ready) -->
     <div id="brand-loader" aria-hidden="true">
@@ -431,7 +463,7 @@
     </header>
 
     <!-- MAIN CONTENT CONTAINER -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full relative" style="z-index:1;">
 
         <!-- 1. HOME TAB -->
         <div id="tab-home" class="tab-content active space-y-12">
