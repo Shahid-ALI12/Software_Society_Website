@@ -85,5 +85,8 @@ $('photos-form').onsubmit=e=>{e.preventDefault();task(async()=>{const photos={};
  const result=await api('settings',{method:'POST',authenticated:true,body:{version:state.settingsVersion,data:{photos,currentSession:$('current-session').value,texts}}});state.settingsVersion=result.version;$('admin-status').textContent='Website photos and HOD/Convenier text saved. Changes appear within 30 seconds.';});};
 $('inbox-refresh').onclick=()=>task(()=>inbox());$('inbox-more').onclick=()=>task(()=>inbox(true));
 $('users-refresh').onclick=()=>task(()=>loadUsers());$('users-more').onclick=()=>task(()=>loadUsers(true));
+// loadUsers already shows the API error message in admin-status via task().
+// The 503 from the server now carries a friendly 'Could not load the user
+// list...' message instead of a bare 500, so editors see what to do next.
 document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>task(async()=>{document.querySelectorAll('.manage-panel').forEach(p=>p.hidden=p.id!==b.dataset.panel);if(b.dataset.panel==='photos-panel')await loadPhotos();if(b.dataset.panel==='inbox-panel')await inbox();if(b.dataset.panel==='users-panel')await loadUsers();$('admin-status').textContent='Ready.';}));
 await task(async()=>{const user=await api('me',{authenticated:true});if(!['admin','editor'].includes(user.role))throw new Error('Your account has no management role. Ask the society owner to grant access.');state.role=user.role;state.uploadsEnabled=user.uploadsEnabled===true;$('admin-panel').hidden=false;document.querySelectorAll('[data-admin-only]').forEach(e=>e.hidden=user.role!=='admin');editor();await loadContent();$('admin-status').textContent='Signed in as '+user.role+'.';});

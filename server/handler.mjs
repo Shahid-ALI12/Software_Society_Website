@@ -42,7 +42,15 @@ export function createHandler({getServices,limit,siteOrigin,production=false,upl
    else if(action==='me')result={uid:user.uid,role:user.role,uploadsEnabled};
    else if(action==='list'){if(!kinds.includes(kind))throw invalid();result=await repo.content(kind,url.searchParams.get('cursor'),false);}
    else if(action==='inbox')result=await repo.inbox(url.searchParams.get('cursor'));
-   else if(action==='users'){const list=await auth.listUsers(url.searchParams.get('pageToken')||undefined,100);result={items:list.users.map(u=>({uid:u.uid,email:u.email,emailVerified:u.emailVerified,disabled:u.disabled,role:u.customClaims?.role||'member'})),nextPageToken:list.pageToken||null};}
+   else if(action==='users'){
+    // listUsers signature is (maxResults, pageToken). Wrap in try/catch so a
+    // Firebase Admin API hiccup returns a clear 503 instead of a bare 500 —
+    // the user-facing admin panel can then show a helpful message.
+    let list;
+    try{list=await auth.listUsers(100,url.searchParams.get('pageToken')||undefined);}
+    catch(e){throw new RequestError(503,'auth_list_failed','Could not load the user list. The Identity Toolkit may be temporarily unavailable or the service account may lack permissions.');}
+    result={items:list.users.map(u=>({uid:u.uid,email:u.email,emailVerified:u.emailVerified,disabled:u.disabled,role:u.customClaims?.role||'member'})),nextPageToken:list.pageToken||null};
+   }
    else{
     const body=await readJsonBody(request,action==='upload'?2900000:24000);
     if(action==='content'){
