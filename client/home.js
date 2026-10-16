@@ -100,9 +100,19 @@ render();
 // request fails we keep the existing sample content for that kind instead of
 // wiping it to an empty array — otherwise visitors see "Nothing published
 // here yet." when the backend is just slow, not broken.
+//
+// Retry: each public read gets up to 2 attempts (initial + 1 retry). This
+// covers transient cold-start timeouts on Vercel serverless + Firebase.
+async function fetchPublic(kind){
+ for(let attempt=0;attempt<2;attempt++){
+  try{return await api('public',{kind,timeoutMs:12000});}
+  catch(e){if(attempt===1)return null;/* keep sample content on 2nd failure */}
+ }
+ return null;
+}
 try{
- const settingsReq=api('public',{kind:'settings'}).catch(()=>null);
- const kindReqs=kinds.map(kind=>api('public',{kind}).catch(()=>null));
+ const settingsReq=fetchPublic('settings');
+ const kindReqs=kinds.map(kind=>fetchPublic(kind));
  const [settingsResult,...kindResults]=await Promise.all([settingsReq,...kindReqs]);
  if(settingsResult){
   const settings=settingsResult.data;state.session=settings?.currentSession||'2026-2027';state.settings=settings;
