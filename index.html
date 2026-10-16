@@ -223,36 +223,122 @@
         }
 
         /* ===== Hero section premium polish ===== */
-        .hero-section { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e3a8a 100%); }
-        .hero-section .hero-sidebar {
-            background: linear-gradient(160deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 58, 138, 0.92) 100%);
+        .hero-section {
+            background:
+                radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.22) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.15) 0%, transparent 60%),
+                linear-gradient(135deg, #0c1445 0%, #1e1b4b 40%, #0f172a 100%);
             position: relative;
         }
+        /* Animated mesh gradient overlay for premium feel */
+        .hero-section::before {
+            content: ""; position: absolute; inset: 0; pointer-events: none;
+            background:
+                radial-gradient(circle at 30% 70%, rgba(96, 165, 250, 0.18) 0%, transparent 30%),
+                radial-gradient(circle at 70% 30%, rgba(167, 139, 250, 0.18) 0%, transparent 30%);
+            animation: hero-mesh 12s ease-in-out infinite alternate;
+        }
+        @keyframes hero-mesh {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-3%, 2%) scale(1.05); }
+            100% { transform: translate(2%, -2%) scale(1); }
+        }
+        /* Decorative dotted pattern overlay */
+        .hero-section::after {
+            content: ""; position: absolute; inset: 0; pointer-events: none;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+            mask-image: linear-gradient(135deg, black 0%, transparent 70%);
+            -webkit-mask-image: linear-gradient(135deg, black 0%, transparent 70%);
+        }
+        .hero-section .hero-sidebar {
+            background: linear-gradient(160deg, rgba(12, 20, 69, 0.85) 0%, rgba(30, 27, 75, 0.78) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            position: relative;
+            border-right: 1px solid rgba(96, 165, 250, 0.2);
+        }
         .hero-section .hero-sidebar::before {
-            content: ""; position: absolute; top: 0; right: 0; width: 4px; height: 100%;
-            background: linear-gradient(to bottom, #60a5fa, #2563eb, transparent);
+            content: ""; position: absolute; top: 0; right: 0; width: 3px; height: 100%;
+            background: linear-gradient(to bottom, transparent, #60a5fa, #a78bfa, transparent);
             pointer-events: none;
         }
         .hero-section .hero-headline {
-            background: linear-gradient(135deg, #ffffff 0%, #93c5fd 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 50%, #a5b4fc 100%);
             -webkit-background-clip: text; background-clip: text;
             -webkit-text-fill-color: transparent; color: transparent;
-            letter-spacing: -0.02em; line-height: 1.1;
+            letter-spacing: -0.025em; line-height: 1.05;
+            filter: drop-shadow(0 4px 20px rgba(99, 102, 241, 0.25));
+        }
+        .hero-section .hero-subtitle {
+            background: linear-gradient(90deg, #93c5fd 0%, #c4b5fd 100%);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent; color: transparent;
+        }
+        .hero-tag {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 14px; border-radius: 999px;
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.2) 0%, rgba(167, 139, 250, 0.2) 100%);
+            border: 1px solid rgba(167, 139, 250, 0.4);
+            color: #e0e7ff; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+            backdrop-filter: blur(10px);
+        }
+        .hero-tag .pulse {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #a5b4fc; box-shadow: 0 0 0 0 rgba(165, 180, 252, 0.7);
+            animation: hero-pulse 2s infinite;
+        }
+        @keyframes hero-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(165, 180, 252, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(165, 180, 252, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(165, 180, 252, 0); }
         }
         .btn-primary-glow {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            box-shadow: var(--se-shadow-blue);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: linear-gradient(135deg, #6366f1 0%, #3b82f6 50%, #2563eb 100%);
+            box-shadow: 0 10px 30px -8px rgba(99, 102, 241, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative; overflow: hidden;
         }
-        .btn-primary-glow:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -6px rgba(37, 99, 235, .5); }
-        .btn-primary-glow:active { transform: translateY(0); }
+        .btn-primary-glow::after {
+            content: ""; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: left 0.6s ease;
+        }
+        .btn-primary-glow:hover { transform: translateY(-3px); box-shadow: 0 16px 35px -8px rgba(99, 102, 241, 0.6), inset 0 1px 0 rgba(255,255,255,0.25); }
+        .btn-primary-glow:hover::after { left: 100%; }
+        .btn-primary-glow:active { transform: translateY(-1px); }
         .btn-glass {
             background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
         }
-        .btn-glass:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.35); transform: translateY(-2px); }
+        .btn-glass:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.4); transform: translateY(-3px); }
+        /* Floating decorative orbs on the photo side */
+        .hero-photo-wrap { position: relative; }
+        .hero-photo-wrap::before {
+            content: ""; position: absolute; top: 20px; right: 20px;
+            width: 80px; height: 80px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.4), transparent 70%);
+            filter: blur(20px); z-index: 2; pointer-events: none;
+            animation: hero-orb 6s ease-in-out infinite;
+        }
+        .hero-photo-wrap::after {
+            content: ""; position: absolute; bottom: 30px; left: 30px;
+            width: 100px; height: 100px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.35), transparent 70%);
+            filter: blur(25px); z-index: 2; pointer-events: none;
+            animation: hero-orb 8s ease-in-out infinite reverse;
+        }
+        @keyframes hero-orb {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(15px, -15px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-section::before, .hero-photo-wrap::before, .hero-photo-wrap::after,
+            .hero-tag .pulse { animation: none; }
+        }
 
         /* ===== Section heading with decorative accent ===== */
         .section-head { position: relative; padding-left: 14px; }
@@ -468,21 +554,22 @@
         <div id="tab-home" class="tab-content active space-y-12">
             
             <!-- Hero Section -->
-            <section class="hero-glow hero-section relative min-h-[28rem] sm:min-h-[34rem] flex flex-col md:flex-row rounded-3xl overflow-hidden text-white shadow-2xl border border-slate-800">
+            <section class="hero-glow hero-section relative min-h-[28rem] sm:min-h-[34rem] flex flex-col md:flex-row rounded-3xl overflow-hidden text-white shadow-2xl border border-indigo-900/30">
                 <!-- Left: solid text sidebar. No overlay on the photo, so the
                      people in the meeting photo stay fully visible. -->
-                <div class="hero-sidebar relative z-10 w-full md:w-[46%] lg:w-[42%] backdrop-blur-sm p-7 sm:p-10 md:p-12 flex flex-col justify-center space-y-5 border-b md:border-b-0 md:border-r border-white/10">
-                    <h1 class="hero-headline text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">Empowering Engineers, Innovating Tomorrow.</h1>
+                <div class="hero-sidebar relative z-10 w-full md:w-[46%] lg:w-[42%] p-7 sm:p-10 md:p-12 flex flex-col justify-center space-y-5 border-b md:border-b-0 border-white/10">
+                    <span class="hero-tag"><span class="pulse"></span>SE Society · NTU Faisalabad</span>
+                    <h1 class="hero-headline text-3xl sm:text-4xl lg:text-5xl font-black">Empowering Engineers, Innovating Tomorrow.</h1>
                     <p class="text-slate-300 text-sm sm:text-base leading-relaxed">The Software Engineering Society (SE Society) at National Textile University Faisalabad fosters technical excellence, leadership, and collaborative learning through hackathons, workshops, and industry expos.</p>
-                    <div class="flex flex-wrap gap-3 pt-1">
-                        <button onclick="switchTab('events')" class="btn-primary-glow px-6 py-3 rounded-xl font-semibold text-white">Explore Events</button>
-                        <button onclick="switchTab('about')" class="btn-glass px-6 py-3 rounded-xl font-semibold text-white">About Society</button>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="switchTab('events')" class="btn-primary-glow px-6 py-3 rounded-xl font-semibold text-white flex items-center gap-2"><i class="fas fa-rocket text-sm"></i> Explore Events</button>
+                        <button onclick="switchTab('about')" class="btn-glass px-6 py-3 rounded-xl font-semibold text-white flex items-center gap-2"><i class="fas fa-info-circle text-sm"></i> About Society</button>
                     </div>
                 </div>
                 <!-- Right: full-bright meeting photo, no overlay, no tint.
                      People, banner and the table are fully visible. WebP first
                      (85% smaller) with JPEG fallback for older browsers. -->
-                <div class="relative flex-1 min-h-[18rem]">
+                <div class="hero-photo-wrap relative flex-1 min-h-[18rem]">
                     <picture>
                         <source srcset="/assets/society-meeting.webp" type="image/webp">
                         <img data-site-photo="hero" src="/assets/society-meeting.jpg" alt="SE Society members at an official meeting" class="absolute inset-0 w-full h-full object-cover" loading="eager" decoding="async" fetchpriority="high">
