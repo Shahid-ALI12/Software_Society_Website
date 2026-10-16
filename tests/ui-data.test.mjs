@@ -39,3 +39,23 @@ test('admin photo editor saves five explicit slots and server version',async()=>
  d.getElementById('site-hero-url').value='https://images.unsplash.com/actual';d.getElementById('site-hero-alt').value='Society team';d.getElementById('photos-form').onsubmit({preventDefault(){}});await new Promise(setImmediate);
  assert.equal(save.version,3);assert.equal(save.data.photos.hero.alt,'Society team');assert.equal(Object.keys(save.data.photos).length,5);assert.match(d.getElementById('admin-status').textContent,/saved/);dom.window.close();
 });
+
+test('admin date picker and explicit publish save public visibility with useful confirmation',async()=>{
+ const dom=new JSDOM(readFileSync('admin.html','utf8'));const d=dom.window.document;let saved;
+ const api=async(action,options)=>{if(action==='me')return {role:'admin',uploadsEnabled:false};if(action==='content'){saved=options.body;return {id:'saved',version:1};}return {items:[],nextCursor:null};};
+ const source=readFileSync('client/admin.js','utf8').replace(/^import .*;\n/gm,'');
+ await new AsyncFunction('document','api','safeImage','fields','kinds','settingFields',source)(d,api,safeImage,fields,kinds,settingFields);
+ assert.equal(d.getElementById('field-date').type,'date');
+ d.getElementById('field-title').value='Society workshop';d.getElementById('field-date').value='2026-10-20';
+ d.getElementById('content-form').onsubmit({preventDefault(){},submitter:d.querySelector('[data-publish]')});await new Promise(setImmediate);
+ assert.equal(saved.content.status,'published');assert.equal(saved.content.data.date,'2026-10-20');
+ assert.match(d.getElementById('admin-status').textContent,/Published and saved/);
+ assert.equal(d.querySelector('input[type=file]').disabled,true);dom.window.close();
+});
+
+test('event dates normalize day-first input and reject impossible dates with a clear error',async()=>{
+ const {validateContent}=await import('../server/schema.mjs');
+ const event={kind:'events',status:'published',data:{title:'Workshop',date:'22-09-2026'}};
+ assert.equal(validateContent(event).data.date,'2026-09-22');
+ assert.throws(()=>validateContent({...event,data:{...event.data,date:'31-02-2026'}}),/valid event date/);
+});
