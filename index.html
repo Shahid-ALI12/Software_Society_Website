@@ -382,42 +382,57 @@
         /* ===== Message cards (HOD + Convenier) ===== */
         .message-card {
             position: relative;
-            background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.75) 100%);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            box-shadow: var(--se-shadow-md);
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            box-shadow: 0 8px 24px -6px rgba(15, 23, 42, 0.10), 0 4px 8px -2px rgba(15, 23, 42, 0.05);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
         .dark .message-card {
-            background: linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.75) 100%);
-            border-color: rgba(255, 255, 255, 0.08);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-color: rgba(51, 65, 85, 0.6);
         }
-        .message-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 30px 60px -15px rgba(15,23,42,.25), 0 15px 30px -10px rgba(15,23,42,.12); }
-        /* Photo frame: plain neutral ring, no coloured gradient. HOD and
-           Convenier share the same look so the page reads cohesive. */
+        /* Always-visible left accent stripe (premium signature) */
+        .message-card::before {
+            content: ""; position: absolute; top: 0; left: 0; bottom: 0; width: 5px;
+            background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 50%, #3b82f6 100%);
+            z-index: 1;
+        }
+        .message-card:hover { transform: translateY(-6px); box-shadow: 0 24px 50px -12px rgba(99, 102, 241, 0.22), 0 12px 24px -6px rgba(15, 23, 42, 0.10); border-color: rgba(99, 102, 241, 0.25); }
+        /* Photo frame: bigger, with soft gradient ring */
         .message-card .photo-frame {
-            position: relative; padding: 4px;
+            position: relative; padding: 5px;
             border-radius: 50%;
-            background: #fff;
-            box-shadow: var(--se-shadow-md);
+            background: linear-gradient(135deg, #c7d2fe 0%, #ddd6fe 100%);
+            box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.25);
             transition: transform 0.4s ease, box-shadow 0.4s ease;
+            flex-shrink: 0;
         }
-        .dark .message-card .photo-frame { background: #0f172a; }
-        .message-card:hover .photo-frame { transform: scale(1.05); box-shadow: var(--se-shadow-lg); }
+        .message-card:hover .photo-frame { transform: scale(1.04) rotate(-2deg); box-shadow: 0 12px 28px -4px rgba(99, 102, 241, 0.4); }
         .message-card .photo-frame img {
             border-radius: 50%; display: block;
             width: 100%; height: 100%; object-fit: cover;
         }
         .message-card .quote-mark {
-            position: absolute; top: 8px; right: 16px;
-            font-size: 64px; line-height: 1;
-            color: rgba(100, 116, 139, 0.18);
+            position: absolute; top: 12px; right: 20px;
+            font-size: 80px; line-height: 1;
+            color: rgba(99, 102, 241, 0.10);
             font-family: Georgia, serif; font-weight: 700;
             pointer-events: none;
         }
-        .dark .message-card .quote-mark { color: rgba(148, 163, 184, 0.22); }
+        .message-card .msg-text {
+            font-size: 15px; line-height: 1.7;
+            color: #475569;
+        }
+        .message-card .msg-name {
+            font-size: 20px; font-weight: 800;
+            background: linear-gradient(135deg, #1e293b 0%, #4f46e5 100%);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .message-card .msg-title {
+            font-size: 13px; color: #64748b; font-weight: 500;
+        }
 
         /* ===== Profile cards (Core Executive Body, Cabinet, Featured) ===== */
         .profile-card {
@@ -714,36 +729,36 @@
             </section>
 
             <!-- HOD Message Section -->
-            <section class="reveal-up message-card rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800">
+            <section class="reveal-up message-card rounded-2xl p-8 sm:p-10 md:p-12 border border-slate-200 dark:border-slate-800">
                 <span class="quote-mark" aria-hidden="true">&rdquo;</span>
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div class="photo-frame shrink-0 w-40 h-40 sm:w-48 sm:h-48 md:w-52 md:h-52">
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 pl-3">
+                    <div class="photo-frame w-44 h-44 sm:w-52 sm:h-52 md:w-60 md:h-60">
                         <img data-site-photo="hod" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=85" alt="HOD Photo">
                     </div>
-                    <div class="space-y-3 text-center md:text-left flex-1">
+                    <div class="space-y-4 text-center md:text-left flex-1">
                         <span class="pill-badge amber"><span class="dot"></span>HOD Message</span>
-                        <p id="hod-message" class="text-slate-600 dark:text-slate-300 italic text-sm sm:text-base leading-relaxed">&ldquo;Welcome to the official portal of SE Society. Our mission is to bridge academia and industry by empowering students with hands-on technical skills, research methodologies, and ethical engineering principles.&rdquo;</p>
-                        <div class="pt-1">
-                            <p id="hod-name" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">Dr. Muhammad Asif</p>
-                            <p id="hod-title" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Head of Department, NTU Faisalabad</p>
+                        <p id="hod-message" class="msg-text italic">&ldquo;Welcome to the official portal of SE Society. Our mission is to bridge academia and industry by empowering students with hands-on technical skills, research methodologies, and ethical engineering principles.&rdquo;</p>
+                        <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                            <p id="hod-name" class="msg-name mt-3">Dr. Muhammad Asif</p>
+                            <p id="hod-title" class="msg-title mt-1">Head of Department, NTU Faisalabad</p>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Convenier Message Section (mirrors HOD block; admin-editable) -->
-            <section class="reveal-up message-card convenier rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800">
+            <section class="reveal-up message-card convenier rounded-2xl p-8 sm:p-10 md:p-12 border border-slate-200 dark:border-slate-800">
                 <span class="quote-mark" aria-hidden="true">&rdquo;</span>
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div class="photo-frame shrink-0 w-40 h-40 sm:w-48 sm:h-48 md:w-52 md:h-52">
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 pl-3">
+                    <div class="photo-frame w-44 h-44 sm:w-52 sm:h-52 md:w-60 md:h-60">
                         <img data-site-photo="convenier" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=85" alt="Convenier Photo">
                     </div>
-                    <div class="space-y-3 text-center md:text-left flex-1">
+                    <div class="space-y-4 text-center md:text-left flex-1">
                         <span class="pill-badge emerald"><span class="dot"></span>Convenier Message</span>
-                        <p id="convenier-message" class="text-slate-600 dark:text-slate-300 italic text-sm sm:text-base leading-relaxed">&ldquo;Welcome to the official portal of SE Society. Our mission is to bridge academia and industry by empowering students with hands-on technical skills, research methodologies, and ethical engineering principles.&rdquo;</p>
-                        <div class="pt-1">
-                            <p id="convenier-name" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">Convenier Name</p>
-                            <p id="convenier-title" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Society Convenier, SE Society, NTU Faisalabad</p>
+                        <p id="convenier-message" class="msg-text italic">&ldquo;Welcome to the official portal of SE Society. Our mission is to bridge academia and industry by empowering students with hands-on technical skills, research methodologies, and ethical engineering principles.&rdquo;</p>
+                        <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                            <p id="convenier-name" class="msg-name mt-3">Convenier Name</p>
+                            <p id="convenier-title" class="msg-title mt-1">Society Convenier, SE Society, NTU Faisalabad</p>
                         </div>
                     </div>
                 </div>
@@ -768,7 +783,7 @@
                     </div>
                     <button onclick="switchTab('cabinet')" class="btn-glass px-4 py-2 rounded-lg text-sm font-semibold text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/50 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition">View Full Cabinet &rarr;</button>
                 </div>
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6" id="homeExecutiveGrid">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6" id="homeExecutiveGrid">
                     <!-- Populated dynamically -->
                 </div>
             </section>
