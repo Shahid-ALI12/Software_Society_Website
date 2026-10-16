@@ -13,4 +13,6 @@ export function createLimiter({url,token,namespace='society:production',fetcher=
   if(result[0]>max){const e=new RequestError(429,'rate_limited','Too many requests. Please wait before trying again.');e.retryAfter=Math.max(1,result[1]);throw e;}
  };
 }
-export const rateLimit=createLimiter({url:process.env.UPSTASH_REDIS_REST_URL,token:process.env.UPSTASH_REDIS_REST_TOKEN,namespace:`society:${process.env.VERCEL_ENV||'development'}`});
+// Vercel's Upstash marketplace integration exposes KV_REST_API_* by default.
+// Keep the explicit UPSTASH_REDIS_REST_* aliases for local/manual setups.
+export const rateLimit=createLimiter({url:process.env.UPSTASH_REDIS_REST_URL||process.env.KV_REST_API_URL,token:process.env.UPSTASH_REDIS_REST_TOKEN||process.env.KV_REST_API_TOKEN,namespace:`society:${process.env.VERCEL_ENV||'development'}`});
