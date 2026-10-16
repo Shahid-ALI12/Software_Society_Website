@@ -31,7 +31,7 @@ export function createHandler({getServices,limit,siteOrigin,production=false,upl
     const kind=url.searchParams.get('kind')||'settings';
     if(kind!=='settings'&&!kinds.includes(kind))throw invalid();
     const result=kind==='settings'?await repo.settings():await repo.content(kind,url.searchParams.get('cursor'),true);
-    return Response.json(result,{headers:{'Cache-Control':'public, max-age=0, s-maxage=30'}});
+    return Response.json(result,{headers:{'Cache-Control':'public, max-age=0, s-maxage=10'}});
    }
    const kind=url.searchParams.get('kind');
    const permission=action==='submission'?{contact:'contact:submit',suggestion:'suggestion:submit',alumni:'alumni:apply'}[kind]:actions[action];

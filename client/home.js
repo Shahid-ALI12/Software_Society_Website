@@ -4,8 +4,10 @@ import { sampleContent } from './sample.js';
 import { kinds, featuredGroups } from '../shared/content-schema.js';
 const $=id=>document.getElementById(id),state={content:sampleContent,cursors:{},eventFilter:'all',live:false,session:'2025-2026',settings:null};
 // Brand loader: fade out once the homepage has either loaded its content or
-// fallen back to sample data. Also has a hard safety timeout (4s) so the
+// fallen back to sample data. Also has a hard safety timeout (8s) so the
 // overlay never strands a visitor if a script error blocks the ready path.
+// 8s matches the worst-case API round-trip (cold Firebase start) so the
+// loader stays visible until real content is ready, not sample content.
 function hideBrandLoader(){
  const loader=$('brand-loader');if(!loader||loader.classList.contains('hidden-loader'))return;
  loader.classList.add('hidden-loader');
@@ -14,7 +16,7 @@ function hideBrandLoader(){
  // readers never announce a phantom loading state.
  setTimeout(()=>{loader.remove?.();},700);
 }
-setTimeout(hideBrandLoader,4000);
+setTimeout(hideBrandLoader,8000);
 // Scroll-reveal: add .is-visible to .reveal-up elements when they enter the
 // viewport. Respects reduced-motion (CSS already shows them at final state).
 function initRevealOnScroll(){
@@ -94,15 +96,19 @@ wireForm('contactForm','contact',form=>({name:form.querySelector('input[type="te
 wireForm('alumniForm','alumni',()=>({name:$('almName').value,batch:$('almBatch').value,role:$('almRole').value,linkedin:$('almLinkedIn').value,consent:$('alumniConsent').checked}));
 render();
 // Load settings + every content kind in parallel. Each request is independent
-// so a single failing endpoint (e.g. backend not configured yet) doesn't make
-// the whole page wait. Falls back to sample data per-kind with a short timeout.
+// so a single failing endpoint doesn't block the others. IMPORTANT: if a
+// request fails we keep the existing sample content for that kind instead of
+// wiping it to an empty array — otherwise visitors see "Nothing published
+// here yet." when the backend is just slow, not broken.
 try{
- const settingsReq=api('public',{kind:'settings'}).catch(()=>({data:null,version:0}));
- const kindReqs=kinds.map(kind=>api('public',{kind}).catch(()=>({items:[],nextCursor:null})));
+ const settingsReq=api('public',{kind:'settings'}).catch(()=>null);
+ const kindReqs=kinds.map(kind=>api('public',{kind}).catch(()=>null));
  const [settingsResult,...kindResults]=await Promise.all([settingsReq,...kindReqs]);
- const settings=settingsResult.data;state.session=settings?.currentSession||'2026-2027';state.settings=settings;
- kinds.forEach((kind,i)=>{state.content[kind]=kindResults[i].items;state.cursors[kind]=kindResults[i].nextCursor;$('more-'+kind).hidden=!state.cursors[kind];});
- document.querySelectorAll('[data-site-photo]').forEach(img=>{const photo=settings?.photos?.[img.dataset.sitePhoto];if(photo?.url&&safeImage(photo.url)){img.src=photo.url;img.alt=photo.alt;}});
+ if(settingsResult){
+  const settings=settingsResult.data;state.session=settings?.currentSession||'2026-2027';state.settings=settings;
+  document.querySelectorAll('[data-site-photo]').forEach(img=>{const photo=settings?.photos?.[img.dataset.sitePhoto];if(photo?.url&&safeImage(photo.url)){img.src=photo.url;img.alt=photo.alt;}});
+ }
+ kinds.forEach((kind,i)=>{const result=kindResults[i];if(result&&Array.isArray(result.items)){state.content[kind]=result.items;state.cursors[kind]=result.nextCursor;$('more-'+kind).hidden=!result.nextCursor;}});
  state.live=true;$('cabinetSessionSelect').value=state.session;render();document.querySelectorAll('button[type="submit"]').forEach(b=>b.disabled=false);
  $('data-status').textContent='Society content is connected. Sign in with a verified email to send submissions.';
 }catch{

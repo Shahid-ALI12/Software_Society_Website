@@ -19,7 +19,7 @@ function request(action,{method='GET',body,auth=true,kind,origin,key='1234567890
  return new Request('https://society.example/api/portal?'+q,{method,headers:{...(auth?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{}),...(origin?{Origin:origin}:{}),'Idempotency-Key':key},body:body?JSON.stringify(body):undefined});
 }
 test('public endpoint only invokes published bounded content query and has cache headers',async()=>{
- const{handle,calls}=setup();const response=await handle(request('public',{auth:false,kind:'events'}));assert.equal(response.status,200);assert.equal(calls[0].name,'content');assert.equal(calls[0].args[2],true);assert.match(response.headers.get('cache-control'),/s-maxage=30/);
+ const{handle,calls}=setup();const response=await handle(request('public',{auth:false,kind:'events'}));assert.equal(response.status,200);assert.equal(calls[0].name,'content');assert.equal(calls[0].args[2],true);assert.match(response.headers.get('cache-control'),/s-maxage=10/);
 });
 test('members cannot write editorial content or read private inbox',async()=>{
  const{handle,calls}=setup();assert.equal((await handle(request('list',{kind:'events'}))).status,403);assert.equal((await handle(request('inbox'))).status,403);assert.equal(calls.length,0);

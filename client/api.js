@@ -1,4 +1,4 @@
-export async function api(action,{kind,cursor,method='GET',body,key,authenticated=false,timeoutMs=6000}={}){
+export async function api(action,{kind,cursor,method='GET',body,key,authenticated=false,timeoutMs=12000}={}){
  const query=new URLSearchParams({action});if(kind)query.set('kind',kind);if(cursor)query.set('cursor',cursor);
  const headers={};if(body)headers['Content-Type']='application/json';if(key)headers['Idempotency-Key']=key;
  if(authenticated){
