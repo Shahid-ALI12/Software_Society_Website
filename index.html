@@ -392,36 +392,55 @@
         /* ===== Profile cards (Core Executive Body, Cabinet, Featured) ===== */
         .profile-card {
             position: relative;
-            background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.75) 100%);
-            backdrop-filter: blur(14px) saturate(160%);
-            -webkit-backdrop-filter: blur(14px) saturate(160%);
-            box-shadow: var(--se-shadow-sm);
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
         .dark .profile-card {
-            background: linear-gradient(180deg, rgba(30,41,59,0.85) 0%, rgba(15,23,42,0.75) 100%);
-            border-color: rgba(255, 255, 255, 0.06);
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border-color: rgba(51, 65, 85, 0.6);
+            box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
         }
+        /* Always-visible top gradient stripe (premium accent) */
         .profile-card::before {
-            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: var(--se-gradient-blue);
-            transform: scaleX(0); transform-origin: left;
-            transition: transform 0.4s ease;
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 50%, #3b82f6 100%);
+            opacity: 0.85;
+            transition: opacity 0.3s ease;
         }
-        .profile-card:hover { transform: translateY(-10px) scale(1.02); box-shadow: 0 25px 50px -12px rgba(15,23,42,.22), 0 12px 24px -8px rgba(15,23,42,.1); }
-        .profile-card:hover::before { transform: scaleX(1); }
-        /* Avatar ring: plain neutral, no coloured gradient. */
+        /* Subtle decorative glow that appears on hover */
+        .profile-card::after {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at center, rgba(99, 102, 241, 0.08) 0%, transparent 50%);
+            opacity: 0; transition: opacity 0.4s ease; pointer-events: none;
+        }
+        .profile-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.25), 0 10px 20px -5px rgba(15, 23, 42, 0.1); border-color: rgba(99, 102, 241, 0.3); }
+        .profile-card:hover::before { opacity: 1; }
+        .profile-card:hover::after { opacity: 1; }
+        /* Avatar with subtle gradient ring */
         .profile-card .avatar-ring {
             padding: 3px; border-radius: 50%;
-            background: #fff;
-            box-shadow: var(--se-shadow-sm);
+            background: linear-gradient(135deg, #c7d2fe 0%, #ddd6fe 100%);
+            box-shadow: 0 4px 10px -2px rgba(99, 102, 241, 0.2);
             transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative; z-index: 1;
         }
-        .dark .profile-card .avatar-ring { background: #0f172a; }
-        .profile-card:hover .avatar-ring { transform: scale(1.08); box-shadow: var(--se-shadow-md); }
+        .dark .profile-card .avatar-ring { background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); }
+        .profile-card:hover .avatar-ring { transform: scale(1.06); box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.4); }
         .profile-card .avatar-ring img { border-radius: 50%; display: block; width: 100%; height: 100%; object-fit: cover; }
+        /* Role label styling */
+        .profile-card .role-label {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 999px;
+            font-size: 11px; font-weight: 600;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            color: #4f46e5;
+            margin-top: 4px;
+        }
+        .dark .profile-card .role-label { color: #a5b4fc; background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%); }
 
         /* ===== Blog card polish (also glass) ===== */
         .blog-card {
@@ -528,25 +547,27 @@
         }
 
         /* ===== Premium page background =====
-           Replaces the flat white/slate-50 body with a subtle layered
-           gradient that matches the hero's indigo/purple theme. */
+           Vibrant layered gradient that matches the hero's indigo/purple theme.
+           More saturated than the previous flat white so the cards pop. */
         body, .dark body {
             background-color: #f8fafc;
         }
         body:not(.dark) {
             background-image:
-                radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.06) 0%, transparent 35%),
-                radial-gradient(circle at 85% 90%, rgba(139, 92, 246, 0.05) 0%, transparent 35%),
-                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
-                linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%);
+                radial-gradient(circle at 12% 8%, rgba(99, 102, 241, 0.12) 0%, transparent 35%),
+                radial-gradient(circle at 88% 92%, rgba(139, 92, 246, 0.10) 0%, transparent 35%),
+                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.08) 0%, transparent 30%),
+                linear-gradient(180deg, #f8fafc 0%, #eef2ff 40%, #faf5ff 70%, #f8fafc 100%);
             background-attachment: fixed;
         }
         body.dark {
             background-image:
-                radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.10) 0%, transparent 35%),
-                radial-gradient(circle at 85% 90%, rgba(139, 92, 246, 0.08) 0%, transparent 35%),
-                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-                linear-gradient(180deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+                radial-gradient(circle at 12% 8%, rgba(99, 102, 241, 0.18) 0%, transparent 35%),
+                radial-gradient(circle at 88% 92%, rgba(139, 92, 246, 0.15) 0%, transparent 35%),
+                radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.10) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(167, 139, 250, 0.12) 0%, transparent 30%),
+                linear-gradient(180deg, #0f172a 0%, #1e1b4b 40%, #2e1065 70%, #0f172a 100%);
             background-color: #0f172a;
         }
     </style>
