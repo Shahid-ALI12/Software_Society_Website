@@ -32,22 +32,16 @@ function content(kind){return state.content[kind].map(item=>({...item.data,id:it
 function render(){renderHome();renderEvents();renderNotices();loadCabinet();renderAlumni();renderFeatured();initRevealOnScroll();}
 function renderHome(){
  $('home-session')&&($('home-session').textContent='Session '+state.session+' Society Leadership');
- // Sort by displayOrder so the admin controls who appears first on the
- // homepage Core Executive Body strip. Lower number = earlier.
  const core=content('cabinet').filter(m=>m.session===state.session&&m.group==='core').sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0)).slice(0,4);
- if($('homeExecutiveGrid'))$('homeExecutiveGrid').innerHTML=core.map(m=>`<article class="${card} text-center">${image(m,'w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 mx-auto rounded-2xl object-cover mb-4 shadow-md')}<h3 class="font-bold text-base sm:text-lg">${esc(m.title)}</h3><p class="text-sm text-blue-600">${esc(m.role)}</p></article>`).join('')||empty;
- if($('blogGrid'))$('blogGrid').innerHTML=content('posts').map(b=>`<button type="button" class="${card} text-left space-y-3" data-blog="${esc(b.id)}">${image(b,'w-full h-56 sm:h-64 lg:h-72 object-cover rounded-xl')}<h3 class="font-bold text-lg">${esc(b.title)}</h3><p class="text-sm text-slate-500">${esc(b.description)}</p><p class="text-sm">By ${esc(b.author)} →</p></button>`).join('')||empty;
- // Drive the HOD block from saved settings instead of hardcoded HTML so the admin
- // panel can update the name, title and message without editing index.html.
+ if($('homeExecutiveGrid'))$('homeExecutiveGrid').innerHTML=core.map(m=>`<article class="profile-card rounded-2xl p-5 border border-slate-200 dark:border-slate-800 text-center"><div class="avatar-ring w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 mx-auto mb-4">${image(m,'w-full h-full')}</div><h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">${esc(m.title)}</h3><p class="text-sm text-blue-600 dark:text-blue-400 mt-0.5">${esc(m.role)}</p></article>`).join('')||empty;
+ if($('blogGrid'))$('blogGrid').innerHTML=content('posts').map(b=>`<button type="button" class="blog-card rounded-2xl p-5 border border-slate-200 dark:border-slate-800 text-left space-y-3" data-blog="${esc(b.id)}"><div class="blog-image">${image(b,'w-full h-56 sm:h-64 lg:h-72 object-cover')}</div><h3 class="font-bold text-lg text-slate-900 dark:text-white">${esc(b.title)}</h3><p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">${esc(b.description)}</p><p class="text-sm text-blue-600 dark:text-blue-400 font-medium">By ${esc(b.author)} &rarr;</p></button>`).join('')||empty;
  const t=state.settings?.texts||{};
  if(t.hodName){const el=$('hod-name');if(el)el.textContent=t.hodName;}
  if(t.hodTitle){const el=$('hod-title');if(el)el.textContent=t.hodTitle;}
- if(t.hodMessage){const el=$('hod-message');if(el){el.textContent='"'+t.hodMessage+'"';el.classList.add('italic');}}
- // Drive the Convenier block the same way as HOD. Falls back to the
- // hardcoded HTML defaults when no Convenier text has been saved yet.
+ if(t.hodMessage){const el=$('hod-message');if(el){el.textContent='\u201C'+t.hodMessage+'\u201D';el.classList.add('italic');}}
  if(t.convenierName){const el=$('convenier-name');if(el)el.textContent=t.convenierName;}
  if(t.convenierTitle){const el=$('convenier-title');if(el)el.textContent=t.convenierTitle;}
- if(t.convenierMessage){const el=$('convenier-message');if(el){el.textContent='"'+t.convenierMessage+'"';el.classList.add('italic');}}
+ if(t.convenierMessage){const el=$('convenier-message');if(el){el.textContent='\u201C'+t.convenierMessage+'\u201D';el.classList.add('italic');}}
 }
 function renderEvents(){
  const today=new Date().toISOString().slice(0,10);
