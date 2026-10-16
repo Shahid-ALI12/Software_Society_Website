@@ -4,7 +4,7 @@ import { errorResponse,RequestError } from './security/errors.mjs';
 import { exact,identifier,version,validateContent,validateSettings,validateAlumni,invalid } from './schema.mjs';
 import { kinds } from '../shared/content-schema.js';
 const actions={'settings-read':'settings:write',me:'suggestion:submit',list:'content:write',content:'content:write',settings:'settings:write',inbox:'inbox:read',moderate:'alumni:moderate',upload:'content:write'};
-export function createHandler({getServices,limit,siteOrigin,production=false}){
+export function createHandler({getServices,limit,siteOrigin,production=false,uploadsEnabled=false}){
  return async request=>{
   try{
    const url=new URL(request.url),action=url.searchParams.get('action');
@@ -30,7 +30,7 @@ export function createHandler({getServices,limit,siteOrigin,production=false}){
    await limit('user:'+user.uid+':'+action,action==='submission'?5:action==='upload'?10:60,action==='submission'?600:60);
    let result;
    if(action==='settings-read')result=await repo.settings();
-   else if(action==='me')result={uid:user.uid,role:user.role};
+   else if(action==='me')result={uid:user.uid,role:user.role,uploadsEnabled};
    else if(action==='list'){if(!kinds.includes(kind))throw invalid();result=await repo.content(kind,url.searchParams.get('cursor'),false);}
    else if(action==='inbox')result=await repo.inbox(url.searchParams.get('cursor'));
    else{
