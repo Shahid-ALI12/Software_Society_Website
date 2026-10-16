@@ -1,4 +1,4 @@
-export async function api(action,{kind,cursor,method='GET',body,key,authenticated=false}={}){
+export async function api(action,{kind,cursor,method='GET',body,key,authenticated=false,timeoutMs=6000}={}){
  const query=new URLSearchParams({action});if(kind)query.set('kind',kind);if(cursor)query.set('cursor',cursor);
  const headers={};if(body)headers['Content-Type']='application/json';if(key)headers['Idempotency-Key']=key;
  if(authenticated){
@@ -6,7 +6,7 @@ export async function api(action,{kind,cursor,method='GET',body,key,authenticate
   if(!auth.currentUser)throw new Error('Please sign in from Account before continuing.');
   headers.Authorization='Bearer '+await auth.currentUser.getIdToken();
  }
- const response=await fetch('/api/portal?'+query,{method,headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(25000)});
+ const response=await fetch('/api/portal?'+query,{method,headers,body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(timeoutMs)});
  let data;try{data=await response.json();}catch{throw new Error('The data service is not available yet. Please try again later.');}
  if(!response.ok){const error=new Error(data.message||'Request failed. Please try again.');error.status=response.status;throw error;}return data;
 }

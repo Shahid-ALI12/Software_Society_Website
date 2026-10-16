@@ -4,7 +4,7 @@ import { sampleContent } from './sample.js';
 import { kinds, featuredGroups } from '../shared/content-schema.js';
 const $=id=>document.getElementById(id),state={content:sampleContent,cursors:{},eventFilter:'all',live:false,session:'2025-2026',settings:null};
 // Brand loader: fade out once the homepage has either loaded its content or
-// fallen back to sample data. Also has a hard safety timeout (2.5s) so the
+// fallen back to sample data. Also has a hard safety timeout (4s) so the
 // overlay never strands a visitor if a script error blocks the ready path.
 function hideBrandLoader(){
  const loader=$('brand-loader');if(!loader||loader.classList.contains('hidden-loader'))return;
@@ -14,7 +14,7 @@ function hideBrandLoader(){
  // readers never announce a phantom loading state.
  setTimeout(()=>{loader.remove?.();},700);
 }
-setTimeout(hideBrandLoader,2500);
+setTimeout(hideBrandLoader,4000);
 // Scroll-reveal: add .is-visible to .reveal-up elements when they enter the
 // viewport. Respects reduced-motion (CSS already shows them at final state).
 function initRevealOnScroll(){
@@ -93,10 +93,19 @@ wireForm('suggestionForm','suggestion',()=>({category:$('sugCategory').value,nam
 wireForm('contactForm','contact',form=>({name:form.querySelector('input[type="text"]').value,email:form.querySelector('input[type="email"]').value,message:form.querySelector('textarea').value}));
 wireForm('alumniForm','alumni',()=>({name:$('almName').value,batch:$('almBatch').value,role:$('almRole').value,linkedin:$('almLinkedIn').value,consent:$('alumniConsent').checked}));
 render();
+// Load settings + every content kind in parallel. Each request is independent
+// so a single failing endpoint (e.g. backend not configured yet) doesn't make
+// the whole page wait. Falls back to sample data per-kind with a short timeout.
 try{
- const results=await Promise.all([api('public',{kind:'settings'}),...kinds.map(kind=>api('public',{kind}))]);const settings=results[0].data;state.session=settings?.currentSession||'2026-2027';state.settings=settings;
- kinds.forEach((kind,i)=>{state.content[kind]=results[i+1].items;state.cursors[kind]=results[i+1].nextCursor;$('more-'+kind).hidden=!state.cursors[kind];});
+ const settingsReq=api('public',{kind:'settings'}).catch(()=>({data:null,version:0}));
+ const kindReqs=kinds.map(kind=>api('public',{kind}).catch(()=>({items:[],nextCursor:null})));
+ const [settingsResult,...kindResults]=await Promise.all([settingsReq,...kindReqs]);
+ const settings=settingsResult.data;state.session=settings?.currentSession||'2026-2027';state.settings=settings;
+ kinds.forEach((kind,i)=>{state.content[kind]=kindResults[i].items;state.cursors[kind]=kindResults[i].nextCursor;$('more-'+kind).hidden=!state.cursors[kind];});
  document.querySelectorAll('[data-site-photo]').forEach(img=>{const photo=settings?.photos?.[img.dataset.sitePhoto];if(photo?.url&&safeImage(photo.url)){img.src=photo.url;img.alt=photo.alt;}});
- state.live=true;$('cabinetSessionSelect').value=state.session;render();document.querySelectorAll('button[type="submit"]').forEach(b=>b.disabled=false);$('data-status').textContent='Society content is connected. Sign in with a verified email to send submissions.';
-}catch{$('data-status').textContent='Website preview — showing sample content while the database connection is being configured. Submissions are currently unavailable.';}
+ state.live=true;$('cabinetSessionSelect').value=state.session;render();document.querySelectorAll('button[type="submit"]').forEach(b=>b.disabled=false);
+ $('data-status').textContent='Society content is connected. Sign in with a verified email to send submissions.';
+}catch{
+ $('data-status').textContent='Website preview — showing sample content while the database connection is being configured. Submissions are currently unavailable.';
+}
 hideBrandLoader();

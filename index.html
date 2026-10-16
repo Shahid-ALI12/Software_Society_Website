@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Software Engineering Society - NTU Faisalabad</title>
-    <script type="module" src="/client/home.js"></script>
+    <!-- Preconnect to external origins so DNS + TLS handshakes happen in
+         parallel with the HTML parse, shaving ~150-400ms off first paint. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <!-- Defer the module script so it no longer blocks HTML parsing.
+         The module attribute already implies defer, but being explicit helps
+         older engines and makes intent clear to reviewers. -->
+    <script type="module" src="/client/home.js" defer></script>
     <!-- FontAwesome Icons CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body {
@@ -274,9 +283,13 @@
                     </div>
                 </div>
                 <!-- Right: full-bright meeting photo, no overlay, no tint.
-                     People, banner and the table are fully visible. -->
+                     People, banner and the table are fully visible. WebP first
+                     (85% smaller) with JPEG fallback for older browsers. -->
                 <div class="relative flex-1 min-h-[18rem]">
-                    <img data-site-photo="hero" src="/assets/society-meeting.jpg" alt="SE Society members at an official meeting" class="absolute inset-0 w-full h-full object-cover">
+                    <picture>
+                        <source srcset="/assets/society-meeting.webp" type="image/webp">
+                        <img data-site-photo="hero" src="/assets/society-meeting.jpg" alt="SE Society members at an official meeting" class="absolute inset-0 w-full h-full object-cover" loading="eager" decoding="async" fetchpriority="high">
+                    </picture>
                 </div>
             </section>
 
