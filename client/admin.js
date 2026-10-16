@@ -56,9 +56,19 @@ async function loadContent(append=false){const result=await api('list',{kind:$('
  state.contentCursor=result.nextCursor;$('content-more').hidden=!result.nextCursor;
 }
 async function loadPhotos(){const result=await api('settings-read',{authenticated:true});state.settingsVersion=result.version;$('current-session').value=result.data?.currentSession||'2026-2027';$('photo-fields').replaceChildren();for(const [key,label]of Object.entries(settingFields)){const p=photo(label,'site-'+key);$('photo-fields').append(p);$('site-'+key+'-url').value=result.data?.photos[key]?.url||'';$('site-'+key+'-alt').value=result.data?.photos[key]?.alt||'';p.refresh();}
- // Editable HOD text fields (name, title, message) so the homepage HOD block can be
- // updated without editing index.html. Rendered under the photos form on the admin page.
- const textWrap=$('hod-text-fields');if(textWrap){textWrap.replaceChildren();for(const [key,label]of Object.entries(settingTextFields)){const wrap=input(label,'hod-text-'+key,key==='hodMessage');const ta=wrap.lastChild;ta.value=result.data?.texts?.[key]||'';if(key==='hodMessage'){ta.rows=4;ta.maxLength=2000;ta.placeholder='Welcome message shown beside the HOD photo on the homepage.';}textWrap.append(wrap);}}}
+ // Editable text fields drive the HOD and Convenier blocks on the homepage.
+ // Each settingTextFields key is rendered into its matching container so the
+ // admin can edit the name, title and message for both blocks side by side.
+ const textContainers={hodName:'hod-text-fields',hodTitle:'hod-text-fields',hodMessage:'hod-text-fields',convenierName:'convenier-text-fields',convenierTitle:'convenier-text-fields',convenierMessage:'convenier-text-fields'};
+ for(const [containerId]of Object.entries([...new Set(Object.values(textContainers))].map(id=>[id,id]))){const wrap=$(containerId);if(wrap)wrap.replaceChildren();}
+ for(const [key,label]of Object.entries(settingTextFields)){
+  const containerId=textContainers[key];const wrap=$(containerId);if(!wrap)continue;
+  const isMessage=key==='hodMessage'||key==='convenierMessage';
+  const fieldWrap=input(label,'text-'+key,isMessage);
+  const ta=fieldWrap.lastChild;ta.value=result.data?.texts?.[key]||'';
+  if(isMessage){ta.rows=4;ta.maxLength=2000;ta.placeholder='Welcome message shown beside the portrait on the homepage.';}
+  wrap.append(fieldWrap);
+ }}
 async function loadUsers(append=false){const result=await api('users',{cursor:append?state.usersCursor:null,authenticated:true});if(!append)$('users-list').replaceChildren();
  for(const u of result.items){const card=node('article',null,'editor-card');const verified=u.emailVerified?'verified':'not verified';card.append(node('h3',(u.email||u.uid)+' — '+u.role,'font-bold'),node('p','Status: '+(u.disabled?'disabled':'enabled')+', email '+verified,'text-sm text-slate-500'));
   const controls=node('div',null,'flex flex-wrap gap-3');for(const role of ['member','editor','admin']){const b=node('button',role==='member'?'Set member':role==='editor'?'Set editor':'Set admin',u.role===role?'primary-button':'secondary-button');b.type='button';b.disabled=u.role===role;b.onclick=()=>confirmAction('Change '+u.email+' to '+role+'? The user must sign out and back in to see the change.',async()=>{await api('assign-role',{method:'POST',authenticated:true,body:{uid:u.uid,role}});$('admin-status').textContent='Role updated. Ask '+u.email+' to sign out and sign in again.';await loadUsers();});controls.append(b);}card.append(controls);$('users-list').append(card);}
@@ -71,8 +81,8 @@ $('new-item').onclick=()=>{editor();$('content-form').scrollIntoView({behavior:'
 $('content-more').onclick=()=>task(()=>loadContent(true));
 $('content-form').onsubmit=e=>{e.preventDefault();if(e.submitter?.dataset.publish==='true')$('content-status').value='published';task(async()=>{const data={};for(const key of Object.keys(fields[$('content-kind').value]))data[key]=$(key==='image'?'item-photo-url':key==='alt'?'item-photo-alt':'field-'+key).value;if(data.image&&!data.alt)data.alt=data.title;const result=await api('content',{method:'POST',authenticated:true,body:{id:state.id,version:state.version,content:{kind:$('content-kind').value,status:$('content-status').value,data}}});state.id=result.id;state.version=result.version;$('editor-title').textContent='Edit item';const visibility=$('content-status').value;const confirmation=visibility==='published'?'Published and saved to the database. Refresh the website after 30 seconds.':visibility==='draft'?'Draft saved to the database. Click Publish to show it on the website.':'Archived and saved to the database. It will no longer appear publicly.';try{await loadContent();$('admin-status').textContent=confirmation;}catch{$('admin-status').textContent=confirmation+' The item list could not refresh; reopen this page.';}});};
 $('photos-form').onsubmit=e=>{e.preventDefault();task(async()=>{const photos={};for(const key of Object.keys(settingFields))photos[key]={url:$('site-'+key+'-url').value,alt:$('site-'+key+'-alt').value||($('site-'+key+'-url').value?settingFields[key]:'')};
- const texts={};for(const key of Object.keys(settingTextFields))texts[key]=$('hod-text-'+key).value;
- const result=await api('settings',{method:'POST',authenticated:true,body:{version:state.settingsVersion,data:{photos,currentSession:$('current-session').value,texts}}});state.settingsVersion=result.version;$('admin-status').textContent='Website photos and HOD text saved. Changes appear within 30 seconds.';});};
+ const texts={};for(const key of Object.keys(settingTextFields))texts[key]=$('text-'+key).value;
+ const result=await api('settings',{method:'POST',authenticated:true,body:{version:state.settingsVersion,data:{photos,currentSession:$('current-session').value,texts}}});state.settingsVersion=result.version;$('admin-status').textContent='Website photos and HOD/Convenier text saved. Changes appear within 30 seconds.';});};
 $('inbox-refresh').onclick=()=>task(()=>inbox());$('inbox-more').onclick=()=>task(()=>inbox(true));
 $('users-refresh').onclick=()=>task(()=>loadUsers());$('users-more').onclick=()=>task(()=>loadUsers(true));
 document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>task(async()=>{document.querySelectorAll('.manage-panel').forEach(p=>p.hidden=p.id!==b.dataset.panel);if(b.dataset.panel==='photos-panel')await loadPhotos();if(b.dataset.panel==='inbox-panel')await inbox();if(b.dataset.panel==='users-panel')await loadUsers();$('admin-status').textContent='Ready.';}));

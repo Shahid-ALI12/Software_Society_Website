@@ -53,7 +53,7 @@ export function validateSettings(body){
  // HOD text fields are optional but, if present, must be sane strings so the homepage
  // block is never fed control characters or a multi-megabyte paste.
  exact(body.texts,Object.keys(settingTextFields));
- const texts={};for(const key of Object.keys(settingTextFields)){const limit=key==='hodMessage'?2000:200;texts[key]=text(body.texts[key],limit);}
+ const texts={};for(const key of Object.keys(settingTextFields)){const limit=key==='hodMessage'||key==='convenierMessage'?2000:200;texts[key]=text(body.texts[key],limit);}
  return {photos,currentSession,texts};
 }
 export function validateAlumni(b){

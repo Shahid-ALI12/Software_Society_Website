@@ -30,18 +30,20 @@ test('contact form waits for API success and reports persistence failure accurat
  const d=dom.window.document,form=d.getElementById('contactForm');form.querySelector('input[type=text]').value='Member';form.querySelector('input[type=email]').value='member@example.com';form.querySelector('textarea').value='Please share the event details.';
  await form.onsubmit({preventDefault(){}});assert.equal(write.kind,'contact');assert.equal(write.authenticated,true);assert.ok(write.key);assert.equal(form.querySelector('.form-status').textContent,'Service unavailable');assert.equal(form.querySelector('input[type=text]').value,'Member');dom.window.close();
 });
-test('admin photo editor saves five explicit slots and server version',async()=>{
+test('admin photo editor saves all photo slots, HOD and Convenier text, and server version',async()=>{
  const dom=new JSDOM(readFileSync('admin.html','utf8'));const d=dom.window.document;let save;
  const api=async(action,options)=>{if(action==='me')return {role:'admin'};if(action==='settings-read')return {data:null,version:3};if(action==='settings'){save=options.body;return {version:4};}return {items:[],nextCursor:null};};
  const source=readFileSync('client/admin.js','utf8').replace(/^import .*;\n/gm,'');
  await new AsyncFunction('document','api','safeImage','fields','kinds','settingFields','settingTextFields','featuredGroups',source)(d,api,safeImage,fields,kinds,settingFields,settingTextFields,featuredGroups);
  assert.equal(d.getElementById('admin-panel').hidden,false);await d.querySelector('[data-panel=photos-panel]').onclick();
  d.getElementById('site-hero-url').value='https://images.unsplash.com/actual';d.getElementById('site-hero-alt').value='Society team';
- // HOD text fields exist alongside the photos and must be present before submit.
- d.getElementById('hod-text-hodName').value='Dr. Test';d.getElementById('hod-text-hodTitle').value='HOD';d.getElementById('hod-text-hodMessage').value='Welcome';
+ // HOD + Convenier text fields exist alongside the photos and must be filled before submit.
+ d.getElementById('text-hodName').value='Dr. Test';d.getElementById('text-hodTitle').value='HOD';d.getElementById('text-hodMessage').value='Welcome';
+ d.getElementById('text-convenierName').value='Mr. Conv';d.getElementById('text-convenierTitle').value='Convenier';d.getElementById('text-convenierMessage').value='Hi all';
  d.getElementById('photos-form').onsubmit({preventDefault(){}});await new Promise(setImmediate);
- assert.equal(save.version,3);assert.equal(save.data.photos.hero.alt,'Society team');assert.equal(Object.keys(save.data.photos).length,5);
+ assert.equal(save.version,3);assert.equal(save.data.photos.hero.alt,'Society team');assert.equal(Object.keys(save.data.photos).length,6);
  assert.equal(save.data.texts.hodName,'Dr. Test');assert.equal(save.data.texts.hodTitle,'HOD');
+ assert.equal(save.data.texts.convenierName,'Mr. Conv');assert.equal(save.data.texts.convenierTitle,'Convenier');
  assert.match(d.getElementById('admin-status').textContent,/saved/);dom.window.close();
 });
 

@@ -32,8 +32,10 @@ function content(kind){return state.content[kind].map(item=>({...item.data,id:it
 function render(){renderHome();renderEvents();renderNotices();loadCabinet();renderAlumni();renderFeatured();initRevealOnScroll();}
 function renderHome(){
  $('home-session')&&($('home-session').textContent='Session '+state.session+' Society Leadership');
- const core=content('cabinet').filter(m=>m.session===state.session&&m.group==='core').slice(0,4);
- if($('homeExecutiveGrid'))$('homeExecutiveGrid').innerHTML=core.map(m=>`<article class="${card} text-center">${image(m,'w-28 h-28 sm:w-32 sm:h-32 mx-auto rounded-full object-cover mb-4')}<h3 class="font-bold">${esc(m.title)}</h3><p class="text-sm text-blue-600">${esc(m.role)}</p></article>`).join('')||empty;
+ // Sort by displayOrder so the admin controls who appears first on the
+ // homepage Core Executive Body strip. Lower number = earlier.
+ const core=content('cabinet').filter(m=>m.session===state.session&&m.group==='core').sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0)).slice(0,4);
+ if($('homeExecutiveGrid'))$('homeExecutiveGrid').innerHTML=core.map(m=>`<article class="${card} text-center">${image(m,'w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 mx-auto rounded-2xl object-cover mb-4 shadow-md')}<h3 class="font-bold text-base sm:text-lg">${esc(m.title)}</h3><p class="text-sm text-blue-600">${esc(m.role)}</p></article>`).join('')||empty;
  if($('blogGrid'))$('blogGrid').innerHTML=content('posts').map(b=>`<button type="button" class="${card} text-left space-y-3" data-blog="${esc(b.id)}">${image(b,'w-full h-56 sm:h-64 lg:h-72 object-cover rounded-xl')}<h3 class="font-bold text-lg">${esc(b.title)}</h3><p class="text-sm text-slate-500">${esc(b.description)}</p><p class="text-sm">By ${esc(b.author)} →</p></button>`).join('')||empty;
  // Drive the HOD block from saved settings instead of hardcoded HTML so the admin
  // panel can update the name, title and message without editing index.html.
@@ -41,6 +43,11 @@ function renderHome(){
  if(t.hodName){const el=$('hod-name');if(el)el.textContent=t.hodName;}
  if(t.hodTitle){const el=$('hod-title');if(el)el.textContent=t.hodTitle;}
  if(t.hodMessage){const el=$('hod-message');if(el){el.textContent='"'+t.hodMessage+'"';el.classList.add('italic');}}
+ // Drive the Convenier block the same way as HOD. Falls back to the
+ // hardcoded HTML defaults when no Convenier text has been saved yet.
+ if(t.convenierName){const el=$('convenier-name');if(el)el.textContent=t.convenierName;}
+ if(t.convenierTitle){const el=$('convenier-title');if(el)el.textContent=t.convenierTitle;}
+ if(t.convenierMessage){const el=$('convenier-message');if(el){el.textContent='"'+t.convenierMessage+'"';el.classList.add('italic');}}
 }
 function renderEvents(){
  const today=new Date().toISOString().slice(0,10);
@@ -53,7 +60,7 @@ function loadCabinet(){
  const select=$('cabinetSessionSelect');if(!select)return;
  const sessions=[...new Set(content('cabinet').map(m=>m.session))].sort().reverse();const previous=select.value;
  select.replaceChildren(...sessions.map(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;return o;}));select.value=sessions.includes(previous)?previous:sessions.includes(state.session)?state.session:sessions[0]||'';
- for(const[group,id]of Object.entries({core:'coreBodyGrid',exec:'executiveBodyGrid',general:'generalBodyGrid'})){const el=$(id);if(el)el.innerHTML=content('cabinet').filter(m=>m.session===select.value&&m.group===group).map(m=>`<article class="${card} text-center">${image(m,'w-32 h-32 sm:w-36 sm:h-36 mx-auto rounded-xl object-cover mb-4')}<h3 class="font-bold">${esc(m.title)}</h3><p class="text-sm text-blue-600">${esc(m.role)}</p></article>`).join('')||empty;}
+ for(const[group,id]of Object.entries({core:'coreBodyGrid',exec:'executiveBodyGrid',general:'generalBodyGrid'})){const el=$(id);if(el)el.innerHTML=content('cabinet').filter(m=>m.session===select.value&&m.group===group).sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0)).map(m=>`<article class="${card} text-center">${image(m,'w-32 h-32 sm:w-36 sm:h-36 mx-auto rounded-xl object-cover mb-4')}<h3 class="font-bold">${esc(m.title)}</h3><p class="text-sm text-blue-600">${esc(m.role)}</p></article>`).join('')||empty;}
 }
 function renderAlumni(){if(!$('alumniGrid'))return;$('alumniGrid').innerHTML=content('alumni').map(a=>`<article class="${card} space-y-3">${image(a,'w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover')}<h3 class="font-bold">${esc(a.title)}</h3><p class="text-xs text-slate-500">Batch: ${esc(a.batch)}</p><p class="text-sm">${esc(a.role)}</p>${safeLinkedIn(a.linkedin)?`<a href="${esc(safeLinkedIn(a.linkedin))}" target="_blank" rel="noopener noreferrer" class="text-blue-600 text-sm underline">Connect on LinkedIn</a>`:''}</article>`).join('')||empty;}
 // Featured people: render one tab per group (HOD, Director, Patrons, Dean, etc.).
