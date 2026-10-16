@@ -18,18 +18,31 @@ function hideBrandLoader(){
 }
 setTimeout(hideBrandLoader,8000);
 // Scroll-reveal: toggle .is-visible on .reveal-up elements every time they
-// enter/leave the viewport — so scrolling DOWN animates them in, and scrolling
-// back UP re-triggers the animation when they come back into view. Respects
-// reduced-motion (CSS already shows them at the final state).
+// enter/leave the viewport — works in BOTH scroll directions.
+//   - Scrolling DOWN  -> element enters from bottom -> fade IN
+//   - Scrolling UP    -> element leaves from bottom -> fade OUT
+//                        -> element re-enters from top -> fade IN again
+// The IntersectionObserver fires on every enter/leave with rootMargin
+// applied on BOTH top and bottom, so the animation triggers whether the
+// element scrolls in from the top OR the bottom of the viewport.
+// Respects reduced-motion (CSS shows them at the final state with no transition).
 function initRevealOnScroll(){
  const targets=document.querySelectorAll('.reveal-up');if(!targets.length)return;
  if(!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('is-visible'));return;}
  const io=new IntersectionObserver((entries)=>{
   entries.forEach(e=>{
-   if(e.isIntersecting){e.target.classList.add('is-visible');}
-   else{e.target.classList.remove('is-visible');}
+   if(e.isIntersecting){
+    // Element is at least 12% visible (from either direction) -> reveal
+    e.target.classList.add('is-visible');
+   }else{
+    // Element has fully left the viewport -> reset so the next entrance
+    // (down OR up) replays the fade-in animation.
+    e.target.classList.remove('is-visible');
+   }
   });
- },{rootMargin:'0px 0px -8% 0px',threshold:0.12});
+  // Symmetric rootMargin: -8% top AND -8% bottom so the trigger point is
+  // equally fair regardless of scroll direction.
+ },{rootMargin:'-8% 0px -8% 0px',threshold:0.12});
  targets.forEach(t=>io.observe(t));
 }
 const empty='<p class="empty-state">Nothing published here yet.</p>';
