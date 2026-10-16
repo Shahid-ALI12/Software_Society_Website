@@ -1,3 +1,17 @@
+# Current integration status — 16 October 2026
+
+Firebase client authentication is now initialized with the registered public web app for `softwarewebsite-861b4`. `/account.html` provides Google/email login, signup, password reset, email verification and sign out. Sessions use tab-level persistence. Firebase manages credentials; no Admin secret is included.
+
+The owner reported configuring Firestore Standard, default database in Bangkok, production mode, Google and Email/Password providers, a 15-character minimum password policy, email enumeration protection, and authorized domain `softwarewebsite-brown.vercel.app`. These settings were supplied through screenshots, not independently verified through administrator access.
+
+Run `npm ci`, `npm test`, and `npm run build`. Test Google sign-in and email signup/reset on the deployed account page. Automated tests use simulated auth callbacks; they do not verify the live project configuration.
+
+The old prototype PIN and local form submissions have been removed. Public content remains sample data and submissions are unavailable. Firestore rules/index deployments, server API integration, Redis and App Check are still pending. Keep the existing production-mode deny rules until scoped rules and APIs are ready.
+
+The following is the earlier security planning reference; descriptions of absent client SDK/PIN integrations below refer to the previous stage.
+
+---
+
 # Firebase setup and current security status
 
 Target project supplied by the owner: `softwarewebsite-861b4`.

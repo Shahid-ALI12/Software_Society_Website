@@ -4,25 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Software Engineering Society - NTU Faisalabad</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        ntu: {
-                            navy: '#0f172a',
-                            blue: '#1e3a8a',
-                            accent: '#2563eb',
-                            gold: '#d97706',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <script type="module" src="/client/home.js"></script>
     <!-- FontAwesome Icons CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -51,6 +33,7 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+<p class="bg-blue-950 text-white text-center p-3 text-sm">Society website preview — sample content. Submissions are not open yet. <a href="/account.html" class="underline">Sign in / Account</a></p>
 
     <!-- TOP NAVIGATION BAR -->
     <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors shadow-sm">
@@ -340,7 +323,7 @@
                 <p class="text-sm text-slate-500 dark:text-slate-400">Your feedback helps us make SE Society better. All submissions are reviewed by leadership.</p>
             </div>
 
-            <form id="suggestionForm" onsubmit="submitSuggestion(event)" class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
+            <form id="suggestionForm" onsubmit="submissionsUnavailable(event)" class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">Category</label>
                     <select id="sugCategory" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
@@ -361,7 +344,7 @@
                     <textarea id="sugMessage" rows="5" placeholder="Share your suggestions, feature requests, or queries..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
                 </div>
 
-                <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-white shadow-md transition">Submit Feedback</button>
+                <button type="submit" disabled class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-white shadow-md transition">Submissions not open yet</button>
             </form>
         </div>
 
@@ -420,7 +403,7 @@
                 </div>
 
                 <!-- Form -->
-                <form onsubmit="handleContactSubmit(event)" class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
+                <form onsubmit="submissionsUnavailable(event)" class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">Full Name</label>
                         <input type="text" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
@@ -433,7 +416,7 @@
                         <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">Message</label>
                         <textarea rows="4" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
                     </div>
-                    <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-white shadow-md transition">Send Message</button>
+                    <button type="submit" disabled class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-white shadow-md transition">Submissions not open yet</button>
                 </form>
             </div>
         </div>
@@ -451,7 +434,7 @@
             <div class="flex items-center space-x-4">
                 <button onclick="switchTab('about')" class="hover:underline">About</button>
                 <button onclick="switchTab('contact')" class="hover:underline">Contact</button>
-                <button onclick="promptAdminPin()" class="hover:underline text-blue-600 dark:text-blue-400 font-bold">Portal Admin</button>
+                <a href="/account.html" class="hover:underline text-blue-600 dark:text-blue-400 font-bold">Sign in / Account</a>
             </div>
         </div>
     </footer>
@@ -491,65 +474,13 @@
             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Alumni Directory Submission</h2>
             <p class="text-xs text-slate-500 dark:text-slate-400">Submit your profile for verification by society admins.</p>
             
-            <form onsubmit="handleAlumniSubmit(event)" class="space-y-3">
+            <form onsubmit="submissionsUnavailable(event)" class="space-y-3">
                 <input type="text" id="almName" placeholder="Full Name" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm" required>
                 <input type="text" id="almBatch" placeholder="Batch / Session (e.g. 2020-2024)" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm" required>
                 <input type="text" id="almRole" placeholder="Current Role & Company (e.g. Software Engineer @ Systems Ltd)" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm" required>
                 <input type="url" id="almLinkedIn" placeholder="LinkedIn Profile URL" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm" required>
-                <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm transition">Submit Profile</button>
+                <button type="submit" disabled class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm transition">Submissions not open yet</button>
             </form>
-        </div>
-    </div>
-
-    <!-- 5. Admin Dashboard Modal -->
-    <div id="adminModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-3xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 space-y-6 border border-slate-200 dark:border-slate-800 shadow-2xl relative">
-            <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-4">
-                <div>
-                    <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center space-x-2">
-                        <i class="fas fa-user-shield text-blue-600"></i>
-                        <span>Admin Portal Dashboard</span>
-                    </h2>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Post notices, review pending alumni requests, and suggestions.</p>
-                </div>
-                <button onclick="closeModal('adminModal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-lg">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <!-- Post New Notice -->
-            <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3">
-                <h3 class="font-bold text-slate-900 dark:text-white text-sm">Post New Notice</h3>
-                <form onsubmit="handlePostNotice(event)" class="space-y-3">
-                    <div class="grid sm:grid-cols-2 gap-3">
-                        <input type="text" id="admNoticeTitle" placeholder="Notice Title" class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm" required>
-                        <select id="admNoticeCategory" class="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm">
-                            <option value="General">General Category</option>
-                            <option value="Workshop">Workshop / Event</option>
-                            <option value="Exams">Exam / Academic</option>
-                        </select>
-                    </div>
-                    <textarea id="admNoticeBody" rows="2" placeholder="Notice content detail..." class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm" required></textarea>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg text-xs">Publish Notice</button>
-                </form>
-            </div>
-
-            <!-- Pending Alumni Approvals -->
-            <div class="space-y-3">
-                <h3 class="font-bold text-slate-900 dark:text-white text-sm">Pending Alumni Approvals</h3>
-                <div id="adminAlumniList" class="space-y-2">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-
-            <!-- Student Suggestions List -->
-            <div class="space-y-3">
-                <h3 class="font-bold text-slate-900 dark:text-white text-sm">Submitted Student Suggestions</h3>
-                <div id="adminSuggestionList" class="space-y-2 max-h-48 overflow-y-auto">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -600,18 +531,16 @@
         };
 
         // Local Storage state initializations
-        let notices = JSON.parse(localStorage.getItem('ntu_se_notices')) || [
+        let notices = [
             { id: 1, title: 'Registration Open for NTU Hackathon 2026', category: 'General', date: '2026-10-12', details: 'All SE students from 1st to 8th semester can register their teams before Nov 1st.' },
             { id: 2, title: 'Lab 02 Maintenance Schedule', category: 'General', date: '2026-10-10', details: 'CS Computer Lab 02 will remain closed on Friday for hardware upgrades.' }
         ];
 
-        let alumniList = JSON.parse(localStorage.getItem('ntu_se_alumni')) || [
+        let alumniList = [
             { id: 1, name: 'Shahmir Khan', batch: '2019-2023', role: 'Full Stack Engineer @ Arbisoft', linkedin: '#' },
             { id: 2, name: 'Zoya Fatima', batch: '2018-2022', role: 'DevOps Specialist @ Systems Ltd', linkedin: '#' }
         ];
 
-        let pendingAlumni = JSON.parse(localStorage.getItem('ntu_se_pending_alumni')) || [];
-        let suggestions = JSON.parse(localStorage.getItem('ntu_se_suggestions')) || [];
 
         // Tab Navigation Switcher
         function switchTab(tabId) {
@@ -804,112 +733,9 @@
             `).join('');
         }
 
-        // Action Handlers
-        function submitSuggestion(e) {
+        function submissionsUnavailable(e) {
             e.preventDefault();
-            const cat = document.getElementById('sugCategory').value;
-            const name = document.getElementById('sugName').value || 'Anonymous';
-            const msg = document.getElementById('sugMessage').value;
-
-            suggestions.push({ id: Date.now(), cat, name, msg, date: new Date().toLocaleDateString() });
-            localStorage.setItem('ntu_se_suggestions', JSON.stringify(suggestions));
-            
-            document.getElementById('suggestionForm').reset();
-            showToast('Suggestion submitted successfully!');
-        }
-
-        function handleContactSubmit(e) {
-            e.preventDefault();
-            showToast('Thank you! Message sent to society office.');
-            e.target.reset();
-        }
-
-        function handleAlumniSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('almName').value;
-            const batch = document.getElementById('almBatch').value;
-            const role = document.getElementById('almRole').value;
-            const linkedin = document.getElementById('almLinkedIn').value;
-
-            pendingAlumni.push({ id: Date.now(), name, batch, role, linkedin });
-            localStorage.setItem('ntu_se_pending_alumni', JSON.stringify(pendingAlumni));
-
-            closeModal('alumniSubmitModal');
-            showToast('Profile submitted for admin approval!');
-        }
-
-        function promptAdminPin() {
-            const pin = prompt('Enter Admin Portal Security PIN:');
-            if (pin === '1234') {
-                renderAdminPortal();
-                openModal('adminModal');
-            } else if (pin !== null) {
-                alert('Incorrect Security PIN!');
-            }
-        }
-
-        function renderAdminPortal() {
-            // Render pending alumni
-            const almContainer = document.getElementById('adminAlumniList');
-            if (pendingAlumni.length === 0) {
-                almContainer.innerHTML = `<p class="text-xs text-slate-400">No pending approvals.</p>`;
-            } else {
-                almContainer.innerHTML = pendingAlumni.map(p => `
-                    <div class="flex justify-between items-center p-3 bg-white dark:bg-slate-900 rounded-lg text-xs border border-slate-200 dark:border-slate-800">
-                        <div>
-                            <span class="font-bold text-slate-900 dark:text-white">${p.name}</span> (${p.batch})
-                            <p class="text-slate-500">${p.role}</p>
-                        </div>
-                        <button onclick="approveAlumni(${p.id})" class="px-3 py-1 bg-emerald-600 text-white rounded hover:bg-emerald-500 font-bold">Approve</button>
-                    </div>
-                `).join('');
-            }
-
-            // Render suggestions
-            const sugContainer = document.getElementById('adminSuggestionList');
-            if (suggestions.length === 0) {
-                sugContainer.innerHTML = `<p class="text-xs text-slate-400">No student feedback submitted.</p>`;
-            } else {
-                sugContainer.innerHTML = suggestions.map(s => `
-                    <div class="p-3 bg-white dark:bg-slate-900 rounded-lg text-xs border border-slate-200 dark:border-slate-800 space-y-1">
-                        <div class="flex justify-between font-bold text-slate-800 dark:text-slate-200">
-                            <span>${s.cat}</span>
-                            <span class="text-slate-400">${s.name}</span>
-                        </div>
-                        <p class="text-slate-600 dark:text-slate-300">${s.msg}</p>
-                    </div>
-                `).join('');
-            }
-        }
-
-        function approveAlumni(id) {
-            const index = pendingAlumni.findIndex(item => item.id === id);
-            if (index !== -1) {
-                const approved = pendingAlumni.splice(index, 1)[0];
-                alumniList.push(approved);
-                localStorage.setItem('ntu_se_alumni', JSON.stringify(alumniList));
-                localStorage.setItem('ntu_se_pending_alumni', JSON.stringify(pendingAlumni));
-                renderAlumni();
-                renderAdminPortal();
-                showToast('Alumni profile approved & published!');
-            }
-        }
-
-        function handlePostNotice(e) {
-            e.preventDefault();
-            const title = document.getElementById('admNoticeTitle').value;
-            const category = document.getElementById('admNoticeCategory').value;
-            const details = document.getElementById('admNoticeBody').value;
-
-            notices.unshift({ id: Date.now(), title, category, details, date: new Date().toISOString().split('T')[0] });
-            localStorage.setItem('ntu_se_notices', JSON.stringify(notices));
-
-            document.getElementById('admNoticeTitle').value = '';
-            document.getElementById('admNoticeBody').value = '';
-
-            renderNotices();
-            renderAdminPortal();
-            showToast('New notice published!');
+            showToast('Submissions are not open yet. Please check back later.');
         }
 
         function openBlogModal(id) {
