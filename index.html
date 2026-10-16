@@ -316,19 +316,48 @@
         }
         .btn-glass:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.4); transform: translateY(-3px); }
         /* Floating decorative orbs on the photo side */
-        .hero-photo-wrap { position: relative; }
+        .hero-photo-wrap { position: relative; overflow: hidden; }
+        .hero-photo-wrap img {
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1), filter 0.5s ease;
+            will-change: transform;
+        }
+        /* Photo zoom + subtle brighten on hover */
+        .hero-photo-wrap:hover img {
+            transform: scale(1.06);
+            filter: brightness(1.08) saturate(1.1);
+        }
+        /* Gradient overlay that fades in on hover — adds depth without
+           hiding the photo (left-to-right, strongest near the sidebar edge). */
         .hero-photo-wrap::before {
-            content: ""; position: absolute; top: 20px; right: 20px;
-            width: 80px; height: 80px; border-radius: 50%;
-            background: radial-gradient(circle, rgba(167, 139, 250, 0.4), transparent 70%);
-            filter: blur(20px); z-index: 2; pointer-events: none;
+            content: ""; position: absolute; inset: 0; z-index: 1;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.25) 0%, transparent 35%);
+            opacity: 0; transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+        .hero-photo-wrap:hover::before { opacity: 1; }
+        /* Photo-frame style border that appears on hover */
+        .hero-photo-wrap::after {
+            content: ""; position: absolute; inset: 12px; z-index: 2;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 16px;
+            opacity: 0; transform: scale(0.96);
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+        }
+        .hero-photo-wrap:hover::after { opacity: 1; transform: scale(1); }
+        /* Floating decorative orbs (kept) */
+        .hero-photo-wrap .orb-1, .hero-photo-wrap .orb-2 {
+            position: absolute; border-radius: 50%; filter: blur(20px);
+            z-index: 3; pointer-events: none;
             animation: hero-orb 6s ease-in-out infinite;
         }
-        .hero-photo-wrap::after {
-            content: ""; position: absolute; bottom: 30px; left: 30px;
-            width: 100px; height: 100px; border-radius: 50%;
+        .hero-photo-wrap .orb-1 {
+            top: 20px; right: 20px; width: 80px; height: 80px;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.4), transparent 70%);
+        }
+        .hero-photo-wrap .orb-2 {
+            bottom: 30px; left: 30px; width: 100px; height: 100px;
             background: radial-gradient(circle, rgba(96, 165, 250, 0.35), transparent 70%);
-            filter: blur(25px); z-index: 2; pointer-events: none;
             animation: hero-orb 8s ease-in-out infinite reverse;
         }
         @keyframes hero-orb {
@@ -336,8 +365,9 @@
             50% { transform: translate(15px, -15px); }
         }
         @media (prefers-reduced-motion: reduce) {
-            .hero-section::before, .hero-photo-wrap::before, .hero-photo-wrap::after,
+            .hero-section::before, .hero-photo-wrap .orb-1, .hero-photo-wrap .orb-2,
             .hero-tag .pulse { animation: none; }
+            .hero-photo-wrap img, .hero-photo-wrap::after { transition: none; }
         }
 
         /* ===== Section heading with decorative accent ===== */
@@ -670,13 +700,16 @@
                     </div>
                 </div>
                 <!-- Right: full-bright meeting photo, no overlay, no tint.
-                     People, banner and the table are fully visible. WebP first
-                     (85% smaller) with JPEG fallback for older browsers. -->
+                     People, banner and the table are fully visible. Hover
+                     adds: zoom, indigo gradient wash (left edge only),
+                     a soft inner photo-frame border, and 2 floating orbs. -->
                 <div class="hero-photo-wrap relative flex-1 min-h-[18rem]">
                     <picture>
                         <source srcset="/assets/society-meeting.webp" type="image/webp">
                         <img data-site-photo="hero" src="/assets/society-meeting.jpg" alt="SE Society members at an official meeting" class="absolute inset-0 w-full h-full object-cover" loading="eager" decoding="async" fetchpriority="high">
                     </picture>
+                    <div class="orb-1" aria-hidden="true"></div>
+                    <div class="orb-2" aria-hidden="true"></div>
                 </div>
             </section>
 
