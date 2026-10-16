@@ -5,7 +5,7 @@ import { rateLimit } from '../server/limits.mjs';
 import { uploadImage } from '../server/uploads.mjs';
 import { createHandler } from '../server/handler.mjs';
 import { errorResponse } from '../server/security/errors.mjs';
-const handle=createHandler({getServices(){const {auth,db,bucket}=getFirebase();return {auth,repo:createRepository(db),upload:body=>uploadImage(bucket,body)};},limit:rateLimit,production:process.env.VERCEL==='1',siteOrigin:process.env.SITE_ORIGIN||'https://softwarewebsite-brown.vercel.app'});
+const handle=createHandler({getServices(){const {auth,db,bucket}=getFirebase();return {auth,repo:createRepository(db),upload:body=>uploadImage(bucket,body)};},limit:rateLimit,uploadsEnabled:process.env.ENABLE_PHOTO_UPLOADS==='true',production:process.env.VERCEL==='1',siteOrigin:process.env.SITE_ORIGIN||'https://softwarewebsite-brown.vercel.app'});
 export default async function handler(req,res){
  let result;
  try{
