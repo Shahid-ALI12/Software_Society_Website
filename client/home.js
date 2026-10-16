@@ -17,12 +17,19 @@ function hideBrandLoader(){
  setTimeout(()=>{loader.remove?.();},700);
 }
 setTimeout(hideBrandLoader,8000);
-// Scroll-reveal: add .is-visible to .reveal-up elements when they enter the
-// viewport. Respects reduced-motion (CSS already shows them at final state).
+// Scroll-reveal: toggle .is-visible on .reveal-up elements every time they
+// enter/leave the viewport — so scrolling DOWN animates them in, and scrolling
+// back UP re-triggers the animation when they come back into view. Respects
+// reduced-motion (CSS already shows them at the final state).
 function initRevealOnScroll(){
  const targets=document.querySelectorAll('.reveal-up');if(!targets.length)return;
  if(!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('is-visible'));return;}
- const io=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px',threshold:0.12});
+ const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+   if(e.isIntersecting){e.target.classList.add('is-visible');}
+   else{e.target.classList.remove('is-visible');}
+  });
+ },{rootMargin:'0px 0px -8% 0px',threshold:0.12});
  targets.forEach(t=>io.observe(t));
 }
 const empty='<p class="empty-state">Nothing published here yet.</p>';
