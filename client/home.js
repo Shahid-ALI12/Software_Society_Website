@@ -89,7 +89,7 @@ function switchTab(tab){document.querySelectorAll('.tab-content').forEach(e=>e.c
  if(history.state?.tab!==tab){history.pushState({tab},'','/#'+tab);}
 }
 function toggleMobileMenu(){const menu=$('mobileMenu');menu.classList.toggle('hidden');$('menuToggle').setAttribute('aria-expanded',String(!menu.classList.contains('hidden')));}
-function toggleTheme(){const dark=document.documentElement.classList.toggle('dark');document.documentElement.classList.toggle('light',!dark);$('themeIcon').className=dark?'fas fa-sun text-amber-400':'fas fa-moon';}
+// Dark mode toggle removed per owner request — site always stays in light mode.
 // Mobile floating-action buttons: Back (uses history), Top (scrolls up).
 // Back falls back to Home tab if there's no tab history (e.g. deep-linked).
 function goBack(){if(history.state?.tab&&history.state.tab!=='home'){window.history.back();}else{switchTab('home');}}
@@ -101,7 +101,7 @@ window.addEventListener('popstate',(e)=>{const tab=e.state?.tab||'home';document
 // Show the "scroll to top" FAB only after the user has scrolled down.
 window.addEventListener('scroll',()=>{const fab=document.querySelector('.fab-top');if(!fab)return;fab.classList.toggle('is-visible',window.scrollY>400);},{passive:true});
 function filterEvents(type){state.eventFilter=type;renderEvents();for(const [id,name]of Object.entries({btnEvtAll:'all',btnEvtUpcoming:'upcoming',btnEvtPast:'past'}))$(id).setAttribute('aria-pressed',String(type===name));}
-Object.assign(window,{switchTab,toggleMobileMenu,toggleTheme,filterEvents,searchNotices:renderNotices,loadCabinet,openModal,closeModal,showToast,goBack,scrollToTop});
+Object.assign(window,{switchTab,toggleMobileMenu,filterEvents,searchNotices:renderNotices,loadCabinet,openModal,closeModal,showToast,goBack,scrollToTop});
 document.addEventListener('click',e=>{const blog=e.target.closest('[data-blog]'),photo=e.target.closest('[data-photo]');if(blog){const b=content('posts').find(b=>b.id===blog.dataset.blog);$('blogModalContent').innerHTML=`<h2 class="text-2xl font-bold pr-8">${esc(b.title)}</h2><p class="text-sm my-4">By ${esc(b.author)}</p><p class="whitespace-pre-wrap">${esc(b.body)}</p>`;openModal('blogModal');}if(photo&&photo.dataset.photo){$('lightboxImg').src=photo.dataset.photo;openModal('lightboxModal');}});
 document.addEventListener('keydown',e=>{const modal=[...document.querySelectorAll('[aria-modal="true"]')].find(m=>!m.classList.contains('hidden'));if(e.key==='Escape'){if(modal)closeModal(modal.id);$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');}if(e.key==='Tab'&&modal){const elements=[...modal.querySelectorAll('button,a,input,select,textarea')].filter(n=>!n.disabled),first=elements[0],last=elements.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 const containers={events:'eventsGrid',posts:'blogGrid',notices:'noticeContainer',cabinet:'generalBodyGrid',gallery:'galleryGrid',alumni:'alumniGrid',featured:'featuredPanel'};
