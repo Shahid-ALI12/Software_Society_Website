@@ -3,11 +3,31 @@ import { api,escapeHTML as esc,safeImage,safeLinkedIn } from './api.js';
 import { sampleContent } from './sample.js';
 import { kinds, featuredGroups } from '../shared/content-schema.js';
 const $=id=>document.getElementById(id),state={content:sampleContent,cursors:{},eventFilter:'all',live:false,session:'2025-2026',settings:null};
+// Brand loader: fade out once the homepage has either loaded its content or
+// fallen back to sample data. Also has a hard safety timeout (2.5s) so the
+// overlay never strands a visitor if a script error blocks the ready path.
+function hideBrandLoader(){
+ const loader=$('brand-loader');if(!loader||loader.classList.contains('hidden-loader'))return;
+ loader.classList.add('hidden-loader');
+ loader.setAttribute('aria-hidden','true');
+ // Remove from the accessibility tree entirely after the fade so screen
+ // readers never announce a phantom loading state.
+ setTimeout(()=>{loader.remove?.();},700);
+}
+setTimeout(hideBrandLoader,2500);
+// Scroll-reveal: add .is-visible to .reveal-up elements when they enter the
+// viewport. Respects reduced-motion (CSS already shows them at final state).
+function initRevealOnScroll(){
+ const targets=document.querySelectorAll('.reveal-up');if(!targets.length)return;
+ if(!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('is-visible'));return;}
+ const io=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px',threshold:0.12});
+ targets.forEach(t=>io.observe(t));
+}
 const empty='<p class="empty-state">Nothing published here yet.</p>';
 const card='bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm';
 function image(data,classes='w-full h-56 sm:h-64 object-cover'){const url=safeImage(data.image);return url?`<img src="${esc(url)}" alt="${esc(data.alt||data.title)}" loading="lazy" decoding="async" class="${classes}">`:'';}
 function content(kind){return state.content[kind].map(item=>({...item.data,id:item.id}));}
-function render(){renderHome();renderEvents();renderNotices();loadCabinet();renderAlumni();renderFeatured();}
+function render(){renderHome();renderEvents();renderNotices();loadCabinet();renderAlumni();renderFeatured();initRevealOnScroll();}
 function renderHome(){
  $('home-session').textContent='Session '+state.session+' Society Leadership';
  const core=content('cabinet').filter(m=>m.session===state.session&&m.group==='core').slice(0,4);
@@ -79,3 +99,4 @@ try{
  document.querySelectorAll('[data-site-photo]').forEach(img=>{const photo=settings?.photos?.[img.dataset.sitePhoto];if(photo?.url&&safeImage(photo.url)){img.src=photo.url;img.alt=photo.alt;}});
  state.live=true;$('cabinetSessionSelect').value=state.session;render();document.querySelectorAll('button[type="submit"]').forEach(b=>b.disabled=false);$('data-status').textContent='Society content is connected. Sign in with a verified email to send submissions.';
 }catch{$('data-status').textContent='Website preview — showing sample content while the database connection is being configured. Submissions are currently unavailable.';}
+hideBrandLoader();
