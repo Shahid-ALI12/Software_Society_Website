@@ -55,12 +55,16 @@ async function loadContent(append=false){const result=await api('list',{kind:$('
  if(!$('content-list').children.length)$('content-list').append(node('p','No items yet. Create the first one.','empty-state'));
  state.contentCursor=result.nextCursor;$('content-more').hidden=!result.nextCursor;
 }
-async function loadPhotos(){const result=await api('settings-read',{authenticated:true});state.settingsVersion=result.version;$('current-session').value=result.data?.currentSession||'2026-2027';$('photo-fields').replaceChildren();for(const [key,label]of Object.entries(settingFields)){const p=photo(label,'site-'+key);$('photo-fields').append(p);$('site-'+key+'-url').value=result.data?.photos[key]?.url||'';$('site-'+key+'-alt').value=result.data?.photos[key]?.alt||'';p.refresh();}
- // Editable text fields drive the HOD and Convenier blocks on the homepage.
- // Each settingTextFields key is rendered into its matching container so the
- // admin can edit the name, title and message for both blocks side by side.
+async function loadPhotos(){const result=await api('settings-read',{authenticated:true});state.settingsVersion=result.version;$('current-session').value=result.data?.currentSession||'2026-2027';
+ // HOD photo -> HOD section container (next to HOD text fields)
+ const hodWrap=$('hod-photo-field');if(hodWrap){hodWrap.replaceChildren();const p=photo('HOD portrait','site-hod');hodWrap.append(p);$('site-hod-url').value=result.data?.photos?.hod?.url||'';$('site-hod-alt').value=result.data?.photos?.hod?.alt||'';p.refresh();}
+ // Convenier photo -> Convenier section container (next to Convenier text fields)
+ const convWrap=$('convenier-photo-field');if(convWrap){convWrap.replaceChildren();const p=photo('Convenier portrait','site-convenier');convWrap.append(p);$('site-convenier-url').value=result.data?.photos?.convenier?.url||'';$('site-convenier-alt').value=result.data?.photos?.convenier?.alt||'';p.refresh();}
+ // General website photos (hero, campus, lab, society) -> general grid
+ const genWrap=$('general-photos');if(genWrap){genWrap.replaceChildren();for(const [key,label]of Object.entries(settingFields)){if(key==='hod'||key==='convenier')continue;const p=photo(label,'site-'+key);genWrap.append(p);$('site-'+key+'-url').value=result.data?.photos?.[key]?.url||'';$('site-'+key+'-alt').value=result.data?.photos?.[key]?.alt||'';p.refresh();}}
+ // Text fields (HOD + Convenier) — each rendered into its matching container.
  const textContainers={hodName:'hod-text-fields',hodTitle:'hod-text-fields',hodMessage:'hod-text-fields',convenierName:'convenier-text-fields',convenierTitle:'convenier-text-fields',convenierMessage:'convenier-text-fields'};
- for(const [containerId]of Object.entries([...new Set(Object.values(textContainers))].map(id=>[id,id]))){const wrap=$(containerId);if(wrap)wrap.replaceChildren();}
+ for(const containerId of [...new Set(Object.values(textContainers))]){$(containerId)?.replaceChildren?.();}
  for(const [key,label]of Object.entries(settingTextFields)){
   const containerId=textContainers[key];const wrap=$(containerId);if(!wrap)continue;
   const isMessage=key==='hodMessage'||key==='convenierMessage';
