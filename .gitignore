@@ -26,3 +26,8 @@ serviceAccount*.json
 Thumbs.db
 .idea/
 .vscode/
+
+# Browser and emulator test artifacts
+playwright-report/
+test-results/
+*-debug.log

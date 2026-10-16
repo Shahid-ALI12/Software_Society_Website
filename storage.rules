@@ -1,0 +1,6 @@
+rules_version = '2';
+service firebase.storage {
+  // Direct client uploads/reads denied. The server validates and re-encodes
+  // photos; only intended public media receive revocable download URLs.
+  match /b/{bucket}/o { match /{allPaths=**} { allow read, write: if false; } }
+}

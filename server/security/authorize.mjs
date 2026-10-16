@@ -1,6 +1,6 @@
 import { RequestError } from './errors.mjs';
 
-// This module is server-only. It is not connected to the prototype yet.
+// Server-only authorization used by api/portal.js.
 // Supply an actual Firebase Admin Auth instance, initialized for projectId.
 // Do not supply a JWT decoder or any client-provided verifier/user record.
 const permissions = new Map([

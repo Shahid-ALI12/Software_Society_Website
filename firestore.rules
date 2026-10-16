@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  // content: public editorial data; settings/site: public photo URLs and session.
+  // submissions: private messages, alumni consent and applicant UID.
+  // auditLogs: private server-written actor UID, action, target and timestamp.
+  // All reads and writes use authenticated, validated server API handlers.
+  // Admin SDK bypasses these rules: API authorization and IAM remain mandatory.
+  match /databases/{database}/documents {
+    match /{document=**} { allow read, write: if false; }
+  }
+}

@@ -1,13 +1,15 @@
 # NTU Software Engineering Society
 
-The design preview includes Firebase Authentication at `/account.html`: Google and email sign-in, signup, password reset, email verification and sign out. Account creation grants no administrator permissions.
+Firebase sign-in, a responsive society website and an editorial/photo management panel on Vercel. Account signup grants no admin access.
 
-Use Node.js 22.12+ (or a compatible newer LTS). Run `npm ci`, then `npm run dev`. Run `npm test` and `npm run build` before deployment. Vercel configuration builds with Vite and serves `dist`.
+- `/account.html`: Google/email login, signup, verification, reset and sign out.
+- `/admin.html`: role-restricted content editor, photo replacement/upload and private submission review.
+- `/api/portal`: Firebase Admin-backed endpoints with authorization, validation, distributed Redis rate limits, transactional writes and public-only CDN caching.
 
-`client/` contains the public Firebase configuration and authentication UI. Firebase manages password hashing. Never commit Admin service-account keys or other server credentials.
+**Deployment setup is still required:** Firebase service credentials, Redis settings, rules/index deployment and the first admin role. Until configured, the homepage labels its sample content and disables submissions. No paid resources or production data were provisioned by the code change.
 
-The homepage still contains sample content. Its forms are disabled until protected APIs and database rules are implemented. The demonstration admin PIN and browser-local submissions have been removed.
+Read [backend setup and photo guide](docs/BACKEND_SETUP.md). Never paste service-account keys into chat/GitHub or expose them as Vite environment variables. File uploads are optional and depend on configured Firebase Storage; supported hosted photo URLs can be used instead.
 
-The tested `server/security/` helpers are foundations only, not deployed API routes. Firestore schemas, deployed rules/indexes, Admin SDK integration, Redis rate limiting and App Check remain future work. Live Google/email login needs a manual check on the deployed domain; automated tests simulate authentication callbacks and do not create production users.
+Use Node.js 22.12+ or a compatible newer LTS. `npm ci`, `npm run dev`, `npm test`, `npm run build`. Vite serves the UI; use Vercel's local runtime to run API routes as well. Test scripts and their external prerequisites are documented in the guide. Vercel builds `dist` and deploys `api/portal.js` as a Node function.
 
-See [Firebase setup](docs/FIREBASE_SETUP.md), [production plan](docs/PRODUCTION_PLAN.md) and [original prototype audit](docs/PROTOTYPE_AUDIT.md).
+The UI tests use simulated identity/API data. Live Firebase/Redis/Storage integration and production login/submission smoke checks must be performed after configuration. App Check enforcement, notification email delivery, backups, orphan-media cleanup and representative load testing remain future work.

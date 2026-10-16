@@ -6,14 +6,14 @@ function invalid() {
   return new RequestError(400, 'invalid_submission', 'Check the submitted fields.');
 }
 
-export async function readJsonBody(request) {
+export async function readJsonBody(request, maxBytes = MAX_BODY_BYTES) {
   const mime = request.headers.get('content-type')?.split(';')[0].trim().toLowerCase();
   if (mime !== 'application/json' ||
       ![null, 'identity'].includes(request.headers.get('content-encoding'))) {
     throw new RequestError(415, 'unsupported_media_type', 'Send an uncompressed JSON request.');
   }
   const length = request.headers.get('content-length');
-  if (length !== null && (!/^\d+$/.test(length) || Number(length) > MAX_BODY_BYTES)) {
+  if (length !== null && (!/^\d+$/.test(length) || Number(length) > maxBytes)) {
     throw new RequestError(413, 'body_too_large', 'The request is too large.');
   }
   if (!request.body) throw invalid();
@@ -25,7 +25,7 @@ export async function readJsonBody(request) {
       const { value, done } = await reader.read();
       if (done) break;
       size += value.byteLength;
-      if (size > MAX_BODY_BYTES) {
+      if (size > maxBytes) {
         await reader.cancel();
         throw new RequestError(413, 'body_too_large', 'The request is too large.');
       }

@@ -2,3 +2,29 @@
 @config '../tailwind.config.js';
 [hidden] { display: none !important; }
 button:disabled { cursor: not-allowed; opacity: .6; }
+/* Responsive foundations shared by the public site and management pages. */
+html { scroll-behavior: smooth; }
+body { overflow-wrap: anywhere; }
+main, section, article, form, nav, .min-w-0 { min-width: 0; }
+img { max-width: 100%; }
+button, a, input, select, textarea { touch-action: manipulation; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #60a5fa; outline-offset: 3px; }
+.admin-header { max-width: 1280px; margin: auto; padding: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.admin-main { max-width: 1280px; margin: auto; padding: 24px; }
+.status-box { border: 1px solid #bfdbfe; background: #eff6ff; color: #1e40af; padding: 16px; border-radius: 12px; margin-bottom: 24px; }
+.admin-tabs { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+.admin-tabs button, .secondary-button { min-height: 44px; padding: 10px 16px; border: 1px solid #cbd5e1; border-radius: 10px; background: white; color: #1e40af; font-weight: 600; }
+.primary-button { min-height: 44px; padding: 12px 20px; border-radius: 10px; background: #1d4ed8; color: white; font-weight: 600; }
+.editor-layout { display: grid; grid-template-columns: minmax(200px, .7fr) minmax(0,1.3fr); gap: 24px; align-items: start; }
+.editor-card { min-width: 0; padding: 24px; background: white; border: 1px solid #e2e8f0; border-radius: 16px; display: grid; gap: 18px; }
+.field-label { display: grid; gap: 8px; font-size: 14px; font-weight: 600; min-width: 0; }
+.field-label input, .field-label textarea, .field-label select { min-width: 0; max-width: 100%; width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; background: white; color: #0f172a; padding: 12px; font-weight: 400; font-size: 16px; }
+.photo-editor-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+.photo-field { display: grid; gap: 14px; min-width: 0; padding: 16px; border: 1px solid #e2e8f0; border-radius: 12px; }
+.photo-preview { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
+.content-list-item { width: 100%; text-align: left; padding: 18px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; display: grid; gap: 8px; }
+.empty-state { padding: 24px; color: #64748b; font-size: 14px; }
+.load-more { display: block; margin: 20px auto; }
+@media(max-width: 767px) { .editor-layout,.photo-editor-grid { grid-template-columns: minmax(0,1fr); } .admin-main,.admin-header { padding: 16px; } .editor-card { padding: 18px; } }
+@media(max-width: 639px) { input,select,textarea { font-size: 16px !important; } #toast { left: 16px; right: 16px; bottom: 16px; max-width: calc(100vw - 32px); } #alumniSubmitModal > div { max-height: 90dvh; overflow-y: auto; } }
+@media(prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }

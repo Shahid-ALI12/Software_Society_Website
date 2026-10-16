@@ -33,7 +33,7 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
-<p class="bg-blue-950 text-white text-center p-3 text-sm">Society website preview — sample content. Submissions are not open yet. <a href="/account.html" class="underline">Sign in / Account</a></p>
+<p id="data-status" role="status" class="bg-blue-950 text-white text-center p-3 text-sm">Loading society content… <a href="/account.html" class="underline">Sign in / Account</a></p>
 
     <!-- TOP NAVIGATION BAR -->
     <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors shadow-sm">
@@ -57,7 +57,7 @@
                 </div>
 
                 <!-- Desktop Nav Links -->
-                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2">
+                <nav class="hidden xl:flex items-center space-x-1 lg:space-x-2">
                     <button onclick="switchTab('home')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-target="home">Home</button>
                     <button onclick="switchTab('events')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-target="events">Events</button>
                     <button onclick="switchTab('notices')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition" data-target="notices">Notices</button>
@@ -74,7 +74,7 @@
                         <i id="themeIcon" class="fas fa-moon text-base"></i>
                     </button>
 
-                    <button onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none">
+                    <button id="menuToggle" aria-label="Open navigation" aria-controls="mobileMenu" aria-expanded="false" onclick="toggleMobileMenu()" class="xl:hidden p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none">
                         <i class="fas fa-bars text-lg"></i>
                     </button>
                 </div>
@@ -83,15 +83,15 @@
         </div>
 
         <!-- Mobile Drawer Menu -->
-        <div id="mobileMenu" class="hidden md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-4 space-y-1 shadow-lg">
-            <button onclick="switchTab('home'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Home</button>
-            <button onclick="switchTab('events'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Events & Gallery</button>
-            <button onclick="switchTab('notices'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Notices</button>
-            <button onclick="switchTab('cabinet'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Cabinet Directory</button>
-            <button onclick="switchTab('alumni'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Alumni Directory</button>
-            <button onclick="switchTab('about'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">About Society</button>
-            <button onclick="switchTab('suggestion'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Suggestion Box</button>
-            <button onclick="switchTab('contact'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Contact Us</button>
+        <div id="mobileMenu" class="hidden xl:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-4 space-y-1 shadow-lg">
+            <button onclick="switchTab('home')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Home</button>
+            <button onclick="switchTab('events')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Events & Gallery</button>
+            <button onclick="switchTab('notices')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Notices</button>
+            <button onclick="switchTab('cabinet')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Cabinet Directory</button>
+            <button onclick="switchTab('alumni')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Alumni Directory</button>
+            <button onclick="switchTab('about')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">About Society</button>
+            <button onclick="switchTab('suggestion')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Suggestion Box</button>
+            <button onclick="switchTab('contact')" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">Contact Us</button>
         </div>
     </header>
 
@@ -103,7 +103,7 @@
             
             <!-- Hero Section -->
             <section class="relative rounded-3xl overflow-hidden bg-slate-900 text-white p-8 sm:p-12 md:p-16 shadow-2xl border border-slate-800">
-                <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1600&q=80" alt="Tech Banner" class="absolute inset-0 w-full h-full object-cover opacity-20">
+                <img data-site-photo="hero" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1600&q=80" alt="Tech Banner" class="absolute inset-0 w-full h-full object-cover opacity-20">
                 <div class="relative z-10 max-w-3xl space-y-6">
                     <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-semibold">
                         <i class="fas fa-code"></i>
@@ -121,7 +121,7 @@
             <!-- HOD Message Section -->
             <section class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
                 <div class="flex flex-col md:flex-row items-center gap-8">
-                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt="HOD Photo" class="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover shadow-md border-2 border-blue-500">
+                    <img data-site-photo="hod" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt="HOD Photo" class="shrink-0 w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover shadow-md border-2 border-blue-500">
                     <div class="space-y-3 text-center md:text-left">
                         <div class="inline-block px-2.5 py-1 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-xs font-bold uppercase tracking-wider">HOD Message</div>
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Message from HOD Computer Science</h2>
@@ -136,14 +136,14 @@
 
             <!-- Core Executive Body Row -->
             <section class="space-y-6">
-                <div class="flex justify-between items-center">
+                <div class="flex flex-wrap gap-4 justify-between items-center">
                     <div>
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Core Executive Body</h2>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">Session 2025–2026 Society Leadership</p>
+                        <p id="home-session" class="text-sm text-slate-500 dark:text-slate-400">Society Leadership</p>
                     </div>
                     <button onclick="switchTab('cabinet')" class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline">View Full Cabinet &rarr;</button>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6" id="homeExecutiveGrid">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6" id="homeExecutiveGrid">
                     <!-- Populated dynamically -->
                 </div>
             </section>
@@ -290,7 +290,7 @@
                 <h2 class="text-2xl font-bold text-slate-900 dark:text-white text-center sm:text-left">Campus & Software Engineering Infrastructure</h2>
                 <div class="grid sm:grid-cols-3 gap-6">
                     <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800">
-                        <img src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80" alt="NTU Main Campus Building" class="w-full h-56 object-cover group-hover:scale-105 transition duration-300">
+                        <img data-site-photo="campus" src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80" alt="NTU Main Campus Building" class="w-full h-56 object-cover group-hover:scale-105 transition duration-300">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent p-4 flex flex-col justify-end">
                             <span class="text-white font-bold text-sm">NTU Main Academic Block</span>
                             <span class="text-slate-300 text-xs">Faisalabad Campus</span>
@@ -298,7 +298,7 @@
                     </div>
 
                     <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800">
-                        <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80" alt="Advanced Software Development Lab" class="w-full h-56 object-cover group-hover:scale-105 transition duration-300">
+                        <img data-site-photo="lab" src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80" alt="Advanced Software Development Lab" class="w-full h-56 object-cover group-hover:scale-105 transition duration-300">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent p-4 flex flex-col justify-end">
                             <span class="text-white font-bold text-sm">Advanced SE Workstations Lab</span>
                             <span class="text-slate-300 text-xs">High-performance Computing</span>
@@ -306,7 +306,7 @@
                     </div>
 
                     <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800">
-                        <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80" alt="Society Hackathon & Seminar" class="w-full h-56 object-cover group-hover:scale-105 transition duration-300">
+                        <img data-site-photo="society" src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80" alt="Society Hackathon & Seminar" class="w-full h-56 object-cover group-hover:scale-105 transition duration-300">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent p-4 flex flex-col justify-end">
                             <span class="text-white font-bold text-sm">Auditorium & Seminars</span>
                             <span class="text-slate-300 text-xs">Capacity 500+ Attendees</span>
@@ -323,14 +323,14 @@
                 <p class="text-sm text-slate-500 dark:text-slate-400">Your feedback helps us make SE Society better. All submissions are reviewed by leadership.</p>
             </div>
 
-            <form id="suggestionForm" onsubmit="submissionsUnavailable(event)" class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
+            <form id="suggestionForm"  class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
                 <div>
                     <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">Category</label>
                     <select id="sugCategory" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                        <option value="Academic Workshops">Academic Workshops</option>
-                        <option value="Event Ideas">Event Ideas</option>
-                        <option value="Lab Infrastructure">Lab Infrastructure</option>
-                        <option value="General Suggestion">General Suggestion</option>
+                        <option value="academic">Academic Workshops</option>
+                        <option value="event">Event Ideas</option>
+                        <option value="other">Lab Infrastructure</option>
+                        <option value="general">General Suggestion</option>
                     </select>
                 </div>
 
@@ -344,7 +344,7 @@
                     <textarea id="sugMessage" rows="5" placeholder="Share your suggestions, feature requests, or queries..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
                 </div>
 
-                <button type="submit" disabled class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-white shadow-md transition">Submissions not open yet</button>
+                <p class="text-xs text-slate-500">A verified account is required. <a class="text-blue-600 underline" href="/account.html">Sign in / Account</a></p><p class="form-status text-sm" role="status"></p><button type="submit" disabled class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-white shadow-md transition">Submit</button>
             </form>
         </div>
 
@@ -403,7 +403,7 @@
                 </div>
 
                 <!-- Form -->
-                <form onsubmit="submissionsUnavailable(event)" class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
+                <form id="contactForm" class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
                     <div>
                         <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">Full Name</label>
                         <input type="text" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
@@ -416,7 +416,7 @@
                         <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">Message</label>
                         <textarea rows="4" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
                     </div>
-                    <button type="submit" disabled class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-white shadow-md transition">Submissions not open yet</button>
+                    <p class="text-xs text-slate-500">A verified account is required. <a class="text-blue-600 underline" href="/account.html">Sign in / Account</a></p><p class="form-status text-sm" role="status"></p><button type="submit" disabled class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-white shadow-md transition">Submit</button>
                 </form>
             </div>
         </div>
@@ -431,10 +431,10 @@
                 <span>© 2026 Software Engineering Society — NTU Faisalabad</span>
             </div>
 
-            <div class="flex items-center space-x-4">
+            <div class="flex flex-wrap items-center gap-4">
                 <button onclick="switchTab('about')" class="hover:underline">About</button>
                 <button onclick="switchTab('contact')" class="hover:underline">Contact</button>
-                <a href="/account.html" class="hover:underline text-blue-600 dark:text-blue-400 font-bold">Sign in / Account</a>
+                <a href="/admin.html" class="hover:underline">Manage website</a><a href="/account.html" class="hover:underline text-blue-600 dark:text-blue-400 font-bold">Sign in / Account</a>
             </div>
         </div>
     </footer>
@@ -442,7 +442,7 @@
     <!-- MODALS SECTION -->
 
     <!-- 1. Custom Toast Notice Modal -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 border border-slate-700">
+    <div id="toast" role="status" aria-live="polite" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 border border-slate-700">
         <i id="toastIcon" class="fas fa-info-circle text-blue-400"></i>
         <span id="toastMsg" class="text-sm font-medium">Notification message</span>
     </div>
@@ -472,316 +472,18 @@
                 <i class="fas fa-times"></i>
             </button>
             <h2 class="text-xl font-bold text-slate-900 dark:text-white">Alumni Directory Submission</h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Submit your profile for verification by society admins.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Submit your profile for verification by society admins. Sign in with a verified email first.</p>
             
-            <form onsubmit="submissionsUnavailable(event)" class="space-y-3">
+            <form id="alumniForm" class="space-y-3">
                 <input type="text" id="almName" placeholder="Full Name" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm" required>
                 <input type="text" id="almBatch" placeholder="Batch / Session (e.g. 2020-2024)" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm" required>
                 <input type="text" id="almRole" placeholder="Current Role & Company (e.g. Software Engineer @ Systems Ltd)" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm" required>
                 <input type="url" id="almLinkedIn" placeholder="LinkedIn Profile URL" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm" required>
-                <button type="submit" disabled class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm transition">Submissions not open yet</button>
+                <label class="flex items-start gap-3 text-sm"><input id="alumniConsent" type="checkbox" required class="mt-1 shrink-0">I consent to publishing my name, batch, role and LinkedIn profile in the public alumni directory after approval.</label><p class="text-xs text-slate-500">A verified account is required. <a class="text-blue-600 underline" href="/account.html">Sign in / Account</a></p><p class="form-status text-sm" role="status"></p><button type="submit" disabled class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm transition">Submit</button>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // State storage
-        const defaultBlogs = [
-            { id: 1, title: 'Navigating Open Source: GSOC 2026 Guide', author: 'Hamza Malik', date: 'Oct 10, 2026', snippet: 'How NTU SE students can prepare for international open-source mentorship programs.', content: 'Open source contribution is one of the most effective ways to build real-world software experience. In this comprehensive guide, we cover version control, selecting beginner-friendly issues, writing unit tests, and communicating with core maintainers.' },
-            { id: 2, title: 'AI & Software Architecture Trends', author: 'Ayesha Tariq', date: 'Sep 28, 2026', snippet: 'Exploring LLM integration in modern microservices and web application pipelines.', content: 'As artificial intelligence models become lighter and faster, incorporating them into traditional microservices is becoming standard. Learn about edge AI deployment, REST API integration, and prompt engineering protocols.' },
-            { id: 3, title: 'Building Scalable Web Apps with React & Tailwind', author: 'Zain Ul Abideen', date: 'Sep 15, 2026', snippet: 'Best practices for state management and clean UI component design.', content: 'Modern front-end applications demand clean architecture, optimal rendering loops, and responsive component libraries. In this write-up, we review Tailwind utility classes and React state design patterns.' }
-        ];
 
-        const defaultEvents = [
-            { id: 1, title: 'NTU Annual Hackathon 2026', type: 'upcoming', date: 'Nov 15, 2026', location: 'Main Auditorium', image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80', desc: '24-hour coding marathon bringing together student developers to solve real-world industry challenges.' },
-            { id: 2, title: 'Cloud Native & DevOps Workshop', type: 'upcoming', date: 'Nov 02, 2026', location: 'Lab 03, CS Block', image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&q=80', desc: 'Hands-on session on Docker containers, Kubernetes orchestration, and GitHub Actions CI/CD.' },
-            { id: 3, title: 'CodeSprint 2025 Speed Programming', type: 'past', date: 'May 12, 2025', location: 'CS Computer Center', image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80', desc: 'Inter-departmental algorithmic programming competition with over 120 participating teams.' }
-        ];
-
-        const cabinetData = {
-            '2025-2026': {
-                core: [
-                    { name: 'Dr. M. Asif', role: 'Patron In Chief', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80' },
-                    { name: 'Usman Ghani', role: 'President', img: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80' },
-                    { name: 'Fatima Zahra', role: 'Vice President', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80' },
-                    { name: 'Bilal Ahmad', role: 'General Secretary', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80' }
-                ],
-                exec: [
-                    { name: 'Hassan Raza', role: 'Media Lead', img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80' },
-                    { name: 'Sana Malik', role: 'Event Coordinator', img: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80' },
-                    { name: 'Ali Hamza', role: 'Technical Lead', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80' },
-                    { name: 'Zoha Nisar', role: 'Graphics Lead', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80' }
-                ],
-                general: ['Hamza', 'Danish', 'Umer', 'Tariq', 'Kashif', 'Laiba', 'Maheen', 'Zohaib', 'Eman', 'Saad', 'Ahsan', 'Waqas']
-            },
-            '2024-2025': {
-                core: [
-                    { name: 'Dr. M. Asif', role: 'Patron In Chief', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80' },
-                    { name: 'Shahid Iqbal', role: 'Ex-President', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80' },
-                    { name: 'Maryam Khan', role: 'Ex-VP', img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80' },
-                    { name: 'Zaid Arshad', role: 'Ex-Secretary', img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80' }
-                ],
-                exec: [
-                    { name: 'Noman Ali', role: 'Ex-Technical Lead', img: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=300&q=80' },
-                    { name: 'Iqra Parvez', role: 'Ex-Media Lead', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80' }
-                ],
-                general: ['Rehan', 'Faisal', 'Sobia', 'Asad', 'Haris', 'Babar']
-            }
-        };
-
-        // Local Storage state initializations
-        let notices = [
-            { id: 1, title: 'Registration Open for NTU Hackathon 2026', category: 'General', date: '2026-10-12', details: 'All SE students from 1st to 8th semester can register their teams before Nov 1st.' },
-            { id: 2, title: 'Lab 02 Maintenance Schedule', category: 'General', date: '2026-10-10', details: 'CS Computer Lab 02 will remain closed on Friday for hardware upgrades.' }
-        ];
-
-        let alumniList = [
-            { id: 1, name: 'Shahmir Khan', batch: '2019-2023', role: 'Full Stack Engineer @ Arbisoft', linkedin: '#' },
-            { id: 2, name: 'Zoya Fatima', batch: '2018-2022', role: 'DevOps Specialist @ Systems Ltd', linkedin: '#' }
-        ];
-
-
-        // Tab Navigation Switcher
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-blue-600', 'dark:text-blue-400'));
-
-            const targetTab = document.getElementById(`tab-${tabId}`);
-            if (targetTab) targetTab.classList.add('active');
-
-            const activeNavBtn = document.querySelector(`.nav-btn[data-target="${tabId}"]`);
-            if (activeNavBtn) activeNavBtn.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-blue-600', 'dark:text-blue-400');
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Theme Switcher Toggle
-        function toggleTheme() {
-            const html = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                html.classList.add('light');
-                icon.className = 'fas fa-moon text-base';
-                showToast('Light Theme Enabled');
-            } else {
-                html.classList.remove('light');
-                html.classList.add('dark');
-                icon.className = 'fas fa-sun text-base text-amber-400';
-                showToast('Dark Theme Enabled');
-            }
-        }
-
-        // Mobile Menu Toggle
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        // Render Functions
-        function renderHome() {
-            // Render Executive Row
-            const grid = document.getElementById('homeExecutiveGrid');
-            const coreList = cabinetData['2025-2026'].core;
-            grid.innerHTML = coreList.map(m => `
-                <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 text-center border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition">
-                    <img src="${m.img}" alt="${m.name}" class="w-20 h-20 mx-auto rounded-full object-cover mb-3 shadow">
-                    <h3 class="font-bold text-slate-900 dark:text-white text-sm">${m.name}</h3>
-                    <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">${m.role}</p>
-                </div>
-            `).join('');
-
-            // Render Blogs
-            const blogGrid = document.getElementById('blogGrid');
-            blogGrid.innerHTML = defaultBlogs.map(b => `
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 shadow-sm hover:border-blue-500/50 transition cursor-pointer" onclick="openBlogModal(${b.id})">
-                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">${b.date}</span>
-                    <h3 class="font-bold text-slate-900 dark:text-white text-base">${b.title}</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">${b.snippet}</p>
-                    <div class="pt-2 text-xs font-semibold text-slate-700 dark:text-slate-300">By ${b.author} &rarr;</div>
-                </div>
-            `).join('');
-        }
-
-        function renderEvents(filter = 'all') {
-            const container = document.getElementById('eventsGrid');
-            const list = filter === 'all' ? defaultEvents : defaultEvents.filter(e => e.type === filter);
-            
-            container.innerHTML = list.map(e => `
-                <div class="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <img src="${e.image}" alt="${e.title}" class="w-full h-44 object-cover">
-                        <div class="p-5 space-y-2">
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="px-2.5 py-0.5 rounded-full font-bold uppercase ${e.type === 'upcoming' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'}">${e.type}</span>
-                                <span class="text-slate-500"><i class="fas fa-calendar-alt"></i> ${e.date}</span>
-                            </div>
-                            <h3 class="font-bold text-slate-900 dark:text-white text-lg">${e.title}</h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">${e.desc}</p>
-                        </div>
-                    </div>
-                    <div class="px-5 pb-5 pt-2 text-xs text-slate-400 border-t border-slate-100 dark:border-slate-800 flex items-center space-x-1">
-                        <i class="fas fa-map-marker-alt text-blue-500"></i>
-                        <span>${e.location}</span>
-                    </div>
-                </div>
-            `).join('');
-
-            // Render Gallery
-            const galleryGrid = document.getElementById('galleryGrid');
-            const imgs = [
-                'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=500&q=80',
-                'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=500&q=80',
-                'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=500&q=80',
-                'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=500&q=80'
-            ];
-            galleryGrid.innerHTML = imgs.map(url => `
-                <div class="rounded-xl overflow-hidden cursor-pointer shadow-sm hover:opacity-90 transition" onclick="openLightbox('${url}')">
-                    <img src="${url}" class="w-full h-32 object-cover">
-                </div>
-            `).join('');
-        }
-
-        function filterEvents(type) {
-            ['btnEvtAll', 'btnEvtUpcoming', 'btnEvtPast'].forEach(id => {
-                const btn = document.getElementById(id);
-                btn.className = 'px-4 py-2 rounded-lg text-slate-600 dark:text-slate-400';
-            });
-            const activeId = type === 'all' ? 'btnEvtAll' : type === 'upcoming' ? 'btnEvtUpcoming' : 'btnEvtPast';
-            document.getElementById(activeId).className = 'px-4 py-2 rounded-lg bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow';
-            renderEvents(type);
-        }
-
-        function renderNotices(filterText = '') {
-            const container = document.getElementById('noticeContainer');
-            const filtered = notices.filter(n => n.title.toLowerCase().includes(filterText.toLowerCase()) || n.details.toLowerCase().includes(filterText.toLowerCase()));
-
-            if(filtered.length === 0) {
-                container.innerHTML = `<p class="text-sm text-slate-500 py-4 text-center">No notices found.</p>`;
-                return;
-            }
-
-            container.innerHTML = filtered.map(n => `
-                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2 shadow-sm">
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="px-2.5 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 font-bold">${n.category}</span>
-                        <span class="text-slate-400">${n.date}</span>
-                    </div>
-                    <h3 class="font-bold text-slate-900 dark:text-white text-base">${n.title}</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${n.details}</p>
-                </div>
-            `).join('');
-        }
-
-        function searchNotices() {
-            const val = document.getElementById('noticeSearch').value;
-            renderNotices(val);
-        }
-
-        function loadCabinet() {
-            const session = document.getElementById('cabinetSessionSelect').value;
-            const data = cabinetData[session];
-
-            // Core
-            document.getElementById('coreBodyGrid').innerHTML = data.core.map(m => `
-                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl text-center border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <img src="${m.img}" class="w-24 h-24 mx-auto rounded-2xl object-cover mb-3 shadow-md">
-                    <h3 class="font-bold text-slate-900 dark:text-white text-base">${m.name}</h3>
-                    <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">${m.role}</p>
-                </div>
-            `).join('');
-
-            // Exec
-            document.getElementById('executiveBodyGrid').innerHTML = data.exec.map(m => `
-                <div class="bg-white dark:bg-slate-900 p-4 rounded-xl text-center border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <img src="${m.img}" class="w-16 h-16 mx-auto rounded-xl object-cover mb-2">
-                    <h3 class="font-bold text-slate-900 dark:text-white text-sm">${m.name}</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">${m.role}</p>
-                </div>
-            `).join('');
-
-            // General
-            document.getElementById('generalBodyGrid').innerHTML = data.general.map(name => `
-                <div class="bg-slate-100 dark:bg-slate-800/60 p-3 rounded-xl text-center text-xs font-semibold text-slate-700 dark:text-slate-300">
-                    ${name}
-                </div>
-            `).join('');
-        }
-
-        function renderAlumni() {
-            const container = document.getElementById('alumniGrid');
-            container.innerHTML = alumniList.map(a => `
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3 shadow-sm flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center space-x-3 mb-2">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
-                                ${a.name.charAt(0)}
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900 dark:text-white text-base">${a.name}</h3>
-                                <p class="text-xs text-slate-400">Batch: ${a.batch}</p>
-                            </div>
-                        </div>
-                        <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">${a.role}</p>
-                    </div>
-                    <a href="${a.linkedin}" target="_blank" class="text-xs font-semibold text-blue-600 hover:underline flex items-center space-x-1 pt-2">
-                        <i class="fab fa-linkedin"></i>
-                        <span>Connect on LinkedIn</span>
-                    </a>
-                </div>
-            `).join('');
-        }
-
-        function submissionsUnavailable(e) {
-            e.preventDefault();
-            showToast('Submissions are not open yet. Please check back later.');
-        }
-
-        function openBlogModal(id) {
-            const blog = defaultBlogs.find(b => b.id === id);
-            if (!blog) return;
-            document.getElementById('blogModalContent').innerHTML = `
-                <span class="text-xs font-bold text-blue-600 uppercase">${blog.date}</span>
-                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">${blog.title}</h2>
-                <p class="text-xs text-slate-400 font-medium mb-4">By ${blog.author}</p>
-                <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
-                    <p>${blog.content}</p>
-                </div>
-            `;
-            openModal('blogModal');
-        }
-
-        function openLightbox(url) {
-            document.getElementById('lightboxImg').src = url;
-            openModal('lightboxModal');
-        }
-
-        function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
-        }
-
-        // Initialize on Load
-        window.onload = function() {
-            renderHome();
-            renderEvents();
-            renderNotices();
-            loadCabinet();
-            renderAlumni();
-        };
-    </script>
 </body>
 </html>

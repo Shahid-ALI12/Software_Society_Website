@@ -1,3 +1,7 @@
+# Update: database, photos and responsive UI
+
+See [BACKEND_SETUP.md](BACKEND_SETUP.md) for the current implementation and live configuration steps. The text below is retained as historical setup context; statements about missing server routes refer to earlier commits.
+
 # Current integration status — 16 October 2026
 
 Firebase client authentication is now initialized with the registered public web app for `softwarewebsite-861b4`. `/account.html` provides Google/email login, signup, password reset, email verification and sign out. Sessions use tab-level persistence. Firebase manages credentials; no Admin secret is included.
