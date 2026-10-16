@@ -1,6 +1,7 @@
 import { auth } from './firebase.js';
-import { setPersistence, browserSessionPersistence, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail, signOut, reload, validatePassword } from 'firebase/auth';
-export const ready = setPersistence(auth, browserSessionPersistence);
+import { setPersistence, browserLocalPersistence, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail, signOut, reload, validatePassword } from 'firebase/auth';
+// Keep the user signed in across tabs and browser restarts on this device.
+export const ready = setPersistence(auth, browserLocalPersistence);
 export const service = {
   observe: callback => onAuthStateChanged(auth, callback),
   login: (email, password) => signInWithEmailAndPassword(auth, email, password),
