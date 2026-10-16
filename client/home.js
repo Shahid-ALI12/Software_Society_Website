@@ -83,7 +83,7 @@ let lastFocus;
 function openModal(id){lastFocus=document.activeElement;const modal=$(id);modal.classList.remove('hidden');modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label',id==='blogModal'?'Article':id==='lightboxModal'?'Photo preview':'Alumni application');modal.querySelector('button,input')?.focus();}
 function closeModal(id){$(id).classList.add('hidden');lastFocus?.focus();}
 function showToast(message){$('toastMsg').textContent=message;$('toast').classList.remove('translate-y-20','opacity-0');setTimeout(()=>$('toast').classList.add('translate-y-20','opacity-0'),5000);}
-function switchTab(tab){document.querySelectorAll('.tab-content').forEach(e=>e.classList.toggle('active',e.id==='tab-'+tab));document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('bg-slate-100',b.dataset.target===tab);b.setAttribute('aria-current',b.dataset.target===tab?'page':'false');});$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');window.scrollTo({top:0,behavior:'smooth'});
+function switchTab(tab){document.querySelectorAll('.tab-content').forEach(e=>e.classList.toggle('active',e.id==='tab-'+tab));document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('active',b.dataset.target===tab);b.setAttribute('aria-current',b.dataset.target===tab?'page':'false');});$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');window.scrollTo({top:0,behavior:'smooth'});
  // Push tab changes to history so the phone's native back button (and our
  // floating Back FAB) can navigate between tabs the way users expect.
  if(history.state?.tab!==tab){history.pushState({tab},'','/#'+tab);}
@@ -97,7 +97,7 @@ function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'});}
 // Listen for popstate so when the user hits the phone's native Back button
 // (or our floating Back button) we restore the previous tab instead of
 // leaving the site entirely on the first back press.
-window.addEventListener('popstate',(e)=>{const tab=e.state?.tab||'home';document.querySelectorAll('.tab-content').forEach(el=>el.classList.toggle('active',el.id==='tab-'+tab));document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('bg-slate-100',b.dataset.target===tab);b.setAttribute('aria-current',b.dataset.target===tab?'page':'false');});window.scrollTo({top:0,behavior:'smooth'});});
+window.addEventListener('popstate',(e)=>{const tab=e.state?.tab||'home';document.querySelectorAll('.tab-content').forEach(el=>el.classList.toggle('active',el.id==='tab-'+tab));document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('active',b.dataset.target===tab);b.setAttribute('aria-current',b.dataset.target===tab?'page':'false');});window.scrollTo({top:0,behavior:'smooth'});});
 // Show the "scroll to top" FAB only after the user has scrolled down.
 window.addEventListener('scroll',()=>{const fab=document.querySelector('.fab-top');if(!fab)return;fab.classList.toggle('is-visible',window.scrollY>400);},{passive:true});
 function filterEvents(type){state.eventFilter=type;renderEvents();for(const [id,name]of Object.entries({btnEvtAll:'all',btnEvtUpcoming:'upcoming',btnEvtPast:'past'}))$(id).setAttribute('aria-pressed',String(type===name));}
