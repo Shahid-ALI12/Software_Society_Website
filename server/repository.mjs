@@ -1,7 +1,7 @@
 import { FieldValue, Timestamp, FieldPath } from 'firebase-admin/firestore';
 import { createHash } from 'node:crypto';
 import { RequestError } from './security/errors.mjs';
-import { fields, settingFields } from '../shared/content-schema.js';
+import { fields, settingFields, settingTextFields } from '../shared/content-schema.js';
 import { invalid,identifier } from './schema.mjs';
 const pageSize=24;
 function cursorDecode(s){
@@ -15,11 +15,19 @@ export function createRepository(db){
  const audit=(tx,uid,action,target)=>tx.set(db.collection('auditLogs').doc(),{uid,action,target,at:FieldValue.serverTimestamp()});
  return {
   async content(kind,cursor,published=true){let q=db.collection('content').where('kind','==',kind);if(published)q=q.where('status','==','published');q=q.orderBy('updatedAt','desc').orderBy(FieldPath.documentId());return page(await withCursor(q,cursor).limit(pageSize+1).get());},
-  async settings(){const d=await db.doc('settings/site').get();return d.exists?{data:{currentSession:d.data().data.currentSession,photos:Object.fromEntries(Object.keys(settingFields).map(k=>[k,{url:d.data().data.photos?.[k]?.url||'',alt:d.data().data.photos?.[k]?.alt||''}]))},version:d.data().version}:{data:null,version:0};},
+  async settings(){const d=await db.doc('settings/site').get();return d.exists?{data:{currentSession:d.data().data.currentSession,photos:Object.fromEntries(Object.keys(settingFields).map(k=>[k,{url:d.data().data.photos?.[k]?.url||'',alt:d.data().data.photos?.[k]?.alt||''}])),texts:Object.fromEntries(Object.keys(settingTextFields).map(k=>[k,d.data().data.texts?.[k]||'']))},version:d.data().version}:{data:null,version:0};},
   async saveContent(uid,body){const ref=body.id?db.collection('content').doc(body.id):db.collection('content').doc();return db.runTransaction(async tx=>{
    const old=await tx.get(ref);if((old.exists?old.data().version:0)!==body.version)throw new RequestError(409,'conflict','This item changed. Reload it before saving.');
    if(old.exists&&old.data().kind!==body.content.kind)throw invalid();
    tx.set(ref,{...body.content,version:body.version+1,createdAt:old.exists?old.data().createdAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()});audit(tx,uid,'content.save',ref.path);return {id:ref.id,version:body.version+1};
+  });},
+  // Soft delete = archive (item stays in DB, hidden from public). Hard delete = permanent removal.
+  // Both check version to prevent concurrent-edit loss; both write audit logs.
+  async deleteContent(uid,body){const ref=db.collection('content').doc(body.id);return db.runTransaction(async tx=>{
+   const old=await tx.get(ref);if(!old.exists)throw new RequestError(404,'not_found','This item no longer exists.');
+   if(old.data().version!==body.version)throw new RequestError(409,'conflict','This item changed. Reload it before deleting.');
+   if(body.permanent){tx.delete(ref);audit(tx,uid,'content.delete',ref.path);return {id:body.id,deleted:true,permanent:true};}
+   tx.update(ref,{status:'archived',version:body.version+1,updatedAt:FieldValue.serverTimestamp()});audit(tx,uid,'content.archive',ref.path);return {id:body.id,version:body.version+1,archived:true};
   });},
   async saveSettings(uid,body){const ref=db.doc('settings/site');return db.runTransaction(async tx=>{const old=await tx.get(ref);if((old.exists?old.data().version:0)!==body.version)throw new RequestError(409,'conflict','Settings changed. Reload before saving.');tx.set(ref,{data:body.data,version:body.version+1,updatedAt:FieldValue.serverTimestamp()});audit(tx,uid,'settings.save',ref.path);return {version:body.version+1};});},
   async submit(uid,kind,data,key){

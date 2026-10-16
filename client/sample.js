@@ -61,5 +61,9 @@ export const sampleContent = {
  notices: notices.map(n=>({id:String(n.id),data:{title:n.title,category:n.category,description:n.details}})),
  cabinet: Object.entries(cabinetData).flatMap(([session,data])=>['core','exec'].flatMap(group=>data[group].map((m,i)=>({id:session+group+i,data:{title:m.name,role:m.role,session,group,image:m.img,alt:m.name}})))),
  alumni: alumniList.map(a=>({id:String(a.id),data:{title:a.name,batch:a.batch,role:a.role,linkedin:'',image:'',alt:''}})),
- gallery: defaultEvents.map(e=>({id:String(e.id),data:{title:e.title,image:e.image,alt:e.title}}))
+ gallery: defaultEvents.map(e=>({id:String(e.id),data:{title:e.title,image:e.image,alt:e.title}})),
+ // Sample featured people start empty; societies populate the `featured` collection
+ // from the admin panel (HOD, Director, Patron, Dean, etc.). The homepage hides the
+ // section entirely when no featured members exist.
+ featured: []
 };

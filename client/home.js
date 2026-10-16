@@ -1,18 +1,24 @@
 import './styles.css';
 import { api,escapeHTML as esc,safeImage,safeLinkedIn } from './api.js';
 import { sampleContent } from './sample.js';
-import { kinds } from '../shared/content-schema.js';
-const $=id=>document.getElementById(id),state={content:sampleContent,cursors:{},eventFilter:'all',live:false,session:'2025-2026'};
+import { kinds, featuredGroups } from '../shared/content-schema.js';
+const $=id=>document.getElementById(id),state={content:sampleContent,cursors:{},eventFilter:'all',live:false,session:'2025-2026',settings:null};
 const empty='<p class="empty-state">Nothing published here yet.</p>';
 const card='bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm';
 function image(data,classes='w-full h-56 sm:h-64 object-cover'){const url=safeImage(data.image);return url?`<img src="${esc(url)}" alt="${esc(data.alt||data.title)}" loading="lazy" decoding="async" class="${classes}">`:'';}
 function content(kind){return state.content[kind].map(item=>({...item.data,id:item.id}));}
-function render(){renderHome();renderEvents();renderNotices();loadCabinet();renderAlumni();}
+function render(){renderHome();renderEvents();renderNotices();loadCabinet();renderAlumni();renderFeatured();}
 function renderHome(){
  $('home-session').textContent='Session '+state.session+' Society Leadership';
  const core=content('cabinet').filter(m=>m.session===state.session&&m.group==='core').slice(0,4);
  $('homeExecutiveGrid').innerHTML=core.map(m=>`<article class="${card} text-center">${image(m,'w-28 h-28 sm:w-32 sm:h-32 mx-auto rounded-full object-cover mb-4')}<h3 class="font-bold">${esc(m.title)}</h3><p class="text-sm text-blue-600">${esc(m.role)}</p></article>`).join('')||empty;
  $('blogGrid').innerHTML=content('posts').map(b=>`<button type="button" class="${card} text-left space-y-3" data-blog="${esc(b.id)}">${image(b,'w-full h-56 sm:h-64 lg:h-72 object-cover rounded-xl')}<h3 class="font-bold text-lg">${esc(b.title)}</h3><p class="text-sm text-slate-500">${esc(b.description)}</p><p class="text-sm">By ${esc(b.author)} →</p></button>`).join('')||empty;
+ // Drive the HOD block from saved settings instead of hardcoded HTML so the admin
+ // panel can update the name, title and message without editing index.html.
+ const t=state.settings?.texts||{};
+ if(t.hodName){const el=$('hod-name');if(el)el.textContent=t.hodName;}
+ if(t.hodTitle){const el=$('hod-title');if(el)el.textContent=t.hodTitle;}
+ if(t.hodMessage){const el=$('hod-message');if(el){el.textContent='"'+t.hodMessage+'"';el.classList.add('italic');}}
 }
 function renderEvents(){
  const today=new Date().toISOString().slice(0,10);
@@ -27,6 +33,28 @@ function loadCabinet(){
  for(const[group,id]of Object.entries({core:'coreBodyGrid',exec:'executiveBodyGrid',general:'generalBodyGrid'}))$(id).innerHTML=content('cabinet').filter(m=>m.session===select.value&&m.group===group).map(m=>`<article class="${card} text-center">${image(m,'w-32 h-32 sm:w-36 sm:h-36 mx-auto rounded-xl object-cover mb-4')}<h3 class="font-bold">${esc(m.title)}</h3><p class="text-sm text-blue-600">${esc(m.role)}</p></article>`).join('')||empty;
 }
 function renderAlumni(){$('alumniGrid').innerHTML=content('alumni').map(a=>`<article class="${card} space-y-3">${image(a,'w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover')}<h3 class="font-bold">${esc(a.title)}</h3><p class="text-xs text-slate-500">Batch: ${esc(a.batch)}</p><p class="text-sm">${esc(a.role)}</p>${safeLinkedIn(a.linkedin)?`<a href="${esc(safeLinkedIn(a.linkedin))}" target="_blank" rel="noopener noreferrer" class="text-blue-600 text-sm underline">Connect on LinkedIn</a>`:''}</article>`).join('')||empty;}
+// Featured people: render one tab per group (HOD, Director, Patrons, Dean, etc.).
+// Each tab shows the published featured members for that group, sorted by displayOrder.
+// When no featured members exist for any group the entire section is hidden so the
+// homepage stays clean for societies that haven't populated it yet.
+function renderFeatured(){
+ const wrap=$('featuredSection');
+ if(!wrap)return;
+ const all=content('featured');
+ if(!all.length){wrap.hidden=true;return;}
+ wrap.hidden=false;
+ const groups=Object.keys(featuredGroups).filter(g=>all.some(p=>p.group===g));
+ if(!groups.length){wrap.hidden=true;return;}
+ const tabs=$('featuredTabs');tabs.replaceChildren();
+ const panel=$('featuredPanel');panel.replaceChildren();
+ groups.forEach((g,i)=>{
+  const tab=document.createElement('button');tab.type='button';tab.className='featured-tab'+(i===0?' active':'');tab.textContent=featuredGroups[g];tab.dataset.group=g;tab.onclick=()=>{document.querySelectorAll('.featured-tab').forEach(b=>b.classList.toggle('active',b===tab));document.querySelectorAll('.featured-pane').forEach(p=>p.hidden=p.dataset.group!==g);};
+  const pane=document.createElement('div');pane.className='featured-pane'+(i===0?'':' hidden-Pane');pane.dataset.group=g;pane.hidden=i!==0;
+  const items=all.filter(p=>p.group===g).sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0));
+  pane.innerHTML=items.map(p=>`<article class="${card} text-center">${image(p,'w-28 h-28 sm:w-32 sm:h-32 mx-auto rounded-full object-cover mb-4')}<h3 class="font-bold">${esc(p.title)}</h3><p class="text-sm text-blue-600">${esc(p.role)}</p></article>`).join('')||empty;
+  tabs.append(tab);panel.append(pane);
+ });
+}
 let lastFocus;
 function openModal(id){lastFocus=document.activeElement;const modal=$(id);modal.classList.remove('hidden');modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label',id==='blogModal'?'Article':id==='lightboxModal'?'Photo preview':'Alumni application');modal.querySelector('button,input')?.focus();}
 function closeModal(id){$(id).classList.add('hidden');lastFocus?.focus();}
@@ -38,15 +66,15 @@ function filterEvents(type){state.eventFilter=type;renderEvents();for(const [id,
 Object.assign(window,{switchTab,toggleMobileMenu,toggleTheme,filterEvents,searchNotices:renderNotices,loadCabinet,openModal,closeModal,showToast});
 document.addEventListener('click',e=>{const blog=e.target.closest('[data-blog]'),photo=e.target.closest('[data-photo]');if(blog){const b=content('posts').find(b=>b.id===blog.dataset.blog);$('blogModalContent').innerHTML=`<h2 class="text-2xl font-bold pr-8">${esc(b.title)}</h2><p class="text-sm my-4">By ${esc(b.author)}</p><p class="whitespace-pre-wrap">${esc(b.body)}</p>`;openModal('blogModal');}if(photo&&photo.dataset.photo){$('lightboxImg').src=photo.dataset.photo;openModal('lightboxModal');}});
 document.addEventListener('keydown',e=>{const modal=[...document.querySelectorAll('[aria-modal="true"]')].find(m=>!m.classList.contains('hidden'));if(e.key==='Escape'){if(modal)closeModal(modal.id);$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');}if(e.key==='Tab'&&modal){const elements=[...modal.querySelectorAll('button,a,input,select,textarea')].filter(n=>!n.disabled),first=elements[0],last=elements.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
-const containers={events:'eventsGrid',posts:'blogGrid',notices:'noticeContainer',cabinet:'generalBodyGrid',gallery:'galleryGrid',alumni:'alumniGrid'};
-for(const kind of kinds){const button=document.createElement('button');button.className='secondary-button load-more';button.textContent='Load more '+kind;button.hidden=true;button.id='more-'+kind;$(containers[kind]).after(button);button.onclick=async()=>{button.disabled=true;try{const page=await api('public',{kind,cursor:state.cursors[kind]});const known=new Set(state.content[kind].map(i=>i.id));state.content[kind].push(...page.items.filter(i=>!known.has(i.id)));state.cursors[kind]=page.nextCursor;button.hidden=!page.nextCursor;render();}catch(e){showToast(e.message);}finally{button.disabled=false;}};}
+const containers={events:'eventsGrid',posts:'blogGrid',notices:'noticeContainer',cabinet:'generalBodyGrid',gallery:'galleryGrid',alumni:'alumniGrid',featured:'featuredPanel'};
+for(const kind of kinds){const button=document.createElement('button');button.className='secondary-button load-more';button.textContent='Load more '+kind;button.hidden=true;button.id='more-'+kind;const fallback=$(containers[kind])||$('featuredPanel');if(fallback)fallback.after(button);button.onclick=async()=>{button.disabled=true;try{const page=await api('public',{kind,cursor:state.cursors[kind]});const known=new Set(state.content[kind].map(i=>i.id));state.content[kind].push(...page.items.filter(i=>!known.has(i.id)));state.cursors[kind]=page.nextCursor;button.hidden=!page.nextCursor;render();}catch(e){showToast(e.message);}finally{button.disabled=false;}};}
 function wireForm(id,kind,body){const form=$(id);let pending=false,key=null;form.addEventListener('input',()=>{if(!pending)key=null;});form.onsubmit=async e=>{e.preventDefault();if(pending||!state.live)return;pending=true;key||=crypto.randomUUID();const button=form.querySelector('button[type="submit"]'),status=form.querySelector('.form-status');button.disabled=true;status.textContent='Saving…';try{await api('submission',{kind,method:'POST',authenticated:true,body:body(form),key});form.reset();key=null;status.textContent=kind==='alumni'?'Application saved for review. Your profile is not public until approved.':'Saved to the society inbox. Thank you.';}catch(error){status.textContent=error.message;}finally{pending=false;button.disabled=false;}};}
 wireForm('suggestionForm','suggestion',()=>({category:$('sugCategory').value,name:$('sugName').value,message:$('sugMessage').value}));
 wireForm('contactForm','contact',form=>({name:form.querySelector('input[type="text"]').value,email:form.querySelector('input[type="email"]').value,message:form.querySelector('textarea').value}));
 wireForm('alumniForm','alumni',()=>({name:$('almName').value,batch:$('almBatch').value,role:$('almRole').value,linkedin:$('almLinkedIn').value,consent:$('alumniConsent').checked}));
 render();
 try{
- const results=await Promise.all([api('public',{kind:'settings'}),...kinds.map(kind=>api('public',{kind}))]);const settings=results[0].data;state.session=settings?.currentSession||'2026-2027';
+ const results=await Promise.all([api('public',{kind:'settings'}),...kinds.map(kind=>api('public',{kind}))]);const settings=results[0].data;state.session=settings?.currentSession||'2026-2027';state.settings=settings;
  kinds.forEach((kind,i)=>{state.content[kind]=results[i+1].items;state.cursors[kind]=results[i+1].nextCursor;$('more-'+kind).hidden=!state.cursors[kind];});
  document.querySelectorAll('[data-site-photo]').forEach(img=>{const photo=settings?.photos?.[img.dataset.sitePhoto];if(photo?.url&&safeImage(photo.url)){img.src=photo.url;img.alt=photo.alt;}});
  state.live=true;$('cabinetSessionSelect').value=state.session;render();document.querySelectorAll('button[type="submit"]').forEach(b=>b.disabled=false);$('data-status').textContent='Society content is connected. Sign in with a verified email to send submissions.';

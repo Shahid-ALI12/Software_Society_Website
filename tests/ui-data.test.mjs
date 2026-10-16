@@ -3,13 +3,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
 import { sampleContent } from '../client/sample.js';
-import { fields,kinds,settingFields } from '../shared/content-schema.js';
+import { fields,kinds,settingFields,settingTextFields,featuredGroups } from '../shared/content-schema.js';
 import { escapeHTML,safeImage,safeLinkedIn } from '../client/api.js';
 const AsyncFunction=Object.getPrototypeOf(async function(){}).constructor;
 async function home(api){
  const dom=new JSDOM(readFileSync('index.html','utf8'),{url:'https://society.example'});dom.window.scrollTo=()=>{};
  const source=readFileSync('client/home.js','utf8').replace(/^import .*;\n/gm,'');
- await new AsyncFunction('document','window','api','esc','safeImage','safeLinkedIn','sampleContent','kinds',source)(dom.window.document,dom.window,api,escapeHTML,safeImage,safeLinkedIn,structuredClone(sampleContent),kinds);
+ await new AsyncFunction('document','window','api','esc','safeImage','safeLinkedIn','sampleContent','kinds','featuredGroups',source)(dom.window.document,dom.window,api,escapeHTML,safeImage,safeLinkedIn,structuredClone(sampleContent),kinds,featuredGroups);
  return dom;
 }
 test('homepage loads API data, enables forms and updates photo slots',async()=>{
@@ -34,10 +34,15 @@ test('admin photo editor saves five explicit slots and server version',async()=>
  const dom=new JSDOM(readFileSync('admin.html','utf8'));const d=dom.window.document;let save;
  const api=async(action,options)=>{if(action==='me')return {role:'admin'};if(action==='settings-read')return {data:null,version:3};if(action==='settings'){save=options.body;return {version:4};}return {items:[],nextCursor:null};};
  const source=readFileSync('client/admin.js','utf8').replace(/^import .*;\n/gm,'');
- await new AsyncFunction('document','api','safeImage','fields','kinds','settingFields',source)(d,api,safeImage,fields,kinds,settingFields);
+ await new AsyncFunction('document','api','safeImage','fields','kinds','settingFields','settingTextFields','featuredGroups',source)(d,api,safeImage,fields,kinds,settingFields,settingTextFields,featuredGroups);
  assert.equal(d.getElementById('admin-panel').hidden,false);await d.querySelector('[data-panel=photos-panel]').onclick();
- d.getElementById('site-hero-url').value='https://images.unsplash.com/actual';d.getElementById('site-hero-alt').value='Society team';d.getElementById('photos-form').onsubmit({preventDefault(){}});await new Promise(setImmediate);
- assert.equal(save.version,3);assert.equal(save.data.photos.hero.alt,'Society team');assert.equal(Object.keys(save.data.photos).length,5);assert.match(d.getElementById('admin-status').textContent,/saved/);dom.window.close();
+ d.getElementById('site-hero-url').value='https://images.unsplash.com/actual';d.getElementById('site-hero-alt').value='Society team';
+ // HOD text fields exist alongside the photos and must be present before submit.
+ d.getElementById('hod-text-hodName').value='Dr. Test';d.getElementById('hod-text-hodTitle').value='HOD';d.getElementById('hod-text-hodMessage').value='Welcome';
+ d.getElementById('photos-form').onsubmit({preventDefault(){}});await new Promise(setImmediate);
+ assert.equal(save.version,3);assert.equal(save.data.photos.hero.alt,'Society team');assert.equal(Object.keys(save.data.photos).length,5);
+ assert.equal(save.data.texts.hodName,'Dr. Test');assert.equal(save.data.texts.hodTitle,'HOD');
+ assert.match(d.getElementById('admin-status').textContent,/saved/);dom.window.close();
 });
 
 test('admin date picker and explicit publish save public visibility with useful confirmation',async()=>{

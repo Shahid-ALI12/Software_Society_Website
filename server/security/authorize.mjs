@@ -8,6 +8,10 @@ const permissions = new Map([
   ['contact:submit', new Set(['member', 'editor', 'admin'])],
   ['alumni:apply', new Set(['member', 'editor', 'admin'])],
   ['content:write', new Set(['editor', 'admin'])],
+  // Permanent deletion + user role management stay admin-only so editors cannot
+  // irreversibly remove society content or grant privileges to other accounts.
+  ['content:delete', new Set(['admin'])],
+  ['users:manage', new Set(['admin'])],
   ['inbox:read', new Set(['admin'])],
   ['alumni:moderate', new Set(['admin'])],
   ['settings:write', new Set(['admin'])],
