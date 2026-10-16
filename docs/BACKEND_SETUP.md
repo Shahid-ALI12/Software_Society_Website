@@ -15,8 +15,7 @@ Code deployment does not create service credentials, enable billing, assign an a
    | Variable | Value |
    | --- | --- |
    | `FIREBASE_SERVICE_ACCOUNT_JSON` | JSON service credentials for `softwarewebsite-861b4`; use a dedicated account with only required Firestore, Firebase Auth and optional Storage permissions, never Owner/Editor |
-   | `UPSTASH_REDIS_REST_URL` | Existing Upstash Redis REST endpoint |
-   | `UPSTASH_REDIS_REST_TOKEN` | Its server-only write token |
+   | `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Vercel's Upstash integration adds these server-only Redis credentials automatically. The backend also accepts `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` for manual setups. |
    | `SITE_ORIGIN` | `https://softwarewebsite-brown.vercel.app` |
    | `ENABLE_PHOTO_UPLOADS` | Keep `false` until Storage is configured; set `true` only after verifying it works |
 
