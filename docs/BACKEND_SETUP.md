@@ -29,13 +29,16 @@ Code deployment does not create service credentials, enable billing, assign an a
 
    Wait until the composite indexes show **Enabled**. Direct browser reads/writes are deliberately denied; all data flows through the server API. An index build delay must not be fixed by opening database rules.
 
-3. Sign in with your own verified account, copy its UID from Firebase Authentication → Users, and run the operator script from a trusted environment with the server credential configured:
+3. Sign in with your own verified account and copy its UID from Firebase Authentication → Users. For a one-time role assignment without creating a JSON key, open Cloud Shell in the same Google Cloud project, authorize Cloud Shell when prompted, clone the public repository, install dependencies and run the operator script. It uses Application Default Credentials in Cloud Shell and preserves the account's existing custom claims:
 
    ```sh
+   git clone https://github.com/Shahid-ALI12/Software_Society_Website.git
+   cd Software_Society_Website
+   npm ci --omit=dev
    node scripts/set-role.mjs YOUR_FIREBASE_UID admin
    ```
 
-   This does not rely on a hardcoded email address. It revokes sessions after changing the role. Sign out and sign back in afterward. Do not share your password or OTP.
+   Replace `YOUR_FIREBASE_UID` with your account's UID. The Google account authorized in Cloud Shell needs Firebase Authentication permission to manage users. The script checks that the account is enabled and verified, revokes sessions after changing the role, and never grants roles from public requests. Sign out and sign back in afterward. Do not share your password, OTP or service-account key.
 
 4. Redeploy the existing Vercel project after configuring environment variables. Check `/api/portal?action=public&kind=settings`, then `/admin.html`. A missing Redis configuration intentionally returns 503 rather than allowing writes without quotas. If configuration is missing, the homepage clearly shows sample content and disables submissions.
 
