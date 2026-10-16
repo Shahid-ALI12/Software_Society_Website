@@ -183,6 +183,26 @@
         @media (prefers-reduced-motion: reduce) {
             .reveal-up { opacity: 1; transform: none; transition: none; }
         }
+
+        /* ===== Mobile floating buttons (Back + Menu + Top) =====
+           Shown only on phone-width screens. Lets users navigate without
+           scrolling back to the top header. */
+        #mobile-fab { position: fixed; right: 16px; bottom: 16px; z-index: 50; display: none; flex-direction: column; gap: 10px; }
+        @media (max-width: 1279px) { #mobile-fab { display: flex; } }
+        #mobile-fab button {
+            width: 52px; height: 52px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid rgba(255,255,255,0.18); cursor: pointer;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.28);
+            color: #fff; font-size: 18px; transition: transform 0.15s ease, background 0.15s ease;
+        }
+        #mobile-fab button:active { transform: scale(0.92); }
+        #mobile-fab .fab-menu { background: #1d4ed8; }
+        #mobile-fab .fab-back { background: #334155; }
+        #mobile-fab .fab-top { background: #0f172a; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+        #mobile-fab .fab-top.is-visible { opacity: 1; pointer-events: auto; }
+        @media (min-width: 1280px) { #mobile-fab { display: none !important; } }
+        @media (prefers-reduced-motion: reduce) { #mobile-fab button:active { transform: none; } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
@@ -602,6 +622,22 @@
             </div>
         </div>
     </footer>
+
+    <!-- ===== Mobile floating action buttons (Back / Menu / Top) =====
+         Only visible on phone-width screens (<=1279px). Back uses the
+         browser's history API so the phone's native back button also works.
+         Top appears after scrolling down 400px and scrolls back to header. -->
+    <div id="mobile-fab" aria-hidden="false">
+        <button class="fab-top" type="button" aria-label="Scroll to top" title="Scroll to top" onclick="scrollToTop()">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        <button class="fab-back" type="button" aria-label="Go back" title="Go back" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+        <button class="fab-menu" type="button" aria-label="Open menu" title="Open menu" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
 
     <!-- MODALS SECTION -->
 

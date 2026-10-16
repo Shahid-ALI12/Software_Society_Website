@@ -89,11 +89,25 @@ let lastFocus;
 function openModal(id){lastFocus=document.activeElement;const modal=$(id);modal.classList.remove('hidden');modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label',id==='blogModal'?'Article':id==='lightboxModal'?'Photo preview':'Alumni application');modal.querySelector('button,input')?.focus();}
 function closeModal(id){$(id).classList.add('hidden');lastFocus?.focus();}
 function showToast(message){$('toastMsg').textContent=message;$('toast').classList.remove('translate-y-20','opacity-0');setTimeout(()=>$('toast').classList.add('translate-y-20','opacity-0'),5000);}
-function switchTab(tab){document.querySelectorAll('.tab-content').forEach(e=>e.classList.toggle('active',e.id==='tab-'+tab));document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('bg-slate-100',b.dataset.target===tab);b.setAttribute('aria-current',b.dataset.target===tab?'page':'false');});$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');window.scrollTo({top:0,behavior:'smooth'});}
+function switchTab(tab){document.querySelectorAll('.tab-content').forEach(e=>e.classList.toggle('active',e.id==='tab-'+tab));document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('bg-slate-100',b.dataset.target===tab);b.setAttribute('aria-current',b.dataset.target===tab?'page':'false');});$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');window.scrollTo({top:0,behavior:'smooth'});
+ // Push tab changes to history so the phone's native back button (and our
+ // floating Back FAB) can navigate between tabs the way users expect.
+ if(history.state?.tab!==tab){history.pushState({tab},'','/#'+tab);}
+}
 function toggleMobileMenu(){const menu=$('mobileMenu');menu.classList.toggle('hidden');$('menuToggle').setAttribute('aria-expanded',String(!menu.classList.contains('hidden')));}
 function toggleTheme(){const dark=document.documentElement.classList.toggle('dark');document.documentElement.classList.toggle('light',!dark);$('themeIcon').className=dark?'fas fa-sun text-amber-400':'fas fa-moon';}
+// Mobile floating-action buttons: Back (uses history), Top (scrolls up).
+// Back falls back to Home tab if there's no tab history (e.g. deep-linked).
+function goBack(){if(history.state?.tab&&history.state.tab!=='home'){window.history.back();}else{switchTab('home');}}
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'});}
+// Listen for popstate so when the user hits the phone's native Back button
+// (or our floating Back button) we restore the previous tab instead of
+// leaving the site entirely on the first back press.
+window.addEventListener('popstate',(e)=>{const tab=e.state?.tab||'home';document.querySelectorAll('.tab-content').forEach(el=>el.classList.toggle('active',el.id==='tab-'+tab));document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('bg-slate-100',b.dataset.target===tab);b.setAttribute('aria-current',b.dataset.target===tab?'page':'false');});window.scrollTo({top:0,behavior:'smooth'});});
+// Show the "scroll to top" FAB only after the user has scrolled down.
+window.addEventListener('scroll',()=>{const fab=document.querySelector('.fab-top');if(!fab)return;fab.classList.toggle('is-visible',window.scrollY>400);},{passive:true});
 function filterEvents(type){state.eventFilter=type;renderEvents();for(const [id,name]of Object.entries({btnEvtAll:'all',btnEvtUpcoming:'upcoming',btnEvtPast:'past'}))$(id).setAttribute('aria-pressed',String(type===name));}
-Object.assign(window,{switchTab,toggleMobileMenu,toggleTheme,filterEvents,searchNotices:renderNotices,loadCabinet,openModal,closeModal,showToast});
+Object.assign(window,{switchTab,toggleMobileMenu,toggleTheme,filterEvents,searchNotices:renderNotices,loadCabinet,openModal,closeModal,showToast,goBack,scrollToTop});
 document.addEventListener('click',e=>{const blog=e.target.closest('[data-blog]'),photo=e.target.closest('[data-photo]');if(blog){const b=content('posts').find(b=>b.id===blog.dataset.blog);$('blogModalContent').innerHTML=`<h2 class="text-2xl font-bold pr-8">${esc(b.title)}</h2><p class="text-sm my-4">By ${esc(b.author)}</p><p class="whitespace-pre-wrap">${esc(b.body)}</p>`;openModal('blogModal');}if(photo&&photo.dataset.photo){$('lightboxImg').src=photo.dataset.photo;openModal('lightboxModal');}});
 document.addEventListener('keydown',e=>{const modal=[...document.querySelectorAll('[aria-modal="true"]')].find(m=>!m.classList.contains('hidden'));if(e.key==='Escape'){if(modal)closeModal(modal.id);$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');}if(e.key==='Tab'&&modal){const elements=[...modal.querySelectorAll('button,a,input,select,textarea')].filter(n=>!n.disabled),first=elements[0],last=elements.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 const containers={events:'eventsGrid',posts:'blogGrid',notices:'noticeContainer',cabinet:'generalBodyGrid',gallery:'galleryGrid',alumni:'alumniGrid',featured:'featuredPanel'};
