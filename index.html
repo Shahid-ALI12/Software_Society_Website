@@ -102,7 +102,7 @@
         <div id="tab-home" class="tab-content active space-y-12">
             
             <!-- Hero Section -->
-            <section class="relative rounded-3xl overflow-hidden bg-slate-900 text-white p-8 sm:p-12 md:p-16 shadow-2xl border border-slate-800">
+            <section class="relative min-h-[26rem] sm:min-h-[30rem] flex items-center rounded-3xl overflow-hidden bg-slate-900 text-white p-8 sm:p-12 md:p-16 shadow-2xl border border-slate-800">
                 <img data-site-photo="hero" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1600&q=80" alt="Tech Banner" class="absolute inset-0 w-full h-full object-cover opacity-20">
                 <div class="relative z-10 max-w-3xl space-y-6">
                     <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-semibold">
@@ -121,7 +121,7 @@
             <!-- HOD Message Section -->
             <section class="bg-white dark:bg-slate-900 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
                 <div class="flex flex-col md:flex-row items-center gap-8">
-                    <img data-site-photo="hod" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt="HOD Photo" class="shrink-0 w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover shadow-md border-2 border-blue-500">
+                    <img data-site-photo="hod" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=85" alt="HOD Photo" class="shrink-0 w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 rounded-2xl object-cover shadow-md border-2 border-blue-500">
                     <div class="space-y-3 text-center md:text-left">
                         <div class="inline-block px-2.5 py-1 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 text-xs font-bold uppercase tracking-wider">HOD Message</div>
                         <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Message from HOD Computer Science</h2>
@@ -290,7 +290,7 @@
                 <h2 class="text-2xl font-bold text-slate-900 dark:text-white text-center sm:text-left">Campus & Software Engineering Infrastructure</h2>
                 <div class="grid sm:grid-cols-3 gap-6">
                     <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800">
-                        <img data-site-photo="campus" src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80" alt="NTU Main Campus Building" class="w-full h-56 object-cover group-hover:scale-105 transition duration-300">
+                        <img data-site-photo="campus" src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=85" alt="NTU Main Campus Building" class="w-full h-64 sm:h-72 object-cover group-hover:scale-105 transition duration-300">
                         <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent p-4 flex flex-col justify-end">
                             <span class="text-white font-bold text-sm">NTU Main Academic Block</span>
                             <span class="text-slate-300 text-xs">Faisalabad Campus</span>
@@ -298,44 +298,7 @@
                     </div>
 
                     <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800">
-                        <img data-site-photo="lab" src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80" alt="Advanced Software Development Lab" class="w-full h-56 object-cover group-hover:scale-105 transition duration-300">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent p-4 flex flex-col justify-end">
-                            <span class="text-white font-bold text-sm">Advanced SE Workstations Lab</span>
-                            <span class="text-slate-300 text-xs">High-performance Computing</span>
-                        </div>
-                    </div>
-
-                    <div class="group relative rounded-2xl overflow-hidden shadow-md border border-slate-200 dark:border-slate-800">
-                        <img data-site-photo="society" src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80" alt="Society Hackathon & Seminar" class="w-full h-56 object-cover group-hover:scale-105 transition duration-300">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent p-4 flex flex-col justify-end">
-                            <span class="text-white font-bold text-sm">Auditorium & Seminars</span>
-                            <span class="text-slate-300 text-xs">Capacity 500+ Attendees</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 7. SUGGESTION TAB -->
-        <div id="tab-suggestion" class="tab-content max-w-2xl mx-auto space-y-6">
-            <div class="text-center space-y-2">
-                <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white">Student Suggestion Box</h1>
-                <p class="text-sm text-slate-500 dark:text-slate-400">Your feedback helps us make SE Society better. All submissions are reviewed by leadership.</p>
-            </div>
-
-            <form id="suggestionForm"  class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">Category</label>
-                    <select id="sugCategory" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                        <option value="academic">Academic Workshops</option>
-                        <option value="event">Event Ideas</option>
-                        <option value="other">Lab Infrastructure</option>
-                        <option value="general">General Suggestion</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 dark:text-slate-400 mb-1">Your Name (Optional)</label>
+                        <img data-site-photo="lab" src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=85" alt="Advanced Software Development Lab" class="w-full h-64 sm:h-72 object-cover group-hover:scale-105 transition duration-…729 tokens truncated…l)</label>
                     <input type="text" id="sugName" placeholder="Anonymous or Full Name" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
