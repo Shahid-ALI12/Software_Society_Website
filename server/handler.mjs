@@ -14,15 +14,19 @@ async function assignRole(auth,uid,role,actorUid){
  catch(e){throw new RequestError(503,'auth_lookup_failed','Could not look up that account. The Identity Toolkit may be temporarily unavailable.');}
  if(!user.emailVerified||user.disabled)throw new RequestError(400,'invalid_input','Target account must be enabled and email verified.');
  const existingClaims=user.customClaims&&typeof user.customClaims==='object'?user.customClaims:{};
+ // setCustomUserClaims needs the 'Firebase Authentication Admin' (or Identity
+ // Toolkit Admin) IAM role on the service account. Wrap it so a permission
+ // gap surfaces a clear, actionable 503 instead of a bare 500.
  try{
   await auth.setCustomUserClaims(uid,{...existingClaims,role});
-  await auth.revokeRefreshTokens(uid);
  }catch(e){
-  // Most common cause: the service account lacks the 'Firebase Authentication Admin'
-  // / 'Identity Toolkit Admin' IAM role, so it cannot write custom claims or revoke
-  // tokens. Surface a clear message instead of a bare 500.
-  throw new RequestError(503,'auth_permission_failed','The server account is not allowed to change roles. Grant the service account the Firebase Authentication Admin (or Identity Toolkit Admin) IAM role in Google Cloud, then try again.');
+  throw new RequestError(503,'auth_permission_failed','The server account is not allowed to change roles. Grant the service account the Firebase Authentication Admin (or Identity Toolkit Admin) IAM role in Google Cloud IAM, then try again. Note: Firebase Console > Users and permissions only controls who can open the Firebase Console — it does NOT grant the backend service account any permissions.');
  }
+ // revokeRefreshTokens is best-effort: if it fails (e.g. service account lacks
+ // the additional 'Service Account Token Creator' permission), the role is
+ // still set — the user just has to sign out manually instead of being forced.
+ // Don't fail the whole request over it.
+ try{await auth.revokeRefreshTokens(uid);}catch(e){/* best-effort — role was set */}
  return {uid,role,actor:actorUid};
 }
 export function createHandler({getServices,limit,siteOrigin,production=false,uploadsEnabled=false}){
