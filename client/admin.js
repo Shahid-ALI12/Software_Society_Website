@@ -33,9 +33,9 @@ function editor(item){
  // delete), admins also see "Delete forever" (permanent). Both ask for confirmation.
  const deleteBar=$('delete-bar');if(deleteBar)deleteBar.replaceChildren();
  if(item&&deleteBar){
-  const archive=node('button','Archive (hide from website)','secondary-button');archive.type='button';archive.dataset.adminOnly='';
+  const archive=node('button',null,'secondary-button');archive.type='button';archive.dataset.adminOnly='';archive.innerHTML='<i class="fas fa-box-archive"></i> Archive (hide from website)';
   archive.onclick=()=>confirmAction('Archive this item? It will be hidden from the public website but kept in the database for recovery.',()=>deleteItem(false));
-  const permanent=node('button','Delete forever','danger-button');permanent.type='button';permanent.dataset.adminOnly='';
+  const permanent=node('button',null,'danger-button');permanent.type='button';permanent.dataset.adminOnly='';permanent.innerHTML='<i class="fas fa-trash"></i> Delete forever';
   permanent.onclick=()=>confirmAction('Delete this item PERMANENTLY? This cannot be undone.',()=>deleteItem(true));
   deleteBar.append(archive,permanent);
   // Editor role cannot permanently delete: only archive.
@@ -51,7 +51,7 @@ async function deleteItem(permanent){
  try{await loadContent();}catch{}
 }
 async function loadContent(append=false){const result=await api('list',{kind:$('content-kind').value,cursor:append?state.contentCursor:null,authenticated:true});if(!append)$('content-list').replaceChildren();
- for(const item of result.items){const b=node('button',null,'content-list-item');b.type='button';b.append(node('strong',item.data.title),node('span',item.status,'text-sm text-slate-500'));b.onclick=()=>{editor(item);$('content-form').scrollIntoView({behavior:'smooth',block:'start'});};$('content-list').append(b);}
+ for(const item of result.items){const b=node('button',null,'content-list-item');b.type='button';const title=node('strong',item.data.title,'font-semibold text-slate-900');const statusBadge=node('span',item.status,'status-badge '+item.status);b.append(title,statusBadge);b.onclick=()=>{document.querySelectorAll('.content-list-item').forEach(el=>el.classList.remove('active'));b.classList.add('active');editor(item);$('content-form').scrollIntoView({behavior:'smooth',block:'start'});};$('content-list').append(b);}
  if(!$('content-list').children.length)$('content-list').append(node('p','No items yet. Create the first one.','empty-state'));
  state.contentCursor=result.nextCursor;$('content-more').hidden=!result.nextCursor;
 }
@@ -70,11 +70,34 @@ async function loadPhotos(){const result=await api('settings-read',{authenticate
   wrap.append(fieldWrap);
  }}
 async function loadUsers(append=false){const result=await api('users',{cursor:append?state.usersCursor:null,authenticated:true});if(!append)$('users-list').replaceChildren();
- for(const u of result.items){const card=node('article',null,'editor-card');const verified=u.emailVerified?'verified':'not verified';card.append(node('h3',(u.email||u.uid)+' — '+u.role,'font-bold'),node('p','Status: '+(u.disabled?'disabled':'enabled')+', email '+verified,'text-sm text-slate-500'));
-  const controls=node('div',null,'flex flex-wrap gap-3');for(const role of ['member','editor','admin']){const b=node('button',role==='member'?'Set member':role==='editor'?'Set editor':'Set admin',u.role===role?'primary-button':'secondary-button');b.type='button';b.disabled=u.role===role;b.onclick=()=>confirmAction('Change '+u.email+' to '+role+'? The user must sign out and back in to see the change.',async()=>{await api('assign-role',{method:'POST',authenticated:true,body:{uid:u.uid,role}});$('admin-status').textContent='Role updated. Ask '+u.email+' to sign out and sign in again.';await loadUsers();});controls.append(b);}card.append(controls);$('users-list').append(card);}
- if(!$('users-list').children.length)$('users-list').append(node('p','No users yet.','empty-state'));
+ for(const u of result.items){const card=node('article',null,'user-card');
+  const emailRow=node('div',null,'user-email');emailRow.append(node('span',null,'fas fa-circle-user text-indigo-500'),node('span',u.email||u.uid));
+  const meta=node('div',null,'user-meta');
+  const verified=u.emailVerified?'<i class="fas fa-check-circle text-emerald-500"></i> verified':'<i class="fas fa-exclamation-circle text-amber-500"></i> not verified';
+  const status=u.disabled?'disabled':'enabled';
+  meta.innerHTML='<span>'+verified+'</span><span>·</span><span>'+status+'</span>';
+  const roleBadge=node('span',u.role,'user-role '+u.role);
+  const controls=node('div',null,'role-controls');
+  for(const role of ['member','editor','admin']){const b=node('button',null,'role-btn'+(u.role===role?' active':''));b.type='button';
+   const label=role==='member'?'Member':role==='editor'?'Editor':'Admin';
+   b.innerHTML='<i class="fas '+(role==='admin'?'fa-crown':role==='editor'?'fa-pen':'fa-user')+'"></i> '+label;
+   b.disabled=u.role===role;
+   b.onclick=()=>confirmAction('Change '+(u.email||u.uid)+' to '+label+'? The user must sign out and back in to see the change.',async()=>{await api('assign-role',{method:'POST',authenticated:true,body:{uid:u.uid,role}});$('admin-status').textContent='Role updated. Ask '+(u.email||u.uid)+' to sign out and sign in again.';await loadUsers();});
+   controls.append(b);}
+  card.append(emailRow,meta,roleBadge,controls);$('users-list').append(card);}
+ if(!$('users-list').children.length)$('users-list').append(node('p','No users yet. Users will appear here after they sign up on the account page.','empty-state'));
  state.usersCursor=result.nextPageToken;$('users-more').hidden=!result.nextPageToken;}
-async function inbox(append=false){const result=await api('inbox',{cursor:append?state.inboxCursor:null,authenticated:true});if(!append)$('inbox-list').replaceChildren();for(const item of result.items){const card=node('article',null,'editor-card');card.append(node('h3',item.kind+' — '+item.status,'font-bold'));for(const[key,value]of Object.entries(item.data)){card.append(node('p',key+': '+String(value),'break-words whitespace-pre-wrap'));}if(item.status==='pending'){const controls=node('div',null,'flex flex-wrap gap-3');for(const status of item.kind==='alumni'?['approved','rejected']:['reviewed','rejected']){const b=node('button',status,'secondary-button');b.onclick=()=>task(async()=>{await api('moderate',{method:'POST',authenticated:true,body:{id:item.id,version:item.version,status}});await inbox();$('admin-status').textContent='Review saved.';});controls.append(b);}card.append(controls);}$('inbox-list').append(card);}if(!$('inbox-list').children.length)$('inbox-list').append(node('p','No submissions yet.','empty-state'));state.inboxCursor=result.nextCursor;$('inbox-more').hidden=!result.nextCursor;}
+async function inbox(append=false){const result=await api('inbox',{cursor:append?state.inboxCursor:null,authenticated:true});if(!append)$('inbox-list').replaceChildren();
+ for(const item of result.items){const card=node('article',null,'inbox-card');
+  const kindBadge=node('span',item.kind,'inbox-kind');kindBadge.innerHTML='<i class="fas '+(item.kind==='contact'?'fa-envelope':item.kind==='suggestion'?'fa-lightbulb':item.kind==='alumni'?'fa-user-graduate':'fa-inbox')+'"></i> '+item.kind;
+  card.append(kindBadge);
+  const statusBadge=node('span',item.status,'user-role '+(item.status==='pending'?'member':item.status==='approved'?'editor':item.status==='rejected'?'admin':'member'));
+  card.append(statusBadge);
+  for(const[key,value]of Object.entries(item.data)){const row=node('div',null,'inbox-row');row.innerHTML='<span class="label">'+key+':</span> '+String(value).replace(/</g,'&lt;').replace(/>/g,'&gt;');card.append(row);}
+  if(item.status==='pending'){const controls=node('div',null,'role-controls');for(const status of item.kind==='alumni'?['approved','rejected']:['reviewed','rejected']){const b=node('button',null,'role-btn');b.innerHTML='<i class="fas '+(status==='approved'?'fa-check':status==='rejected'?'fa-xmark':'fa-check-double')+'"></i> '+status;b.onclick=()=>task(async()=>{await api('moderate',{method:'POST',authenticated:true,body:{id:item.id,version:item.version,status}});await inbox();$('admin-status').textContent='Review saved.';});controls.append(b);}card.append(controls);}
+  $('inbox-list').append(card);}
+ if(!$('inbox-list').children.length)$('inbox-list').append(node('p','No submissions yet. New contact messages, suggestions and alumni applications will appear here.','empty-state'));
+ state.inboxCursor=result.nextCursor;$('inbox-more').hidden=!result.nextCursor;}
 for(const kind of kinds){const o=node('option',kind);o.value=kind;$('content-kind').append(o);}
 $('content-kind').onchange=()=>task(async()=>{editor();await loadContent();$('admin-status').textContent='Content loaded.';});
 $('new-item').onclick=()=>{editor();$('content-form').scrollIntoView({behavior:'smooth'});};
@@ -88,5 +111,7 @@ $('users-refresh').onclick=()=>task(()=>loadUsers());$('users-more').onclick=()=
 // loadUsers already shows the API error message in admin-status via task().
 // The 503 from the server now carries a friendly 'Could not load the user
 // list...' message instead of a bare 500, so editors see what to do next.
-document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>task(async()=>{document.querySelectorAll('.manage-panel').forEach(p=>p.hidden=p.id!==b.dataset.panel);if(b.dataset.panel==='photos-panel')await loadPhotos();if(b.dataset.panel==='inbox-panel')await inbox();if(b.dataset.panel==='users-panel')await loadUsers();$('admin-status').textContent='Ready.';}));
+document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>task(async()=>{document.querySelectorAll('.manage-panel').forEach(p=>p.hidden=p.id!==b.dataset.panel);document.querySelectorAll('.admin-tabs button').forEach(btn=>btn.classList.toggle('active',btn===b));if(b.dataset.panel==='photos-panel')await loadPhotos();if(b.dataset.panel==='inbox-panel')await inbox();if(b.dataset.panel==='users-panel')await loadUsers();$('admin-status').textContent='Ready.';}));
+// Mark the Content tab as active on initial load.
+document.querySelector('.admin-tabs button[data-panel="content-panel"]')?.classList.add('active');
 await task(async()=>{const user=await api('me',{authenticated:true});if(!['admin','editor'].includes(user.role))throw new Error('Your account has no management role. Ask the society owner to grant access.');state.role=user.role;state.uploadsEnabled=user.uploadsEnabled===true;$('admin-panel').hidden=false;document.querySelectorAll('[data-admin-only]').forEach(e=>e.hidden=user.role!=='admin');editor();await loadContent();$('admin-status').textContent='Signed in as '+user.role+'.';});
