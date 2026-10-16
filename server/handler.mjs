@@ -7,10 +7,22 @@ const actions={'settings-read':'settings:write',me:'suggestion:submit',list:'con
 // Assign a role to another user. Trusted admins only. Preserves existing custom claims
 // (apart from role), revokes sessions to force re-sign-in, and never operates on the caller.
 async function assignRole(auth,uid,role,actorUid){
- const user=await auth.getUser(uid);
+ // getUser can return customClaims as null/undefined for users who have no
+ // claims yet — guard the spread so we don't crash with a bare 500.
+ let user;
+ try{user=await auth.getUser(uid);}
+ catch(e){throw new RequestError(503,'auth_lookup_failed','Could not look up that account. The Identity Toolkit may be temporarily unavailable.');}
  if(!user.emailVerified||user.disabled)throw new RequestError(400,'invalid_input','Target account must be enabled and email verified.');
- await auth.setCustomUserClaims(uid,{...user.customClaims,role});
- await auth.revokeRefreshTokens(uid);
+ const existingClaims=user.customClaims&&typeof user.customClaims==='object'?user.customClaims:{};
+ try{
+  await auth.setCustomUserClaims(uid,{...existingClaims,role});
+  await auth.revokeRefreshTokens(uid);
+ }catch(e){
+  // Most common cause: the service account lacks the 'Firebase Authentication Admin'
+  // / 'Identity Toolkit Admin' IAM role, so it cannot write custom claims or revoke
+  // tokens. Surface a clear message instead of a bare 500.
+  throw new RequestError(503,'auth_permission_failed','The server account is not allowed to change roles. Grant the service account the Firebase Authentication Admin (or Identity Toolkit Admin) IAM role in Google Cloud, then try again.');
+ }
  return {uid,role,actor:actorUid};
 }
 export function createHandler({getServices,limit,siteOrigin,production=false,uploadsEnabled=false}){
