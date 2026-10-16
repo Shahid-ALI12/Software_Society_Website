@@ -39,7 +39,7 @@ test('writes reject foreign origins, wrong methods and role injection',async()=>
  assert.equal((await handle(request('submission',{method:'POST',kind:'suggestion',body}))).status,400);assert.equal(calls.length,0);
 });
 test('valid submission forwards trusted UID and key only after validation',async()=>{
- const{handle,calls}=setup();const response=await handle(request('submission',{method:'POST',kind:'suggestion',body:{category:'general',message:'This is useful feedback.'}}));
+ const{handle,calls}=setup();const response=await handle(request('submission',{method:'POST',kind:'suggestion',body:{category:'general',email:'member@example.com',message:'This is useful feedback.'}}));
  assert.equal(response.status,200);assert.equal(calls[0].args[0],uid);assert.equal(calls[0].args[3],'1234567890abcdef');assert.match(response.headers.get('cache-control'),/no-store/);
 });
 test('limiter outages fail closed before database or auth work',async()=>{

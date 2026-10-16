@@ -137,9 +137,9 @@ test('contact input allows only intended fields and enforces lengths and types',
 });
 
 test('suggestion validation permits optional name but rejects unknown category/control characters', () => {
-  assert.equal(validateSuggestion({ category: 'event', message: 'Please run a coding workshop.' }).name, '');
-  assert.throws(() => validateSuggestion({ category: 'admin', message: 'Please do this.' }), status(400));
-  assert.throws(() => validateSuggestion({ category: 'event', message: 'Hello\u0000 world' }), status(400));
+  assert.equal(validateSuggestion({ category: 'event', email: 'member@example.com', message: 'Please run a coding workshop.' }).name, '');
+  assert.throws(() => validateSuggestion({ category: 'admin', email: 'member@example.com', message: 'Please do this.' }), status(400));
+  assert.throws(() => validateSuggestion({ category: 'event', email: 'member@example.com', message: 'Hello\u0000 world' }), status(400));
 });
 
 test('error responses are private and redact unexpected exceptions', async () => {

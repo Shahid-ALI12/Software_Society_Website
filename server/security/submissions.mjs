@@ -66,12 +66,17 @@ function text(value, min, max) {
 }
 
 export function validateSuggestion(body) {
-  objectWithFields(body, ['category', 'name', 'message']);
+  objectWithFields(body, ['category', 'name', 'email', 'message']);
   const category = text(body.category, 1, 32);
   if (!['general', 'event', 'website', 'academic', 'other'].includes(category)) throw invalid();
+  // Email is required so the society can respond to the submitter.
+  // Same regex + length cap as the contact form.
+  const email = text(body.email, 3, 254);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(email)) throw invalid();
   return Object.freeze({
     category,
     name: body.name === undefined ? '' : text(body.name, 0, 120),
+    email,
     message: text(body.message, 10, 4000),
   });
 }
