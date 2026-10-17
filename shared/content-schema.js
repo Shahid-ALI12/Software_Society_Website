@@ -20,8 +20,9 @@ export const fields = {
 export const settingFields = {hero:'Homepage banner',hod:'HOD portrait',convenier:'Convenier portrait',campus:'Campus photo',lab:'Lab photo',society:'Society photo'};
 // Editable text fields stored alongside the photo settings so the HOD and
 // Convenier blocks on the homepage are data-driven instead of being hardcoded
-// into index.html.
-export const settingTextFields = {hodName:'HOD name',hodTitle:'HOD title',hodMessage:'HOD welcome message',convenierName:'Convenier name',convenierTitle:'Convenier title',convenierMessage:'Convenier message'};
+// into index.html. Each person gets a name, title, message AND a longer
+// biography shown in a modal when their photo is clicked.
+export const settingTextFields = {hodName:'HOD name',hodTitle:'HOD title',hodMessage:'HOD welcome message',hodBio:'HOD biography (shown when photo is clicked)',convenierName:'Convenier name',convenierTitle:'Convenier title',convenierMessage:'Convenier message',convenierBio:'Convenier biography (shown when photo is clicked)'};
 // Featured-people tabs rendered on the landing page. Order here controls on-page order.
 // The values are the labels shown in the UI; the keys are stored in the `group` field.
 export const featuredGroups = {hod:'HOD & Department',director:'Director & Faculty',patron:'Patrons',dean:'Dean Office'};

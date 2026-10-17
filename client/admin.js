@@ -78,14 +78,17 @@ async function loadPhotos(){const result=await api('settings-read',{authenticate
  // General website photos (hero, campus, lab, society) -> general grid
  const genWrap=$('general-photos');if(genWrap){genWrap.replaceChildren();for(const [key,label]of Object.entries(settingFields)){if(key==='hod'||key==='convenier')continue;const p=photo(label,'site-'+key);genWrap.append(p);$('site-'+key+'-url').value=result.data?.photos?.[key]?.url||'';$('site-'+key+'-alt').value=result.data?.photos?.[key]?.alt||'';p.refresh();}}
  // Text fields (HOD + Convenier) — each rendered into its matching container.
- const textContainers={hodName:'hod-text-fields',hodTitle:'hod-text-fields',hodMessage:'hod-text-fields',convenierName:'convenier-text-fields',convenierTitle:'convenier-text-fields',convenierMessage:'convenier-text-fields'};
+ const textContainers={hodName:'hod-text-fields',hodTitle:'hod-text-fields',hodMessage:'hod-text-fields',hodBio:'hod-text-fields',convenierName:'convenier-text-fields',convenierTitle:'convenier-text-fields',convenierMessage:'convenier-text-fields',convenierBio:'convenier-text-fields'};
  for(const containerId of [...new Set(Object.values(textContainers))]){$(containerId)?.replaceChildren?.();}
  for(const [key,label]of Object.entries(settingTextFields)){
   const containerId=textContainers[key];const wrap=$(containerId);if(!wrap)continue;
   const isMessage=key==='hodMessage'||key==='convenierMessage';
-  const fieldWrap=input(label,'text-'+key,isMessage);
+  const isBio=key==='hodBio'||key==='convenierBio';
+  const multiline=isMessage||isBio;
+  const fieldWrap=input(label,'text-'+key,multiline);
   const ta=fieldWrap.lastChild;ta.value=result.data?.texts?.[key]||'';
-  if(isMessage){ta.rows=4;ta.maxLength=2000;ta.placeholder='Welcome message shown beside the portrait on the homepage.';}
+  if(isMessage){ta.rows=4;ta.maxLength=4000;ta.placeholder='Welcome message shown beside the portrait on the homepage.';}
+  if(isBio){ta.rows=5;ta.maxLength=4000;ta.placeholder='Full biography shown when the visitor clicks the photo on the homepage.';}
   wrap.append(fieldWrap);
  }}
 async function loadUsers(append=false){const result=await api('users',{cursor:append?state.usersCursor:null,authenticated:true});if(!append)$('users-list').replaceChildren();

@@ -157,7 +157,8 @@ let lastFocus;
 function openModal(id){lastFocus=document.activeElement;const modal=$(id);modal.classList.remove('hidden');modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label',id==='blogModal'?'Article':id==='lightboxModal'?'Photo preview':id==='bioModal'?'Member biography':'Alumni application');modal.querySelector('button,input')?.focus();}
 function closeModal(id){$(id).classList.add('hidden');lastFocus?.focus();}
 function showToast(message){$('toastMsg').textContent=message;$('toast').classList.remove('translate-y-20','opacity-0');setTimeout(()=>$('toast').classList.add('translate-y-20','opacity-0'),5000);}
-// Open the biography modal for a cabinet member.
+// Open the biography modal for a cabinet member OR HOD/Convenier.
+// member = {title(name), role, bio, image, alt}
 function openBioModal(member){
  const content=$('bioModalContent');if(!content)return;
  content.innerHTML=`
@@ -171,6 +172,18 @@ function openBioModal(member){
   <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">${member.bio?esc(member.bio):'No biography available yet for this member.'}</div>
  `;
  openModal('bioModal');
+}
+// Open bio modal for HOD or Convenier using settings data.
+function openSettingsBioModal(who){
+ const t=state.settings?.texts||{};
+ const p=state.settings?.photos?.[who]||{};
+ const member={
+  title:who==='hod'?(t.hodName||'HOD'):(t.convenierName||'Convenier'),
+  role:who==='hod'?(t.hodTitle||'Head of Department'):(t.convenierTitle||'Society Convenier'),
+  bio:who==='hod'?t.hodBio:t.convenierBio,
+  image:p.url,alt:p.alt
+ };
+ openBioModal(member);
 }
 function switchTab(tab){document.querySelectorAll('.tab-content').forEach(e=>e.classList.toggle('active',e.id==='tab-'+tab));document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('active',b.dataset.target===tab);b.setAttribute('aria-current',b.dataset.target===tab?'page':'false');});$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');window.scrollTo({top:0,behavior:'smooth'});
  // Push tab changes to history so the phone's native back button (and our
@@ -190,7 +203,7 @@ window.addEventListener('popstate',(e)=>{const tab=e.state?.tab||'home';document
 // Show the "scroll to top" FAB only after the user has scrolled down.
 window.addEventListener('scroll',()=>{const fab=document.querySelector('.fab-top');if(!fab)return;fab.classList.toggle('is-visible',window.scrollY>400);},{passive:true});
 function filterEvents(type){state.eventFilter=type;renderEvents();for(const [id,name]of Object.entries({btnEvtAll:'all',btnEvtUpcoming:'upcoming',btnEvtPast:'past'}))$(id).setAttribute('aria-pressed',String(type===name));}
-Object.assign(window,{switchTab,toggleMobileMenu,filterEvents,searchNotices:renderNotices,loadCabinet,openModal,closeModal,showToast,goBack,scrollToTop,openBioModal});
+Object.assign(window,{switchTab,toggleMobileMenu,filterEvents,searchNotices:renderNotices,loadCabinet,openModal,closeModal,showToast,goBack,scrollToTop,openBioModal,openSettingsBioModal});
 document.addEventListener('click',e=>{
  // Close any open modal when clicking on the dark overlay (not the card itself).
  const openModalEl=[...document.querySelectorAll('[aria-modal="true"]')].find(m=>!m.classList.contains('hidden'));
