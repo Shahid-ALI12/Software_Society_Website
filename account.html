@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Your account | NTU Software Engineering Society</title></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Your account | NTU Software Engineering Society</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
 <header class="max-w-6xl mx-auto px-6 py-8 flex justify-between gap-6"><a href="/" class="font-bold">NTU / Software Engineering Society</a><a href="/" class="text-blue-300">Back to society</a></header>
 <main class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 px-6 py-12">
-<section class="space-y-6 md:pt-12"><p class="text-blue-300 uppercase tracking-widest text-sm">Connect. Learn. Build.</p><h1 class="text-4xl md:text-6xl font-bold leading-tight">Your society.<br>Your community.</h1><p class="text-slate-300 max-w-md text-lg">Join the Software Engineering Society community at National Textile University, Faisalabad.</p><p class="text-slate-400 max-w-md">The society website is currently a preview. Signing in creates your account; membership and administrative access are managed separately.</p></section>
+<section class="space-y-6 md:pt-12"><p class="text-blue-300 uppercase tracking-widest text-sm">Connect. Learn. Build.</p><h1 class="text-4xl md:text-6xl font-bold leading-tight">Your society.<br>Your community.</h1><p class="text-slate-300 max-w-md text-lg">Join the Software Engineering Society community at National Textile University, Faisalabad.</p><p class="text-slate-400 max-w-md">Create an account to submit alumni applications, suggestions and contact messages. Only verified emails can access the management panel — admins grant roles separately.</p></section>
 <section class="bg-white text-slate-900 rounded-3xl p-6 md:p-9 shadow-xl self-start" aria-label="Account">
 <p id="status" role="status" aria-live="polite" class="mb-5 text-sm text-blue-800">Loading secure sign-in…</p>
 <div id="guest" hidden>
 <h2 id="title" class="text-2xl font-bold mb-6">Welcome back</h2>
 <form id="form" class="space-y-5">
 <label class="block font-medium" for="email">Email<input id="email" name="email" type="email" autocomplete="email" required maxlength="254" class="block w-full mt-2 border border-slate-300 rounded-xl p-3"></label>
-<label id="password-row" class="block font-medium" for="password">Password<input id="password" name="password" type="password" autocomplete="current-password" required maxlength="4096" class="block w-full mt-2 border border-slate-300 rounded-xl p-3"></label>
+<div id="password-row" class="block font-medium relative">
+<label for="password" class="block">Password</label>
+<input id="password" name="password" type="password" autocomplete="current-password" required maxlength="4096" class="block w-full mt-2 border border-slate-300 rounded-xl p-3 pr-12">
+<button id="toggle-password" type="button" aria-label="Show password" class="absolute right-3 top-9 text-slate-400 hover:text-slate-700 transition" style="background:none;border:none;cursor:pointer;padding:4px;"><i id="eye-icon" class="fas fa-eye"></i></button>
+</div>
 <p id="policy" hidden class="text-sm text-slate-600">Use a passphrase of at least 15 characters.</p>
 <button id="submit" type="submit" class="bg-blue-700 text-white font-semibold w-full rounded-xl p-3">Sign in</button>
 </form>
 <button id="google" type="button" class="border border-slate-300 font-semibold w-full rounded-xl p-3 mt-4">Continue with Google</button>
 <div class="flex flex-wrap justify-between gap-4 mt-6 text-blue-700 text-sm"><button id="toggle" type="button">Create an account</button><button id="reset" type="button">Forgot password?</button></div>
+<p class="text-xs text-slate-400 mt-4">Don't have an account? Click <strong>Create an account</strong> above. After creating your account, verify your email to submit alumni applications and suggestions.</p>
 </div>
 <div id="member" hidden class="space-y-5"><h2 class="text-2xl font-bold">Your account</h2><p id="identity" class="break-all"></p><p id="verified"></p><a href="/admin.html" class="block text-blue-700">Manage website (authorized staff)</a><button id="verify" type="button" class="bg-blue-700 text-white rounded-xl p-3">Send verification email</button><button id="refresh" type="button" class="border rounded-xl p-3">I have verified my email</button><button id="logout" type="button" class="block text-blue-700">Sign out</button></div>
 <noscript><p>Enable JavaScript to sign in.</p></noscript>

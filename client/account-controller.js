@@ -53,6 +53,12 @@ export function mountAccount(doc, service) {
   }
   el('toggle').onclick = () => setMode(mode === 'login' ? 'signup' : 'login');
   el('reset').onclick = () => setMode('reset');
+  // Password visibility toggle (eye icon)
+  el('toggle-password').onclick = () => {
+    const pwd = el('password'), icon = el('eye-icon');
+    if (pwd.type === 'password') { pwd.type = 'text'; icon.className = 'fas fa-eye-slash'; el('toggle-password').setAttribute('aria-label', 'Hide password'); }
+    else { pwd.type = 'password'; icon.className = 'fas fa-eye'; el('toggle-password').setAttribute('aria-label', 'Show password'); }
+  };
   el('form').onsubmit = event => {
     event.preventDefault();
     if (!el('form').reportValidity()) return;
