@@ -52,9 +52,9 @@ function content(kind){return state.content[kind].map(item=>({...item.data,id:it
 function render(){renderHome();renderEvents();renderNotices();loadCabinet();renderAlumni();renderFeatured();initRevealOnScroll();}
 function renderHome(){
  $('home-session')&&($('home-session').textContent='Session '+state.session+' Society Leadership');
- // Show only 3 members on the homepage Core Executive Body strip (President,
- // Vice President, General Secretary, etc. — controlled by displayOrder).
- const core=content('cabinet').filter(m=>m.session===state.session&&m.group==='core').sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0)).slice(0,3);
+ // Show only 3 members on the homepage Core Executive Body strip.
+ // Filter by placement: only 'homepage' or 'both' (or missing = old data = both).
+ const core=content('cabinet').filter(m=>m.session===state.session&&m.group==='core'&&(m.placement==='homepage'||m.placement==='both'||!m.placement)).sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0)).slice(0,3);
  if($('homeExecutiveGrid'))$('homeExecutiveGrid').innerHTML=core.map(m=>`<article class="profile-card rounded-2xl p-6 sm:p-7 border border-slate-200 dark:border-slate-800 text-center"><div class="avatar-ring w-36 h-36 sm:w-44 sm:h-44 md:w-48 md:h-48 mx-auto mb-5">${image(m,'w-full h-full')}</div><h3 class="font-bold text-lg sm:text-xl text-slate-900 dark:text-white">${esc(m.title)}</h3><div class="role-label mt-2">${esc(m.role)}</div></article>`).join('')||empty;
  if($('blogGrid'))$('blogGrid').innerHTML=content('posts').map(b=>`<button type="button" class="blog-card rounded-2xl p-5 border border-slate-200 dark:border-slate-800 text-left space-y-3" data-blog="${esc(b.id)}"><div class="blog-image">${image(b,'w-full h-56 sm:h-64 lg:h-72 object-cover')}</div><h3 class="font-bold text-lg text-slate-900 dark:text-white">${esc(b.title)}</h3><p class="text-sm text-slate-500 dark:text-slate-400 line-clamp-2">${esc(b.description)}</p><p class="text-sm text-blue-600 dark:text-blue-400 font-medium">By ${esc(b.author)} &rarr;</p></button>`).join('')||empty;
  const t=state.settings?.texts||{};
@@ -77,7 +77,7 @@ function loadCabinet(){
  const sessions=[...new Set(content('cabinet').map(m=>m.session))].sort().reverse();const previous=select.value;
  select.replaceChildren(...sessions.map(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;return o;}));select.value=sessions.includes(previous)?previous:sessions.includes(state.session)?state.session:sessions[0]||'';
 
- const allMembers=content('cabinet').filter(m=>m.session===select.value).sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0));
+ const allMembers=content('cabinet').filter(m=>m.session===select.value&&(m.placement==='cabinet'||m.placement==='both'||!m.placement)).sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0));
  const coreMembers=allMembers.filter(m=>m.group==='core');
  const execMembers=allMembers.filter(m=>m.group==='exec');
  const generalMembers=allMembers.filter(m=>m.group==='general');

@@ -40,6 +40,11 @@ export function validateContent(body){
  if(body.kind==='events' && /^\d{2}-\d{2}-\d{4}$/.test(data.date))data.date=data.date.split('-').reverse().join('-');
  if(body.kind==='events' && (!/^\d{4}-\d{2}-\d{2}$/.test(data.date)||!Number.isFinite(Date.parse(data.date))||new Date(data.date).toISOString().slice(0,10)!==data.date))throw invalid('Choose a valid event date using the date picker.');
  if(body.kind==='cabinet' && (!/^20\d{2}-20\d{2}$/.test(data.session)||!['core','exec','general'].includes(data.group)))throw invalid('Choose a cabinet group and enter the session as 2026-2027.');
+ // placement: where to show this member. Default to 'both' for old data.
+ if(body.kind==='cabinet'){
+  if(!data.placement) data.placement='both';
+  if(!['homepage','cabinet','both'].includes(data.placement)) throw invalid('Choose where to show this member: homepage, cabinet, or both.');
+ }
  if(body.kind==='featured' && !Object.keys(featuredGroups).includes(data.group))throw invalid('Choose a valid featured tab (e.g. hod, director, patron, dean).');
  return {kind:body.kind,status:body.status,data};
 }
