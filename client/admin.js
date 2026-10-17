@@ -1,6 +1,8 @@
 import './styles.css';
 import { api, safeImage } from './api.js';
 import { fields,kinds,settingFields,settingTextFields,featuredGroups } from '../shared/content-schema.js';
+// esc = escapeHTML for safe text rendering in admin cards (alumni review, inbox, etc.)
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=id=>document.getElementById(id),state={id:null,version:0,settingsVersion:0,contentCursor:null,inboxCursor:null,usersCursor:null,uploadsEnabled:false};
 let busy=false;
 async function task(fn){if(busy)return;busy=true;document.querySelectorAll('button,input,select,textarea').forEach(b=>b.disabled=true);$('admin-status').textContent='Please wait…';try{await fn();}catch(e){$('admin-status').textContent=e.message||'Request failed. Please try again.';$('admin-status').scrollIntoView?.({block:'center',behavior:'smooth'});}finally{busy=false;document.querySelectorAll('button,input,select,textarea').forEach(b=>b.disabled=b.dataset.unavailable==='true');}}
