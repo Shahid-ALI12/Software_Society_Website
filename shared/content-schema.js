@@ -9,7 +9,8 @@ export const fields = {
  // row controls WHICH row on the cabinet page (1=top/president, 2=next, etc.).
  //   Members with the same row number appear in the same horizontal row,
  //   sorted by displayOrder. Row size = number of members in that row.
- cabinet: { title: 'Full name', role: 'Position', session: 'Session (2026-2027)', group: 'Group (core, exec or general)', displayOrder: 'Display order (number, lower shows first)', placement: 'Show on (homepage, cabinet, both)', row: 'Row number on cabinet page (1=top)', image: 'Photo URL', alt: 'Photo description' },
+ // bio is a longer biography shown in a modal when the user clicks the photo.
+ cabinet: { title: 'Full name', role: 'Position', session: 'Session (2026-2027)', group: 'Group (core, exec or general)', displayOrder: 'Display order (number, lower shows first)', placement: 'Show on (homepage, cabinet, both)', row: 'Row number on cabinet page (1=top)', bio: 'Biography (shown when photo is clicked)', image: 'Photo URL', alt: 'Photo description' },
  gallery: { title: 'Caption', image: 'Photo URL', alt: 'Photo description' },
  alumni: { title: 'Full name', batch: 'Batch', role: 'Role and company', linkedin: 'LinkedIn URL', image: 'Photo URL', alt: 'Photo description' },
  // Featured people shown on the landing-page leadership strip (HOD, Director, Patron, Dean, etc.).

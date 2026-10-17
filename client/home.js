@@ -118,8 +118,16 @@ function loadCabinet(){
   const rowDiv=document.createElement('div');
   rowDiv.className='cabinet-row';
   rowDiv.dataset.row=String(rowNum);
-  rowDiv.innerHTML=members.map(m=>`<div class="cab-photo-wrap"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div></div>`).join('');
+  rowDiv.innerHTML=members.map(m=>`<div class="cab-photo-wrap" data-bio-id="${esc(m.id)}" style="cursor:pointer;" title="Click to view biography"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div></div>`).join('');
   rowsWrap.append(rowDiv);
+ });
+ // Add click listeners to all cabinet photos — opens the bio modal.
+ rowsWrap.querySelectorAll('[data-bio-id]').forEach(el=>{
+  el.onclick=()=>{
+   const id=el.dataset.bioId;
+   const member=content('cabinet').find(m=>m.id===id);
+   if(member) openBioModal(member);
+  };
  });
 }
 function renderAlumni(){if(!$('alumniGrid'))return;$('alumniGrid').innerHTML=content('alumni').map(a=>`<article class="profile-card rounded-2xl p-5 border border-slate-200 dark:border-slate-800 space-y-3 text-center"><div class="avatar-ring w-28 h-28 sm:w-32 sm:h-32 mx-auto">${image(a,'w-full h-full')}</div><h3 class="font-bold text-slate-900 dark:text-white">${esc(a.title)}</h3><p class="text-xs text-slate-500 dark:text-slate-400">Batch: ${esc(a.batch)}</p><p class="text-sm text-slate-700 dark:text-slate-300">${esc(a.role)}</p>${safeLinkedIn(a.linkedin)?`<a href="${esc(safeLinkedIn(a.linkedin))}" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 text-sm font-medium hover:underline">Connect on LinkedIn &rarr;</a>`:''}</article>`).join('')||empty;}
@@ -146,9 +154,24 @@ function renderFeatured(){
  });
 }
 let lastFocus;
-function openModal(id){lastFocus=document.activeElement;const modal=$(id);modal.classList.remove('hidden');modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label',id==='blogModal'?'Article':id==='lightboxModal'?'Photo preview':'Alumni application');modal.querySelector('button,input')?.focus();}
+function openModal(id){lastFocus=document.activeElement;const modal=$(id);modal.classList.remove('hidden');modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label',id==='blogModal'?'Article':id==='lightboxModal'?'Photo preview':id==='bioModal'?'Member biography':'Alumni application');modal.querySelector('button,input')?.focus();}
 function closeModal(id){$(id).classList.add('hidden');lastFocus?.focus();}
 function showToast(message){$('toastMsg').textContent=message;$('toast').classList.remove('translate-y-20','opacity-0');setTimeout(()=>$('toast').classList.add('translate-y-20','opacity-0'),5000);}
+// Open the biography modal for a cabinet member.
+function openBioModal(member){
+ const content=$('bioModalContent');if(!content)return;
+ content.innerHTML=`
+  <div class="flex flex-col items-center text-center gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+   <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-indigo-200 dark:border-indigo-900 shadow-lg">${member.image?`<img src="${esc(safeImage(member.image))}" alt="${esc(member.alt||member.title)}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-3xl"><i class="fas fa-user"></i></div>`}</div>
+   <div>
+    <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">${esc(member.title)}</h2>
+    <p class="text-sm text-indigo-600 dark:text-indigo-400 font-semibold mt-1">${esc(member.role)}</p>
+   </div>
+  </div>
+  <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">${member.bio?esc(member.bio):'No biography available yet for this member.'}</div>
+ `;
+ openModal('bioModal');
+}
 function switchTab(tab){document.querySelectorAll('.tab-content').forEach(e=>e.classList.toggle('active',e.id==='tab-'+tab));document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('active',b.dataset.target===tab);b.setAttribute('aria-current',b.dataset.target===tab?'page':'false');});$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');window.scrollTo({top:0,behavior:'smooth'});
  // Push tab changes to history so the phone's native back button (and our
  // floating Back FAB) can navigate between tabs the way users expect.
@@ -167,7 +190,7 @@ window.addEventListener('popstate',(e)=>{const tab=e.state?.tab||'home';document
 // Show the "scroll to top" FAB only after the user has scrolled down.
 window.addEventListener('scroll',()=>{const fab=document.querySelector('.fab-top');if(!fab)return;fab.classList.toggle('is-visible',window.scrollY>400);},{passive:true});
 function filterEvents(type){state.eventFilter=type;renderEvents();for(const [id,name]of Object.entries({btnEvtAll:'all',btnEvtUpcoming:'upcoming',btnEvtPast:'past'}))$(id).setAttribute('aria-pressed',String(type===name));}
-Object.assign(window,{switchTab,toggleMobileMenu,filterEvents,searchNotices:renderNotices,loadCabinet,openModal,closeModal,showToast,goBack,scrollToTop});
+Object.assign(window,{switchTab,toggleMobileMenu,filterEvents,searchNotices:renderNotices,loadCabinet,openModal,closeModal,showToast,goBack,scrollToTop,openBioModal});
 document.addEventListener('click',e=>{const blog=e.target.closest('[data-blog]'),photo=e.target.closest('[data-photo]');if(blog){const b=content('posts').find(b=>b.id===blog.dataset.blog);$('blogModalContent').innerHTML=`<h2 class="text-2xl font-bold pr-8">${esc(b.title)}</h2><p class="text-sm my-4">By ${esc(b.author)}</p><p class="whitespace-pre-wrap">${esc(b.body)}</p>`;openModal('blogModal');}if(photo&&photo.dataset.photo){$('lightboxImg').src=photo.dataset.photo;openModal('lightboxModal');}});
 document.addEventListener('keydown',e=>{const modal=[...document.querySelectorAll('[aria-modal="true"]')].find(m=>!m.classList.contains('hidden'));if(e.key==='Escape'){if(modal)closeModal(modal.id);$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');}if(e.key==='Tab'&&modal){const elements=[...modal.querySelectorAll('button,a,input,select,textarea')].filter(n=>!n.disabled),first=elements[0],last=elements.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 const containers={events:'eventsGrid',posts:'blogGrid',notices:'noticeContainer',cabinet:'generalBodyGrid',gallery:'galleryGrid',alumni:'alumniGrid',featured:'featuredPanel'};

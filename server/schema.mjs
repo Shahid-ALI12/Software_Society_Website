@@ -34,7 +34,7 @@ export function validateContent(body){
  const spec=fields[body.kind];exact(body.data,Object.keys(spec));const data={};
  for(const key of Object.keys(spec)) {
   const v=body.data[key]??'';
-  data[key]=field(spec[key],()=>key==='image'?imageURL(v,body.kind==='gallery'):key==='linkedin'?linkedIn(v):key==='displayOrder'?displayOrder(v):text(v,key==='body'?12000:key==='description'?4000:200,key==='title'?1:0));
+  data[key]=field(spec[key],()=>key==='image'?imageURL(v,body.kind==='gallery'):key==='linkedin'?linkedIn(v):key==='displayOrder'?displayOrder(v):key==='bio'?text(v,4000,0):text(v,key==='body'?12000:key==='description'?4000:200,key==='title'?1:0));
  }
  if(data.image&&!data.alt)throw invalid('Add a photo description before saving.');
  if(body.kind==='events' && /^\d{2}-\d{2}-\d{4}$/.test(data.date))data.date=data.date.split('-').reverse().join('-');

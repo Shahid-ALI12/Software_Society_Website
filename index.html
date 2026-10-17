@@ -1273,6 +1273,16 @@
         </div>
     </div>
 
+    <!-- 5. Cabinet Member Biography Modal -->
+    <div id="bioModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto border border-slate-200 dark:border-slate-800 shadow-2xl relative">
+            <button onclick="closeModal('bioModal')" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="bioModalContent" class="p-6 sm:p-8 space-y-4"></div>
+        </div>
+    </div>
+
 
 </body>
 </html>
