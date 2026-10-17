@@ -87,30 +87,30 @@ function loadCabinet(){
  // Top-4 = next 4 core members (displayOrder 1-4: VP, Co-President, Chairman, Gen Sec)
  const top4=coreMembers.slice(1,5);
 
- // Render President (top of chart)
+ // Render President (top of chart) — photo only, name/role hidden until hover
  const presWrap=$('cabinetPresident');if(presWrap){presWrap.replaceChildren();
   if(president){
-   presWrap.innerHTML=`<div class="cabinet-president"><div class="president-card"><div class="crown"><i class="fas fa-crown"></i></div><div class="avatar-ring">${image(president,'w-full h-full')}</div><div class="name">${esc(president.title)}</div><div class="role-label">${esc(president.role)}</div></div></div>`;
+   presWrap.innerHTML=`<div class="cabinet-president"><div class="cab-photo-wrap"><div class="crown"><i class="fas fa-crown"></i></div><div class="avatar-ring">${image(president,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(president.title)}</div><div class="role-label">${esc(president.role)}</div></div></div></div>`;
   }
  }
 
- // Render connectors + Top-4 row
+ // Render connectors + Top-4 row — photos only, name/role hidden until hover
  const connV=$('cabinetConnector');const connH=$('cabinetConnectorH');const top4Wrap=$('cabinetTop4');
  if(top4.length){
   if(connV)connV.hidden=false;if(connH)connH.hidden=false;
   if(top4Wrap){top4Wrap.replaceChildren();
-   top4Wrap.innerHTML=top4.map(m=>`<div class="top4-card"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div>`).join('');
+   top4Wrap.innerHTML=top4.map(m=>`<div class="cab-photo-wrap"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div></div>`).join('');
   }
  }else{
   if(connV)connV.hidden=true;if(connH)connH.hidden=true;
   if(top4Wrap)top4Wrap.replaceChildren();
  }
 
- // Department Heads (exec group)
- const execEl=$('executiveBodyGrid');if(execEl){execEl.innerHTML=execMembers.map(m=>`<article class="profile-card rounded-2xl p-4 border border-slate-200 dark:border-slate-800 text-center"><div class="avatar-ring w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-3">${image(m,'w-full h-full')}</div><h3 class="font-bold text-sm text-slate-900 dark:text-white">${esc(m.title)}</h3><div class="role-label mt-1" style="font-size:10px;padding:2px 8px;">${esc(m.role)}</div></article>`).join('')||empty;}
+ // Department Heads (exec group) — photos only, name/role hidden until hover
+ const execEl=$('executiveBodyGrid');if(execEl){execEl.innerHTML=execMembers.map(m=>`<div class="cab-photo-wrap"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div></div>`).join('')||empty;}
 
- // General Body
- const genEl=$('generalBodyGrid');if(genEl){genEl.innerHTML=generalMembers.map(m=>`<article class="profile-card rounded-xl p-3 border border-slate-200 dark:border-slate-800 text-center"><div class="avatar-ring w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-2">${image(m,'w-full h-full')}</div><h3 class="font-bold text-xs text-slate-900 dark:text-white">${esc(m.title)}</h3><div class="role-label mt-1" style="font-size:9px;padding:2px 6px;">${esc(m.role)}</div></article>`).join('')||empty;}
+ // General Body — photos only, name/role hidden until hover
+ const genEl=$('generalBodyGrid');if(genEl){genEl.innerHTML=generalMembers.map(m=>`<div class="cab-photo-wrap"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div></div>`).join('')||empty;}
 }
 function renderAlumni(){if(!$('alumniGrid'))return;$('alumniGrid').innerHTML=content('alumni').map(a=>`<article class="profile-card rounded-2xl p-5 border border-slate-200 dark:border-slate-800 space-y-3 text-center"><div class="avatar-ring w-28 h-28 sm:w-32 sm:h-32 mx-auto">${image(a,'w-full h-full')}</div><h3 class="font-bold text-slate-900 dark:text-white">${esc(a.title)}</h3><p class="text-xs text-slate-500 dark:text-slate-400">Batch: ${esc(a.batch)}</p><p class="text-sm text-slate-700 dark:text-slate-300">${esc(a.role)}</p>${safeLinkedIn(a.linkedin)?`<a href="${esc(safeLinkedIn(a.linkedin))}" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 text-sm font-medium hover:underline">Connect on LinkedIn &rarr;</a>`:''}</article>`).join('')||empty;}
 // Featured people: render one tab per group (HOD, Director, Patrons, Dean, etc.).

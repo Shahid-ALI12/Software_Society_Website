@@ -205,53 +205,63 @@
         @media (prefers-reduced-motion: reduce) { #mobile-fab button:active { transform: none; } }
 
         /* ===== Cabinet hierarchy / org-chart layout =====
-           President at top (large), then a row of top-4 (VP, Co-President,
-           Chairman, Gen Sec), then all heads in a grid, then general body.
-           Connected visually with subtle gradient connector lines. */
+           Photos-only by default. Name + role slide up on hover.
+           No card backgrounds, no borders — clean and visual. */
         .cabinet-hierarchy { display: flex; flex-direction: column; align-items: center; gap: 0; }
-        /* President — top of the chart */
-        .cabinet-president {
-            display: flex; justify-content: center; padding-bottom: 32px;
-            position: relative;
-        }
-        .cabinet-president .president-card {
-            max-width: 280px; width: 100%;
-            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            border: 2px solid transparent;
-            background-clip: padding-box;
-            box-shadow: 0 12px 30px -8px rgba(99, 102, 241, 0.25);
-            border-radius: 20px; padding: 24px;
-            text-align: center; position: relative;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .cabinet-president .president-card::before {
-            content: ""; position: absolute; inset: 0; border-radius: 20px; padding: 2px;
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor; mask-composite: exclude;
+
+        /* Shared hover-reveal info block */
+        .cab-info {
+            margin-top: 10px; text-align: center;
+            opacity: 0; transform: translateY(-6px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
             pointer-events: none;
         }
-        .cabinet-president .president-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 18px 40px -8px rgba(245, 158, 11, 0.35); }
-        .cabinet-president .president-card .crown {
-            position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+        .cab-info .name { font-size: 14px; font-weight: 700; color: #0f172a; line-height: 1.2; }
+        .cab-info .role-label {
+            display: inline-block; margin-top: 4px;
+            padding: 2px 8px; border-radius: 999px;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(59, 130, 246, 0.12) 100%);
+            color: #4f46e5;
+        }
+        .cab-photo-wrap { position: relative; cursor: pointer; }
+        .cab-photo-wrap .avatar-ring {
+            padding: 3px; border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .cab-photo-wrap .avatar-ring img { border-radius: 50%; width: 100%; height: 100%; object-fit: cover; display: block; }
+        .cab-photo-wrap:hover .avatar-ring { transform: scale(1.06); box-shadow: 0 10px 24px -4px rgba(99, 102, 241, 0.35); }
+        .cab-photo-wrap:hover .cab-info { opacity: 1; transform: translateY(0); }
+
+        /* President — top of chart, biggest photo */
+        .cabinet-president {
+            display: flex; flex-direction: column; align-items: center;
+            padding-bottom: 28px;
+        }
+        .cabinet-president .cab-photo-wrap .avatar-ring {
+            width: 180px; height: 180px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            padding: 4px;
+        }
+        .cabinet-president .cab-photo-wrap:hover .avatar-ring { box-shadow: 0 14px 30px -4px rgba(217, 119, 6, 0.45); }
+        .cabinet-president .crown {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
             width: 36px; height: 36px; border-radius: 50%;
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 14px;
+            color: white; font-size: 14px; z-index: 2;
             box-shadow: 0 4px 10px -2px rgba(217, 119, 6, 0.5);
         }
-        .cabinet-president .president-card .avatar-ring {
-            width: 110px; height: 110px; margin: 0 auto 14px;
-            padding: 3px; border-radius: 50%;
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        .cabinet-president .cab-info .name { font-size: 16px; }
+        .cabinet-president .cab-info .role-label {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e; font-size: 11px;
         }
-        .cabinet-president .president-card .avatar-ring img { border-radius: 50%; width: 100%; height: 100%; object-fit: cover; }
-        .cabinet-president .president-card .name { font-size: 18px; font-weight: 800; color: #0f172a; }
-        .cabinet-president .president-card .role-label { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; margin-top: 6px; font-size: 12px; padding: 4px 12px; }
 
         /* Vertical connector line from president down */
         .cabinet-connector-v {
-            width: 3px; height: 32px;
+            width: 3px; height: 28px;
             background: linear-gradient(180deg, #f59e0b 0%, #6366f1 100%);
             border-radius: 2px;
         }
@@ -261,42 +271,23 @@
             background: linear-gradient(90deg, transparent 0%, #6366f1 15%, #6366f1 85%, transparent 100%);
             border-radius: 2px;
         }
+
         /* Top-4 row (VP, Co-President, Chairman, Gen Sec) */
         .cabinet-top4 {
             display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 20px; width: 100%; max-width: 900px;
-            padding: 20px 0;
+            gap: 28px 20px; width: 100%; max-width: 900px;
+            padding: 24px 0;
         }
         @media (min-width: 768px) { .cabinet-top4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-        .cabinet-top4 .top4-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 16px; padding: 18px;
-            text-align: center; position: relative;
-            box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.15);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .cabinet-top4 .top4-card::before {
-            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
-            border-radius: 16px 16px 0 0;
-        }
-        .cabinet-top4 .top4-card:hover { transform: translateY(-6px); box-shadow: 0 14px 28px -6px rgba(99, 102, 241, 0.3); }
-        .cabinet-top4 .top4-card .avatar-ring {
-            width: 80px; height: 80px; margin: 0 auto 10px;
-            padding: 2px; border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
-        }
-        .cabinet-top4 .top4-card .avatar-ring img { border-radius: 50%; width: 100%; height: 100%; object-fit: cover; }
-        .cabinet-top4 .top4-card .name { font-size: 14px; font-weight: 700; color: #0f172a; }
-        .cabinet-top4 .top4-card .role-label { font-size: 10px; padding: 3px 8px; margin-top: 4px; }
+        .cabinet-top4 .cab-photo-wrap { display: flex; flex-direction: column; align-items: center; }
+        .cabinet-top4 .cab-photo-wrap .avatar-ring { width: 130px; height: 130px; }
 
         /* Section heading for heads + general */
         .cabinet-section-head {
             display: flex; align-items: center; gap: 10px;
             font-size: 18px; font-weight: 700; color: #0f172a;
-            margin-top: 32px; margin-bottom: 16px;
-            padding-top: 20px; border-top: 1px solid #e2e8f0;
+            margin-top: 36px; margin-bottom: 20px;
+            padding-top: 24px; border-top: 1px solid #e2e8f0;
             width: 100%;
         }
         .cabinet-section-head::before {
@@ -304,6 +295,35 @@
             background: linear-gradient(180deg, #6366f1 0%, #3b82f6 100%);
         }
         .cabinet-section-head i { color: #6366f1; }
+
+        /* Heads grid (exec) */
+        .cabinet-heads-grid {
+            display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 28px 16px; width: 100%;
+        }
+        @media (min-width: 640px) { .cabinet-heads-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (min-width: 768px) { .cabinet-heads-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        @media (min-width: 1024px) { .cabinet-heads-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+        .cabinet-heads-grid .cab-photo-wrap { display: flex; flex-direction: column; align-items: center; }
+        .cabinet-heads-grid .cab-photo-wrap .avatar-ring { width: 96px; height: 96px; }
+        .cabinet-heads-grid .cab-info .name { font-size: 13px; }
+
+        /* General body grid */
+        .cabinet-general-grid {
+            display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px 12px; width: 100%;
+        }
+        @media (min-width: 640px) { .cabinet-general-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (min-width: 768px) { .cabinet-general-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+        .cabinet-general-grid .cab-photo-wrap { display: flex; flex-direction: column; align-items: center; }
+        .cabinet-general-grid .cab-photo-wrap .avatar-ring { width: 72px; height: 72px; }
+        .cabinet-general-grid .cab-info .name { font-size: 12px; }
+        .cabinet-general-grid .cab-info .role-label { font-size: 9px; padding: 1px 6px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .cab-info { transition: none; }
+            .cab-photo-wrap:hover .avatar-ring { transform: none; }
+        }
 
         /* ===== Premium design system for the public site =====
            A cohesive set of design tokens + components used across the
@@ -973,13 +993,13 @@
             <!-- Department Heads -->
             <div class="w-full">
                 <div class="cabinet-section-head"><i class="fas fa-users-cog"></i> Department Heads</div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5" id="executiveBodyGrid"></div>
+                <div class="cabinet-heads-grid" id="executiveBodyGrid"></div>
             </div>
 
             <!-- General Body -->
             <div class="w-full">
                 <div class="cabinet-section-head"><i class="fas fa-user-friends"></i> General Body Members</div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4" id="generalBodyGrid"></div>
+                <div class="cabinet-general-grid" id="generalBodyGrid"></div>
             </div>
 
             <!-- Hidden legacy grid (kept for compatibility but unused) -->
