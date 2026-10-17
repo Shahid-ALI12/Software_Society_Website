@@ -4,7 +4,16 @@ export function errorMessage(error) {
   if (error?.code === 'auth/unauthorized-domain') return 'Sign-in is not configured for this domain. Please contact the society team.';
   if (error?.code === 'auth/too-many-requests') return 'Too many attempts. Please wait before trying again.';
   if (error?.code === 'auth/network-request-failed') return 'Check your internet connection and try again.';
-  if (['auth/weak-password', 'auth/password-does-not-meet-requirements'].includes(error?.code)) return 'Use a password that meets the policy, including at least 15 characters.';
+  if (error?.code === 'auth/weak-password' || error?.code === 'auth/password-does-not-meet-requirements') return 'Use a password of at least 15 characters, with upper and lower case letters and numbers.';
+  if (error?.code === 'auth/invalid-credential' || error?.code === 'auth/wrong-password') return 'Incorrect email or password. Double-check your details or reset your password.';
+  if (error?.code === 'auth/user-not-found') return 'No account found with this email. Create an account first.';
+  if (error?.code === 'auth/invalid-email') return 'Enter a valid email address.';
+  if (error?.code === 'auth/email-already-in-use') return 'An account with this email already exists. Sign in instead.';
+  if (error?.code === 'auth/operation-not-allowed') return 'Email/password sign-in is not enabled for this project. Contact the society team.';
+  if (error?.code === 'auth/missing-password') return 'Please enter your password.';
+  if (error?.code === 'auth/invalid-login-credentials') return 'Incorrect email or password. Double-check your details or reset your password.';
+  // Show the actual Firebase error code so the admin/user can report it.
+  if (error?.code) return `Error: ${error.code}. Check your details or try password reset.`;
   return 'Unable to complete the request. Check your details or try password reset.';
 }
 export function mountAccount(doc, service) {
