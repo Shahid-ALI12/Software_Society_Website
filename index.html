@@ -265,28 +265,36 @@
            same row appear side-by-side. Photo size scales down for higher
            row numbers so the president (row 1) is biggest, row 2 is medium,
            row 3+ is smaller. */
-        .cabinet-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 36px 24px; }
+        .cabinet-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 40px 28px; }
         .cabinet-row .cab-photo-wrap { display: flex; flex-direction: column; align-items: center; }
-        /* Row 1 = biggest (president-level) */
-        .cabinet-row[data-row="1"] .cab-photo-wrap .avatar-ring { width: 200px; height: 200px; }
-        .cabinet-row[data-row="1"] .cab-info .name { font-size: 16px; }
+        /* Row 1 = biggest (president-level) — lifted up with extra margin */
+        .cabinet-row[data-row="1"] { margin-top: 20px; margin-bottom: 50px; }
+        .cabinet-row[data-row="1"] .cab-photo-wrap .avatar-ring { width: 260px; height: 260px; }
+        .cabinet-row[data-row="1"] .cab-info .name { font-size: 18px; }
+        .cabinet-row[data-row="1"] .cab-info .role-label { font-size: 12px; padding: 4px 14px; }
         /* Row 2 = medium (VP / Co-P / Chairman / GenSec level) */
-        .cabinet-row[data-row="2"] .cab-photo-wrap .avatar-ring { width: 150px; height: 150px; }
-        .cabinet-row[data-row="2"] .cab-info .name { font-size: 14px; }
+        .cabinet-row[data-row="2"] { margin-bottom: 50px; }
+        .cabinet-row[data-row="2"] .cab-photo-wrap .avatar-ring { width: 190px; height: 190px; }
+        .cabinet-row[data-row="2"] .cab-info .name { font-size: 15px; }
         /* Row 3 = standard heads level */
-        .cabinet-row[data-row="3"] .cab-photo-wrap .avatar-ring { width: 120px; height: 120px; }
-        .cabinet-row[data-row="3"] .cab-info .name { font-size: 13px; }
+        .cabinet-row[data-row="3"] { margin-bottom: 50px; }
+        .cabinet-row[data-row="3"] .cab-photo-wrap .avatar-ring { width: 150px; height: 150px; }
+        .cabinet-row[data-row="3"] .cab-info .name { font-size: 14px; }
         /* Row 4+ = smaller (general body level) */
         .cabinet-row[data-row="4"] .cab-photo-wrap .avatar-ring,
         .cabinet-row[data-row="5"] .cab-photo-wrap .avatar-ring,
-        .cabinet-row[data-row="6"] .cab-photo-wrap .avatar-ring { width: 92px; height: 92px; }
+        .cabinet-row[data-row="6"] .cab-photo-wrap .avatar-ring { width: 120px; height: 120px; }
         .cabinet-row[data-row="4"] .cab-info .name,
         .cabinet-row[data-row="5"] .cab-info .name,
-        .cabinet-row[data-row="6"] .cab-info .name { font-size: 12px; }
+        .cabinet-row[data-row="6"] .cab-info .name { font-size: 13px; }
         @media (max-width: 640px) {
-            .cabinet-row { gap: 24px 16px; }
-            .cabinet-row[data-row="1"] .cab-photo-wrap .avatar-ring { width: 160px; height: 160px; }
-            .cabinet-row[data-row="2"] .cab-photo-wrap .avatar-ring { width: 120px; height: 120px; }
+            .cabinet-row { gap: 28px 18px; }
+            .cabinet-row[data-row="1"] .cab-photo-wrap .avatar-ring { width: 200px; height: 200px; }
+            .cabinet-row[data-row="2"] .cab-photo-wrap .avatar-ring { width: 150px; height: 150px; }
+            .cabinet-row[data-row="3"] .cab-photo-wrap .avatar-ring { width: 120px; height: 120px; }
+            .cabinet-row[data-row="4"] .cab-photo-wrap .avatar-ring,
+            .cabinet-row[data-row="5"] .cab-photo-wrap .avatar-ring,
+            .cabinet-row[data-row="6"] .cab-photo-wrap .avatar-ring { width: 90px; height: 90px; }
         }
 
         /* Section heading for heads + general */
