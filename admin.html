@@ -49,9 +49,20 @@
             <!-- 1. CONTENT PANEL -->
             <section id="content-panel" class="manage-panel">
                 <div class="flex flex-wrap items-end justify-between gap-4 mb-5">
-                    <label class="field-label">Content type
-                        <select id="content-kind"></select>
-                    </label>
+                    <div class="flex flex-wrap items-end gap-3">
+                        <label class="field-label">Content type
+                            <select id="content-kind"></select>
+                        </label>
+                        <!-- Cabinet group filter — only visible when cabinet is selected -->
+                        <label class="field-label" id="cabinet-filter-label" style="display:none;">Filter by
+                            <select id="cabinet-filter">
+                                <option value="all">All members</option>
+                                <option value="core">Main Body (President, VP, etc.)</option>
+                                <option value="exec">Heads</option>
+                                <option value="general">General Members</option>
+                            </select>
+                        </label>
+                    </div>
                     <button id="new-item" class="primary-button"><i class="fas fa-plus"></i> New item</button>
                 </div>
 
