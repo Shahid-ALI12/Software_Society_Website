@@ -204,6 +204,107 @@
         @media (min-width: 1280px) { #mobile-fab { display: none !important; } }
         @media (prefers-reduced-motion: reduce) { #mobile-fab button:active { transform: none; } }
 
+        /* ===== Cabinet hierarchy / org-chart layout =====
+           President at top (large), then a row of top-4 (VP, Co-President,
+           Chairman, Gen Sec), then all heads in a grid, then general body.
+           Connected visually with subtle gradient connector lines. */
+        .cabinet-hierarchy { display: flex; flex-direction: column; align-items: center; gap: 0; }
+        /* President — top of the chart */
+        .cabinet-president {
+            display: flex; justify-content: center; padding-bottom: 32px;
+            position: relative;
+        }
+        .cabinet-president .president-card {
+            max-width: 280px; width: 100%;
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            box-shadow: 0 12px 30px -8px rgba(99, 102, 241, 0.25);
+            border-radius: 20px; padding: 24px;
+            text-align: center; position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .cabinet-president .president-card::before {
+            content: ""; position: absolute; inset: 0; border-radius: 20px; padding: 2px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+            pointer-events: none;
+        }
+        .cabinet-president .president-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 18px 40px -8px rgba(245, 158, 11, 0.35); }
+        .cabinet-president .president-card .crown {
+            position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 14px;
+            box-shadow: 0 4px 10px -2px rgba(217, 119, 6, 0.5);
+        }
+        .cabinet-president .president-card .avatar-ring {
+            width: 110px; height: 110px; margin: 0 auto 14px;
+            padding: 3px; border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        .cabinet-president .president-card .avatar-ring img { border-radius: 50%; width: 100%; height: 100%; object-fit: cover; }
+        .cabinet-president .president-card .name { font-size: 18px; font-weight: 800; color: #0f172a; }
+        .cabinet-president .president-card .role-label { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; margin-top: 6px; font-size: 12px; padding: 4px 12px; }
+
+        /* Vertical connector line from president down */
+        .cabinet-connector-v {
+            width: 3px; height: 32px;
+            background: linear-gradient(180deg, #f59e0b 0%, #6366f1 100%);
+            border-radius: 2px;
+        }
+        /* Horizontal connector for the top-4 row */
+        .cabinet-connector-h {
+            width: 100%; max-width: 800px; height: 3px;
+            background: linear-gradient(90deg, transparent 0%, #6366f1 15%, #6366f1 85%, transparent 100%);
+            border-radius: 2px;
+        }
+        /* Top-4 row (VP, Co-President, Chairman, Gen Sec) */
+        .cabinet-top4 {
+            display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px; width: 100%; max-width: 900px;
+            padding: 20px 0;
+        }
+        @media (min-width: 768px) { .cabinet-top4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        .cabinet-top4 .top4-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px; padding: 18px;
+            text-align: center; position: relative;
+            box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .cabinet-top4 .top4-card::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+            border-radius: 16px 16px 0 0;
+        }
+        .cabinet-top4 .top4-card:hover { transform: translateY(-6px); box-shadow: 0 14px 28px -6px rgba(99, 102, 241, 0.3); }
+        .cabinet-top4 .top4-card .avatar-ring {
+            width: 80px; height: 80px; margin: 0 auto 10px;
+            padding: 2px; border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+        }
+        .cabinet-top4 .top4-card .avatar-ring img { border-radius: 50%; width: 100%; height: 100%; object-fit: cover; }
+        .cabinet-top4 .top4-card .name { font-size: 14px; font-weight: 700; color: #0f172a; }
+        .cabinet-top4 .top4-card .role-label { font-size: 10px; padding: 3px 8px; margin-top: 4px; }
+
+        /* Section heading for heads + general */
+        .cabinet-section-head {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 18px; font-weight: 700; color: #0f172a;
+            margin-top: 32px; margin-bottom: 16px;
+            padding-top: 20px; border-top: 1px solid #e2e8f0;
+            width: 100%;
+        }
+        .cabinet-section-head::before {
+            content: ""; width: 4px; height: 20px; border-radius: 2px;
+            background: linear-gradient(180deg, #6366f1 0%, #3b82f6 100%);
+        }
+        .cabinet-section-head i { color: #6366f1; }
+
         /* ===== Premium design system for the public site =====
            A cohesive set of design tokens + components used across the
            homepage cards, sections and buttons. Designed to look polished
@@ -856,32 +957,33 @@
                 </select>
             </div>
 
-            <!-- Executive Core Body -->
-            <div class="space-y-4">
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                    <i class="fas fa-crown text-amber-500"></i>
-                    <span>Executive Core Body</span>
-                </h2>
-                <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6" id="coreBodyGrid"></div>
+            <!-- Hierarchy / Org-Chart Layout -->
+            <div class="cabinet-hierarchy">
+
+                <!-- President (top of chart) -->
+                <div id="cabinetPresident"></div>
+
+                <!-- Connector + Top-4 row (VP, Co-President, Chairman, Gen Sec) -->
+                <div id="cabinetConnector" class="cabinet-connector-v" hidden></div>
+                <div id="cabinetConnectorH" class="cabinet-connector-h" hidden></div>
+                <div id="cabinetTop4" class="cabinet-top4"></div>
+
             </div>
 
-            <!-- Executive Body -->
-            <div class="space-y-4 pt-6">
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                    <i class="fas fa-users-cog text-blue-500"></i>
-                    <span>Executive Body (Co-heads & Leads)</span>
-                </h2>
-                <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6" id="executiveBodyGrid"></div>
+            <!-- Department Heads -->
+            <div class="w-full">
+                <div class="cabinet-section-head"><i class="fas fa-users-cog"></i> Department Heads</div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5" id="executiveBodyGrid"></div>
             </div>
 
             <!-- General Body -->
-            <div class="space-y-4 pt-6">
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                    <i class="fas fa-user-friends text-emerald-500"></i>
-                    <span>General Body Members</span>
-                </h2>
+            <div class="w-full">
+                <div class="cabinet-section-head"><i class="fas fa-user-friends"></i> General Body Members</div>
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4" id="generalBodyGrid"></div>
             </div>
+
+            <!-- Hidden legacy grid (kept for compatibility but unused) -->
+            <div id="coreBodyGrid" hidden></div>
         </div>
 
         <!-- 5. ALUMNI TAB -->
