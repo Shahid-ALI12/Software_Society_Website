@@ -112,7 +112,7 @@ export function createHandler({getServices,limit,siteOrigin,production=false,upl
         const html=body.status==='approved'
          ?'<h2>Congratulations!</h2><p>Your alumni directory submission has been approved by the SE Society admin team. Your profile is now visible on the public Alumni Directory page.</p><p>Thank you for being part of the SE Society community!</p><br><p>Best regards,<br>SE Society Team<br>National Textile University, Faisalabad</p>'
          :'<h2>Alumni Application Update</h2><p>We regret to inform you that your alumni directory submission has been rejected by the SE Society admin team.</p><p>If you believe this was a mistake, please contact us at se.society.ntu@gmail.com.</p><br><p>Best regards,<br>SE Society Team<br>National Textile University, Faisalabad</p>';
-        await fetch('https://api.resend.com/emails',{
+        const emailResp=await fetch('https://api.resend.com/emails',{
          method:'POST',
          headers:{'Authorization':'Bearer '+process.env.RESEND_API_KEY,'Content-Type':'application/json'},
          body:JSON.stringify({
@@ -123,9 +123,12 @@ export function createHandler({getServices,limit,siteOrigin,production=false,upl
          }),
          signal:AbortSignal.timeout(5000)
         });
-        result.emailSent=true;
+        const emailBody=await emailResp.text();
+        console.log('email_send_result',{status:emailResp.status,body:emailBody.substring(0,200),to:emailAddr});
+        if(emailResp.ok)result.emailSent=true;
+        else result.emailError=emailBody.substring(0,200);
        }
-      }catch(e){/* email failed — don't fail the moderation */}
+      }catch(e){console.log('email_send_error',e.message);result.emailError=e.message;}
      }
     }else if(action==='assign-role'){
      exact(body,['uid','role']);if(!['member','editor','admin'].includes(body.role))throw invalid();
