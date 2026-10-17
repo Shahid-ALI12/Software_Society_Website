@@ -107,6 +107,13 @@ function loadCabinet(){
  if(!sortedRowNums.length){rowsWrap.innerHTML=empty;return;}
 
  sortedRowNums.forEach(rowNum=>{
+  // Before row 3 (heads level), insert a left-aligned "All Heads" label.
+  if(rowNum===3){
+   const head=document.createElement('div');
+   head.className='cabinet-section-head';
+   head.innerHTML='<i class="fas fa-users-cog"></i> All Heads';
+   rowsWrap.append(head);
+  }
   const members=rowMap[rowNum].sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0));
   const rowDiv=document.createElement('div');
   rowDiv.className='cabinet-row';
