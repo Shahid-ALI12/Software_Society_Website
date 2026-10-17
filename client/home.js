@@ -162,9 +162,9 @@ function openBioModal(member){
  const content=$('bioModalContent');if(!content)return;
  content.innerHTML=`
   <div class="flex flex-col items-center text-center gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
-   <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-indigo-200 dark:border-indigo-900 shadow-lg">${member.image?`<img src="${esc(safeImage(member.image))}" alt="${esc(member.alt||member.title)}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-3xl"><i class="fas fa-user"></i></div>`}</div>
+   <div class="w-36 h-36 sm:w-40 sm:h-40 rounded-full overflow-hidden shadow-xl">${member.image?`<img src="${esc(safeImage(member.image))}" alt="${esc(member.alt||member.title)}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-4xl"><i class="fas fa-user"></i></div>`}</div>
    <div>
-    <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">${esc(member.title)}</h2>
+    <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">${esc(member.title)}</h2>
     <p class="text-sm text-indigo-600 dark:text-indigo-400 font-semibold mt-1">${esc(member.role)}</p>
    </div>
   </div>
@@ -191,7 +191,14 @@ window.addEventListener('popstate',(e)=>{const tab=e.state?.tab||'home';document
 window.addEventListener('scroll',()=>{const fab=document.querySelector('.fab-top');if(!fab)return;fab.classList.toggle('is-visible',window.scrollY>400);},{passive:true});
 function filterEvents(type){state.eventFilter=type;renderEvents();for(const [id,name]of Object.entries({btnEvtAll:'all',btnEvtUpcoming:'upcoming',btnEvtPast:'past'}))$(id).setAttribute('aria-pressed',String(type===name));}
 Object.assign(window,{switchTab,toggleMobileMenu,filterEvents,searchNotices:renderNotices,loadCabinet,openModal,closeModal,showToast,goBack,scrollToTop,openBioModal});
-document.addEventListener('click',e=>{const blog=e.target.closest('[data-blog]'),photo=e.target.closest('[data-photo]');if(blog){const b=content('posts').find(b=>b.id===blog.dataset.blog);$('blogModalContent').innerHTML=`<h2 class="text-2xl font-bold pr-8">${esc(b.title)}</h2><p class="text-sm my-4">By ${esc(b.author)}</p><p class="whitespace-pre-wrap">${esc(b.body)}</p>`;openModal('blogModal');}if(photo&&photo.dataset.photo){$('lightboxImg').src=photo.dataset.photo;openModal('lightboxModal');}});
+document.addEventListener('click',e=>{
+ // Close any open modal when clicking on the dark overlay (not the card itself).
+ const openModalEl=[...document.querySelectorAll('[aria-modal="true"]')].find(m=>!m.classList.contains('hidden'));
+ if(openModalEl&&e.target===openModalEl){closeModal(openModalEl.id);return;}
+ const blog=e.target.closest('[data-blog]'),photo=e.target.closest('[data-photo]');
+ if(blog){const b=content('posts').find(b=>b.id===blog.dataset.blog);$('blogModalContent').innerHTML=`<h2 class="text-2xl font-bold pr-8">${esc(b.title)}</h2><p class="text-sm my-4">By ${esc(b.author)}</p><p class="whitespace-pre-wrap">${esc(b.body)}</p>`;openModal('blogModal');}
+ if(photo&&photo.dataset.photo){$('lightboxImg').src=photo.dataset.photo;openModal('lightboxModal');}
+});
 document.addEventListener('keydown',e=>{const modal=[...document.querySelectorAll('[aria-modal="true"]')].find(m=>!m.classList.contains('hidden'));if(e.key==='Escape'){if(modal)closeModal(modal.id);$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');}if(e.key==='Tab'&&modal){const elements=[...modal.querySelectorAll('button,a,input,select,textarea')].filter(n=>!n.disabled),first=elements[0],last=elements.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 const containers={events:'eventsGrid',posts:'blogGrid',notices:'noticeContainer',cabinet:'generalBodyGrid',gallery:'galleryGrid',alumni:'alumniGrid',featured:'featuredPanel'};
 for(const kind of kinds){const button=document.createElement('button');button.className='secondary-button load-more';button.textContent='Load more '+kind;button.hidden=true;button.id='more-'+kind;const fallback=$(containers[kind])||$('featuredPanel');if(fallback)fallback.after(button);button.onclick=async()=>{button.disabled=true;try{const page=await api('public',{kind,cursor:state.cursors[kind]});const known=new Set(state.content[kind].map(i=>i.id));state.content[kind].push(...page.items.filter(i=>!known.has(i.id)));state.cursors[kind]=page.nextCursor;button.hidden=!page.nextCursor;render();}catch(e){showToast(e.message);}finally{button.disabled=false;}};}
