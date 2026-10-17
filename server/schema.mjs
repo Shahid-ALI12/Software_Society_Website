@@ -21,8 +21,9 @@ export function imageURL(value, required=false) {
 }
 export function linkedIn(value) {
  const v=text(value,500); if(!v)return '';
- let u;try{u=new URL(v);}catch{throw invalid();}
- if(u.protocol!=='https:' || !['www.linkedin.com','linkedin.com'].includes(u.hostname) || u.username || u.password || u.port || !u.pathname.startsWith('/in/'))throw invalid();
+ let u;try{u=new URL(v);}catch{throw invalid('Enter a valid LinkedIn URL.');}
+ if(u.protocol!=='https:' || !['www.linkedin.com','linkedin.com'].includes(u.hostname) || u.username || u.password || u.port)throw invalid('Use a valid LinkedIn URL (https://www.linkedin.com/in/your-name or /company/your-company).');
+ if(!u.pathname.startsWith('/in/') && !u.pathname.startsWith('/company/'))throw invalid('LinkedIn URL must be a personal profile (linkedin.com/in/...) or company page (linkedin.com/company/...).');
  return u.href;
 }
 export function identifier(v){ if(typeof v!=='string'||!/^[A-Za-z0-9_-]{1,80}$/.test(v))throw invalid();return v; }
