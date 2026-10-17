@@ -40,7 +40,7 @@ export function createRepository(db){
     if(v.data.consent!==true)throw invalid();
     tx.set(db.collection('content').doc('alumni-'+id),{kind:'alumni',status:'published',data:{title:v.data.name,batch:v.data.batch,role:v.data.role,linkedin:v.data.linkedin,image:'',alt:''},version:1,createdAt:FieldValue.serverTimestamp(),updatedAt:FieldValue.serverTimestamp()});
    }else if(status==='approved')throw invalid();
-   tx.update(ref,{status,version:version+1,updatedAt:FieldValue.serverTimestamp()});audit(tx,uid,'submission.'+status,ref.path);return {id,status};
+   tx.update(ref,{status,version:version+1,updatedAt:FieldValue.serverTimestamp()});audit(tx,uid,'submission.'+status,ref.path);return {id,status,submitterUid:v.uid,kind:v.kind};
   });}
  };
 }

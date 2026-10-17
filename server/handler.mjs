@@ -82,6 +82,34 @@ export function createHandler({getServices,limit,siteOrigin,production=false,upl
     }else if(action==='moderate'){
      exact(body,['id','status','version']);if(!['approved','rejected','reviewed'].includes(body.status))throw invalid();
      result=await repo.moderate(user.uid,identifier(body.id),body.status,version(body.version));
+     // Send notification email to the applicant when an alumni application is
+     // approved or rejected. Uses Resend API (https://resend.com).
+     // If RESEND_API_KEY is not set, the email is silently skipped — the
+     // moderation itself still succeeds.
+     if(result.submitterUid && (body.status==='approved'||body.status==='rejected') && process.env.RESEND_API_KEY){
+      try{
+       const submitter=await auth.getUser(result.submitterUid);
+       const emailAddr=submitter.email;
+       if(emailAddr){
+        const subject=body.status==='approved'?'Your alumni application has been approved':'Your alumni application has been rejected';
+        const html=body.status==='approved'
+         ?'<h2>Congratulations!</h2><p>Your alumni directory submission has been approved by the SE Society admin team. Your profile is now visible on the public Alumni Directory page.</p><p>Thank you for being part of the SE Society community!</p><br><p>Best regards,<br>SE Society Team<br>National Textile University, Faisalabad</p>'
+         :'<h2>Alumni Application Update</h2><p>We regret to inform you that your alumni directory submission has been rejected by the SE Society admin team.</p><p>If you believe this was a mistake, please contact us at se.society.ntu@gmail.com.</p><br><p>Best regards,<br>SE Society Team<br>National Textile University, Faisalabad</p>';
+        await fetch('https://api.resend.com/emails',{
+         method:'POST',
+         headers:{'Authorization':'Bearer '+process.env.RESEND_API_KEY,'Content-Type':'application/json'},
+         body:JSON.stringify({
+          from:process.env.EMAIL_FROM||'SE Society <onboarding@resend.dev>',
+          to:[emailAddr],
+          subject,
+          html
+         }),
+         signal:AbortSignal.timeout(5000)
+        });
+        result.emailSent=true;
+       }
+      }catch(e){/* email failed — don't fail the moderation */}
+     }
     }else if(action==='assign-role'){
      exact(body,['uid','role']);if(!['member','editor','admin'].includes(body.role))throw invalid();
      if(body.uid===user.uid)throw new RequestError(400,'invalid_input','You cannot change your own role.');
