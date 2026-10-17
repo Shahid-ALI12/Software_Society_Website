@@ -77,36 +77,43 @@ function loadCabinet(){
  const sessions=[...new Set(content('cabinet').map(m=>m.session))].sort().reverse();const previous=select.value;
  select.replaceChildren(...sessions.map(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;return o;}));select.value=sessions.includes(previous)?previous:sessions.includes(state.session)?state.session:sessions[0]||'';
 
- const allMembers=content('cabinet').filter(m=>m.session===select.value&&(m.placement==='cabinet'||m.placement==='both'||!m.placement)).sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0));
- const coreMembers=allMembers.filter(m=>m.group==='core');
- const execMembers=allMembers.filter(m=>m.group==='exec');
- const generalMembers=allMembers.filter(m=>m.group==='general');
+ // Filter by session + placement (cabinet or both or missing=old data).
+ const allMembers=content('cabinet').filter(m=>m.session===select.value&&(m.placement==='cabinet'||m.placement==='both'||!m.placement));
 
- // President = first core member (displayOrder 0)
- const president=coreMembers[0];
- // Top-4 = next 4 core members (displayOrder 1-4: VP, Co-President, Chairman, Gen Sec)
- const top4=coreMembers.slice(1,5);
-
- // Render President (top of chart) — photo only, name/role hidden until hover
- const presWrap=$('cabinetPresident');if(presWrap){presWrap.replaceChildren();
-  if(president){
-   presWrap.innerHTML=`<div class="cabinet-president"><div class="cab-photo-wrap"><div class="avatar-ring">${image(president,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(president.title)}</div><div class="role-label">${esc(president.role)}</div></div></div></div>`;
+ // Determine row for each member.
+ // - If member has a `row` field, use it.
+ // - Else (old data) infer: core displayOrder 0 = row 1, core >0 = row 2,
+ //   exec = row 3, general = row 4.
+ const withRows=allMembers.map(m=>{
+  let row=Number(m.row);
+  if(!Number.isSafeInteger(row)||row<1){
+   if(m.group==='core') row=(Number(m.displayOrder)||0)===0?1:2;
+   else if(m.group==='exec') row=3;
+   else row=4;
   }
- }
+  return {...m,_row:row};
+ });
 
- // Render Top-4 row — photos only, name/role hidden until hover
- const top4Wrap=$('cabinetTop4');
- if(top4Wrap){top4Wrap.replaceChildren();
-  if(top4.length){
-   top4Wrap.innerHTML=top4.map(m=>`<div class="cab-photo-wrap"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div></div>`).join('');
-  }
- }
+ // Group members by row number.
+ const rowMap={};
+ withRows.forEach(m=>{if(!rowMap[m._row])rowMap[m._row]=[];rowMap[m._row].push(m);});
 
- // Department Heads (exec group) — only render if there are members
- const execEl=$('executiveBodyGrid');if(execEl){execEl.innerHTML=execMembers.length?execMembers.map(m=>`<div class="cab-photo-wrap"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div></div>`).join(''):'';}
+ // Sort rows ascending; within each row sort by displayOrder.
+ const sortedRowNums=Object.keys(rowMap).map(Number).sort((a,b)=>a-b);
 
- // General Body — only render if there are members
- const genEl=$('generalBodyGrid');if(genEl){genEl.innerHTML=generalMembers.length?generalMembers.map(m=>`<div class="cab-photo-wrap"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div></div>`).join(''):'';}
+ // Render into #cabinetRows — each row is a flex container.
+ const rowsWrap=$('cabinetRows');if(!rowsWrap)return;
+ rowsWrap.replaceChildren();
+ if(!sortedRowNums.length){rowsWrap.innerHTML=empty;return;}
+
+ sortedRowNums.forEach(rowNum=>{
+  const members=rowMap[rowNum].sort((a,b)=>(Number(a.displayOrder)||0)-(Number(b.displayOrder)||0));
+  const rowDiv=document.createElement('div');
+  rowDiv.className='cabinet-row';
+  rowDiv.dataset.row=String(rowNum);
+  rowDiv.innerHTML=members.map(m=>`<div class="cab-photo-wrap"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div></div>`).join('');
+  rowsWrap.append(rowDiv);
+ });
 }
 function renderAlumni(){if(!$('alumniGrid'))return;$('alumniGrid').innerHTML=content('alumni').map(a=>`<article class="profile-card rounded-2xl p-5 border border-slate-200 dark:border-slate-800 space-y-3 text-center"><div class="avatar-ring w-28 h-28 sm:w-32 sm:h-32 mx-auto">${image(a,'w-full h-full')}</div><h3 class="font-bold text-slate-900 dark:text-white">${esc(a.title)}</h3><p class="text-xs text-slate-500 dark:text-slate-400">Batch: ${esc(a.batch)}</p><p class="text-sm text-slate-700 dark:text-slate-300">${esc(a.role)}</p>${safeLinkedIn(a.linkedin)?`<a href="${esc(safeLinkedIn(a.linkedin))}" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 text-sm font-medium hover:underline">Connect on LinkedIn &rarr;</a>`:''}</article>`).join('')||empty;}
 // Featured people: render one tab per group (HOD, Director, Patrons, Dean, etc.).

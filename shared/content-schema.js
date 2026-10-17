@@ -6,7 +6,10 @@ export const fields = {
  // displayOrder lets the admin choose who appears first on the homepage
  // Core Executive Body strip and the Cabinet tab. Lower number = earlier.
  // placement controls WHERE the member shows: homepage, cabinet, or both.
- cabinet: { title: 'Full name', role: 'Position', session: 'Session (2026-2027)', group: 'Group (core, exec or general)', displayOrder: 'Display order (number, lower shows first)', placement: 'Show on (homepage, cabinet, both)', image: 'Photo URL', alt: 'Photo description' },
+ // row controls WHICH row on the cabinet page (1=top/president, 2=next, etc.).
+ //   Members with the same row number appear in the same horizontal row,
+ //   sorted by displayOrder. Row size = number of members in that row.
+ cabinet: { title: 'Full name', role: 'Position', session: 'Session (2026-2027)', group: 'Group (core, exec or general)', displayOrder: 'Display order (number, lower shows first)', placement: 'Show on (homepage, cabinet, both)', row: 'Row number on cabinet page (1=top)', image: 'Photo URL', alt: 'Photo description' },
  gallery: { title: 'Caption', image: 'Photo URL', alt: 'Photo description' },
  alumni: { title: 'Full name', batch: 'Batch', role: 'Role and company', linkedin: 'LinkedIn URL', image: 'Photo URL', alt: 'Photo description' },
  // Featured people shown on the landing-page leadership strip (HOD, Director, Patron, Dean, etc.).

@@ -260,6 +260,35 @@
         .cabinet-top4 .cab-photo-wrap { display: flex; flex-direction: column; align-items: center; }
         .cabinet-top4 .cab-photo-wrap .avatar-ring { width: 160px; height: 160px; }
 
+        /* ===== Row-based cabinet layout (replaces fixed president/top-4) =====
+           Each row is a flex container centered on the page. Members in the
+           same row appear side-by-side. Photo size scales down for higher
+           row numbers so the president (row 1) is biggest, row 2 is medium,
+           row 3+ is smaller. */
+        .cabinet-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 36px 24px; }
+        .cabinet-row .cab-photo-wrap { display: flex; flex-direction: column; align-items: center; }
+        /* Row 1 = biggest (president-level) */
+        .cabinet-row[data-row="1"] .cab-photo-wrap .avatar-ring { width: 200px; height: 200px; }
+        .cabinet-row[data-row="1"] .cab-info .name { font-size: 16px; }
+        /* Row 2 = medium (VP / Co-P / Chairman / GenSec level) */
+        .cabinet-row[data-row="2"] .cab-photo-wrap .avatar-ring { width: 150px; height: 150px; }
+        .cabinet-row[data-row="2"] .cab-info .name { font-size: 14px; }
+        /* Row 3 = standard heads level */
+        .cabinet-row[data-row="3"] .cab-photo-wrap .avatar-ring { width: 120px; height: 120px; }
+        .cabinet-row[data-row="3"] .cab-info .name { font-size: 13px; }
+        /* Row 4+ = smaller (general body level) */
+        .cabinet-row[data-row="4"] .cab-photo-wrap .avatar-ring,
+        .cabinet-row[data-row="5"] .cab-photo-wrap .avatar-ring,
+        .cabinet-row[data-row="6"] .cab-photo-wrap .avatar-ring { width: 92px; height: 92px; }
+        .cabinet-row[data-row="4"] .cab-info .name,
+        .cabinet-row[data-row="5"] .cab-info .name,
+        .cabinet-row[data-row="6"] .cab-info .name { font-size: 12px; }
+        @media (max-width: 640px) {
+            .cabinet-row { gap: 24px 16px; }
+            .cabinet-row[data-row="1"] .cab-photo-wrap .avatar-ring { width: 160px; height: 160px; }
+            .cabinet-row[data-row="2"] .cab-photo-wrap .avatar-ring { width: 120px; height: 120px; }
+        }
+
         /* Section heading for heads + general */
         .cabinet-section-head {
             display: flex; align-items: center; gap: 10px;
@@ -955,22 +984,17 @@
                 </select>
             </div>
 
-            <!-- Hierarchy / Org-Chart Layout -->
+            <!-- Hierarchy / Org-Chart Layout (row-based) -->
             <div class="cabinet-hierarchy">
-
-                <!-- President (top of chart) -->
-                <div id="cabinetPresident"></div>
-
-                <!-- Top-4 row (VP, Co-President, Chairman, Gen Sec) -->
-                <div id="cabinetTop4" class="cabinet-top4"></div>
-
+                <!-- All cabinet rows render here, populated by loadCabinet() -->
+                <div id="cabinetRows" class="space-y-10"></div>
             </div>
 
-            <!-- Hidden containers (will be re-enabled when photos are ready) -->
+            <!-- Hidden containers (kept for compatibility) -->
+            <div id="cabinetPresident" hidden></div>
+            <div id="cabinetTop4" hidden></div>
             <div id="executiveBodyGrid" hidden></div>
             <div id="generalBodyGrid" hidden></div>
-
-            <!-- Hidden legacy grid (kept for compatibility but unused) -->
             <div id="coreBodyGrid" hidden></div>
         </div>
 

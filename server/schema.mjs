@@ -44,6 +44,11 @@ export function validateContent(body){
  if(body.kind==='cabinet'){
   if(!data.placement) data.placement='both';
   if(!['homepage','cabinet','both'].includes(data.placement)) throw invalid('Choose where to show this member: homepage, cabinet, or both.');
+  // row: which row on the cabinet page (1=top). Default to 1 for old data.
+  if(data.row===undefined||data.row===null||data.row==='') data.row=1;
+  const rowNum=Number(data.row);
+  if(!Number.isSafeInteger(rowNum)||rowNum<1||rowNum>20) throw invalid('Row must be a number between 1 and 20.');
+  data.row=rowNum;
  }
  if(body.kind==='featured' && !Object.keys(featuredGroups).includes(data.group))throw invalid('Choose a valid featured tab (e.g. hod, director, patron, dean).');
  return {kind:body.kind,status:body.status,data};
