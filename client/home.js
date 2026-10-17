@@ -233,8 +233,8 @@ try{
  }
  kinds.forEach((kind,i)=>{const result=kindResults[i];if(result&&Array.isArray(result.items)){state.content[kind]=result.items;state.cursors[kind]=result.nextCursor;$('more-'+kind).hidden=!result.nextCursor;}});
  state.live=true;$('cabinetSessionSelect').value=state.session;render();document.querySelectorAll('button[type="submit"]').forEach(b=>b.disabled=false);
- $('data-status').textContent='Society content is connected. Sign in with a verified email to send submissions.';
+ const ds=$('data-status');if(ds) ds.textContent='Society content is connected. Sign in with a verified email to send submissions.';
 }catch{
- $('data-status').textContent='Website preview — showing sample content while the database connection is being configured. Submissions are currently unavailable.';
+ const ds=$('data-status');if(ds) ds.textContent='Website preview — showing sample content while the database connection is being configured. Submissions are currently unavailable.';
 }
 hideBrandLoader();
