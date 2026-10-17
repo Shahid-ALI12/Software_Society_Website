@@ -51,14 +51,23 @@ async function deleteItem(permanent){
  try{await loadContent();}catch{}
 }
 async function loadContent(append=false){const result=await api('list',{kind:$('content-kind').value,cursor:append?state.contentCursor:null,authenticated:true});if(!append)$('content-list').replaceChildren();
- // Cabinet group filter: if cabinet is selected and a filter is chosen,
- // only show items matching that group.
+ // Cabinet group filter + search: if cabinet is selected, filter items by
+ // group AND by search text (name contains search, case-insensitive).
  const filterVal=$('cabinet-filter')?.value||'all';
+ const searchVal=($('cabinet-search')?.value||'').toLowerCase().trim();
  const kind=$('content-kind').value;
  let items=result.items;
- if(kind==='cabinet'&&filterVal!=='all'){items=items.filter(i=>i.data.group===filterVal);}
+ if(kind==='cabinet'){
+  if(filterVal!=='all') items=items.filter(i=>i.data.group===filterVal);
+  if(searchVal) items=items.filter(i=>(i.data.title||'').toLowerCase().includes(searchVal)||(i.data.role||'').toLowerCase().includes(searchVal));
+ }
  for(const item of items){const b=node('button',null,'content-list-item');b.type='button';const title=node('strong',item.data.title,'font-semibold text-slate-900');const statusBadge=node('span',item.status,'status-badge '+item.status);b.append(title,statusBadge);b.onclick=()=>{document.querySelectorAll('.content-list-item').forEach(el=>el.classList.remove('active'));b.classList.add('active');editor(item);$('content-form').scrollIntoView({behavior:'smooth',block:'start'});};$('content-list').append(b);}
- if(!$('content-list').children.length)$('content-list').append(node('p',kind==='cabinet'&&filterVal!=='all'?'No members in this group. Try a different filter or create a new one.':'No items yet. Create the first one.','empty-state'));
+ if(!$('content-list').children.length){
+  let msg='No items yet. Create the first one.';
+  if(kind==='cabinet'&&filterVal!=='all'&&!searchVal) msg='No members in this group. Try a different filter or create a new one.';
+  else if(kind==='cabinet'&&searchVal) msg='No members found matching "'+searchVal+'". Try a different search.';
+  $('content-list').append(node('p',msg,'empty-state'));
+ }
  state.contentCursor=result.nextCursor;$('content-more').hidden=!result.nextCursor;
 }
 async function loadPhotos(){const result=await api('settings-read',{authenticated:true});state.settingsVersion=result.version;$('current-session').value=result.data?.currentSession||'2026-2027';
@@ -110,13 +119,22 @@ async function inbox(append=false){const result=await api('inbox',{cursor:append
  state.inboxCursor=result.nextCursor;$('inbox-more').hidden=!result.nextCursor;}
 for(const kind of kinds){const o=node('option',kind);o.value=kind;$('content-kind').append(o);}
 $('content-kind').onchange=()=>task(async()=>{
- // Show cabinet filter only when cabinet is selected
+ // Show cabinet filter + search only when cabinet is selected
  const isCabinet=$('content-kind').value==='cabinet';
  const fl=$('cabinet-filter-label');if(fl)fl.style.display=isCabinet?'':'none';
+ const sl=$('cabinet-search-label');if(sl)sl.style.display=isCabinet?'':'none';
+ // Clear search when switching content types
+ if(!isCabinet){const si=$('cabinet-search');if(si)si.value='';}
  editor();await loadContent();$('admin-status').textContent='Content loaded.';
 });
 // Cabinet filter change — reload content list
 $('cabinet-filter')?.addEventListener('change',()=>task(async()=>{await loadContent();$('admin-status').textContent='Filter applied.';}));
+// Cabinet search — reload on each keystroke (debounced)
+let searchTimer=null;
+$('cabinet-search')?.addEventListener('input',()=>{
+ clearTimeout(searchTimer);
+ searchTimer=setTimeout(()=>task(async()=>{await loadContent();$('admin-status').textContent='Search applied.';}),300);
+});
 $('new-item').onclick=()=>{editor();$('content-form').scrollIntoView({behavior:'smooth'});};
 $('content-more').onclick=()=>task(()=>loadContent(true));
 $('content-form').onsubmit=e=>{e.preventDefault();if(e.submitter?.dataset.publish==='true')$('content-status').value='published';task(async()=>{const data={};for(const key of Object.keys(fields[$('content-kind').value]))data[key]=$(key==='image'?'item-photo-url':key==='alt'?'item-photo-alt':'field-'+key).value;if(data.image&&!data.alt)data.alt=data.title;const result=await api('content',{method:'POST',authenticated:true,body:{id:state.id,version:state.version,content:{kind:$('content-kind').value,status:$('content-status').value,data}}});state.id=result.id;state.version=result.version;$('editor-title').textContent='Edit item';const visibility=$('content-status').value;const confirmation=visibility==='published'?'Published and saved to the database. Refresh the website after 30 seconds.':visibility==='draft'?'Draft saved to the database. Click Publish to show it on the website.':'Archived and saved to the database. It will no longer appear publicly.';try{await loadContent();$('admin-status').textContent=confirmation;}catch{$('admin-status').textContent=confirmation+' The item list could not refresh; reopen this page.';}});};
