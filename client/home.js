@@ -232,6 +232,20 @@ try{
   document.querySelectorAll('[data-site-photo]').forEach(img=>{const photo=settings?.photos?.[img.dataset.sitePhoto];if(photo?.url&&safeImage(photo.url)){img.src=photo.url;img.alt=photo.alt;}});
  }
  kinds.forEach((kind,i)=>{const result=kindResults[i];if(result&&Array.isArray(result.items)){state.content[kind]=result.items;state.cursors[kind]=result.nextCursor;$('more-'+kind).hidden=!result.nextCursor;}});
+ // Auto-load ALL cabinet pages so all 25+ members show at once (no "Load more" button).
+ if(state.cursors['cabinet']){
+  let cursor=state.cursors['cabinet'];
+  while(cursor){
+   try{
+    const more=await api('public',{kind:'cabinet',cursor,timeoutMs:12000});
+    const known=new Set(state.content['cabinet'].map(i=>i.id));
+    state.content['cabinet'].push(...more.items.filter(i=>!known.has(i.id)));
+    cursor=more.nextCursor;
+   }catch{break;}
+  }
+  state.cursors['cabinet']=null;
+  const mb=$('more-cabinet');if(mb)mb.hidden=true;
+ }
  state.live=true;$('cabinetSessionSelect').value=state.session;render();document.querySelectorAll('button[type="submit"]').forEach(b=>b.disabled=false);
  const ds=$('data-status');if(ds) ds.textContent='Society content is connected. Sign in with a verified email to send submissions.';
 }catch{
