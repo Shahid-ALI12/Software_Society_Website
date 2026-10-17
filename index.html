@@ -823,8 +823,19 @@
                     <button onclick="switchTab('contact')" class="nav-btn-premium nav-btn" data-target="contact">Contact</button>
                 </nav>
 
-                <!-- Actions: Mobile Menu Button only (dark mode toggle removed per owner request) -->
+                <!-- Actions: Profile circle (when signed in) or nothing -->
                 <div class="flex items-center space-x-3">
+                    <!-- Profile circle — shown when user is signed in -->
+                    <div id="profile-circle-wrap" style="display:none;" class="relative">
+                        <button id="profile-circle" type="button" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-bold text-sm cursor-pointer transition" style="background:linear-gradient(135deg,#6366f1 0%,#3b82f6 100%);box-shadow:0 4px 10px -2px rgba(99,102,241,0.4);" title="Your account">?</button>
+                        <!-- Dropdown menu -->
+                        <div id="profile-dropdown" class="hidden absolute right-0 top-12 bg-white rounded-xl shadow-xl border border-slate-200 p-4 w-64 z-50">
+                            <p id="profile-email" class="text-sm font-semibold text-slate-900 break-all mb-1"></p>
+                            <p id="profile-role" class="text-xs text-slate-500 mb-3"></p>
+                            <a href="/account.html" class="block text-sm text-indigo-600 hover:underline mb-2">Account settings</a>
+                            <button id="profile-signout" type="button" class="block text-sm text-red-600 hover:underline">Sign out</button>
+                        </div>
+                    </div>
                     <button id="menuToggle" aria-label="Open navigation" aria-controls="mobileMenu" aria-expanded="false" onclick="toggleMobileMenu()" class="xl:hidden p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 focus:outline-none">
                         <i class="fas fa-bars text-lg"></i>
                     </button>
@@ -1222,7 +1233,7 @@
             <div class="flex flex-wrap items-center gap-4">
                 <button onclick="switchTab('about')" class="hover:underline">About</button>
                 <button onclick="switchTab('contact')" class="hover:underline">Contact</button>
-                <a href="/admin.html" class="hover:underline">Manage website</a><a href="/account.html" class="hover:underline text-blue-600 dark:text-blue-400 font-bold">Sign in / Account</a>
+                <a href="/admin.html" class="hover:underline">Manage website</a>
             </div>
         </div>
     </footer>

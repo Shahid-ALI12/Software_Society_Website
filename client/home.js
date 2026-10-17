@@ -247,7 +247,58 @@ wireForm('suggestionForm','suggestion',()=>{const cat=$('sugCategory');return {c
 wireForm('contactForm','contact',form=>({name:form.querySelector('input[type="text"]').value,email:form.querySelector('input[type="email"]').value,message:form.querySelector('textarea').value}));
 wireForm('alumniForm','alumni',()=>({name:$('almName').value,batch:$('almBatch').value,role:$('almRole').value,linkedin:$('almLinkedIn').value,consent:$('alumniConsent').checked}));
 render();
-// Load settings + every content kind in parallel. Each request is independent
+// Check auth state and show profile circle if signed in.
+(async()=>{
+ try{
+  const [{auth},{ready}]=await Promise.all([import('./firebase.js'),import('./auth-service.js')]);
+  await ready;await auth.authStateReady();
+  const updateProfileCircle=async()=>{
+   const wrap=document.getElementById('profile-circle-wrap');
+   if(!wrap)return;
+   if(auth.currentUser){
+    const email=auth.currentUser.email||'';
+    const firstLetter=email.charAt(0).toUpperCase()||'?';
+    const circle=document.getElementById('profile-circle');
+    if(circle)circle.textContent=firstLetter;
+    const emailEl=document.getElementById('profile-email');
+    if(emailEl)emailEl.textContent=email;
+    try{
+     const me=await api('me',{authenticated:true});
+     const roleEl=document.getElementById('profile-role');
+     if(roleEl)roleEl.textContent='Role: '+me.role;
+    }catch{/* not signed in or no role */}
+    wrap.style.display='';
+   }else{
+    wrap.style.display='';
+    const circle=document.getElementById('profile-circle');
+    if(circle){
+     circle.innerHTML='<i class="fas fa-user" style="font-size:11px;"></i>';
+     circle.title='Sign in';
+     circle.onclick=()=>{window.location.href='/account.html';};
+    }
+    const dropdown=document.getElementById('profile-dropdown');
+    if(dropdown)dropdown.classList.add('hidden');
+    const emailEl=document.getElementById('profile-email');
+    if(emailEl)emailEl.innerHTML='<a href="/account.html" class="text-indigo-600 hover:underline">Sign in / Create account</a>';
+    const roleEl=document.getElementById('profile-role');
+    if(roleEl)roleEl.textContent='';
+    const so=document.getElementById('profile-signout');
+    if(so)so.style.display='none';
+   }
+  };
+  await updateProfileCircle();
+  const circleBtn=document.getElementById('profile-circle');
+  const dropdown=document.getElementById('profile-dropdown');
+  if(circleBtn&&dropdown){
+   circleBtn.addEventListener('click',(e)=>{e.stopPropagation();dropdown.classList.toggle('hidden');});
+   document.addEventListener('click',(e)=>{if(!dropdown.contains(e.target)&&!circleBtn.contains(e.target))dropdown.classList.add('hidden');});
+  }
+  const signoutBtn=document.getElementById('profile-signout');
+  if(signoutBtn){
+   signoutBtn.addEventListener('click',async()=>{try{await import('./auth-service.js').then(s=>s.service.logout());}catch{}window.location.href='/';});
+  }
+ }catch{/* auth not available */}
+})();
 // so a single failing endpoint doesn't block the others. IMPORTANT: if a
 // request fails we keep the existing sample content for that kind instead of
 // wiping it to an empty array — otherwise visitors see "Nothing published

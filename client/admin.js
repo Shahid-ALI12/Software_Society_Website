@@ -147,11 +147,68 @@ $('photos-form').onsubmit=e=>{e.preventDefault();task(async()=>{const photos={};
  const texts={};for(const key of Object.keys(settingTextFields))texts[key]=$('text-'+key).value;
  const result=await api('settings',{method:'POST',authenticated:true,body:{version:state.settingsVersion,data:{photos,currentSession:$('current-session').value,texts}}});state.settingsVersion=result.version;$('admin-status').textContent='Website photos and HOD/Convenier text saved. Changes appear within 30 seconds.';});};
 $('inbox-refresh').onclick=()=>task(()=>inbox());$('inbox-more').onclick=()=>task(()=>inbox(true));
+// Alumni Review panel
+let alumniReviewCursor=null,alumniReviewStatus='pending',alumniReviewItems=[];
+async function loadAlumniReview(append=false){
+ const result=await api('inbox',{cursor:append?alumniReviewCursor:null,authenticated:true});
+ if(!append)alumniReviewItems=[];
+ alumniReviewItems=alumniReviewItems.concat(result.items.filter(i=>i.kind==='alumni'));
+ alumniReviewCursor=result.nextCursor;
+ $('alumni-review-more').hidden=!result.nextCursor;
+ // Update counts
+ const pending=alumniReviewItems.filter(i=>i.status==='pending').length;
+ const approved=alumniReviewItems.filter(i=>i.status==='approved').length;
+ const rejected=alumniReviewItems.filter(i=>i.status==='rejected').length;
+ const pc=$('alumni-count-pending');if(pc)pc.textContent=pending;
+ const ac=$('alumni-count-approved');if(ac)ac.textContent=approved;
+ const rc=$('alumni-count-rejected');if(rc)rc.textContent=rejected;
+ // Render current status tab
+ const list=$('alumni-review-list');if(!list)return;
+ const filtered=alumniReviewItems.filter(i=>i.status===alumniReviewStatus);
+ if(!filtered.length){list.innerHTML='<p class="empty-state">No '+alumniReviewStatus+' alumni submissions.</p>';return;}
+ list.innerHTML=filtered.map(item=>{
+  const d=item.data||{};
+  const statusColor=item.status==='pending'?'member':item.status==='approved'?'editor':'admin';
+  return `<div class="inbox-card">
+   <span class="inbox-kind"><i class="fas fa-user-graduate"></i> Alumni Application</span>
+   <span class="user-role ${statusColor}">${item.status}</span>
+   <div class="inbox-row"><span class="label">Name:</span> ${esc(d.name||'')}</div>
+   <div class="inbox-row"><span class="label">Batch:</span> ${esc(d.batch||'')}</div>
+   <div class="inbox-row"><span class="label">Role:</span> ${esc(d.role||'')}</div>
+   ${d.linkedin?`<div class="inbox-row"><span class="label">LinkedIn:</span> <a href="${esc(d.linkedin)}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 hover:underline">${esc(d.linkedin)}</a></div>`:''}
+   ${item.status==='pending'?`<div class="role-controls">
+    <button class="role-btn" onclick="document.dispatchEvent(new CustomEvent('alumni-moderate',{detail:{id:'${item.id}',version:${item.version},status:'approved'}}))"><i class="fas fa-check"></i> Approve</button>
+    <button class="role-btn" style="color:#dc2626;" onclick="document.dispatchEvent(new CustomEvent('alumni-moderate',{detail:{id:'${item.id}',version:${item.version},status:'rejected'}}))"><i class="fas fa-xmark"></i> Reject</button>
+   </div>`:''}
+   ${item.status==='rejected'?`<div class="role-controls"><span class="text-xs text-red-600"><i class="fas fa-envelope"></i> Rejection notification email sent to applicant</span></div>`:''}
+  </div>`;
+ }).join('');
+}
+// Alumni sub-tab switching
+document.querySelectorAll('[data-alumni-status]').forEach(btn=>{
+ btn.onclick=()=>{
+  alumniReviewStatus=btn.dataset.alumniStatus;
+  document.querySelectorAll('[data-alumni-status]').forEach(b=>{
+   b.style.background='';b.style.color='';b.style.border='';
+  });
+  btn.style.background='linear-gradient(135deg,#6366f1 0%,#3b82f6 100%)';
+  btn.style.color='white';btn.style.border='none';
+  loadAlumniReview();
+ };
+});
+// Alumni moderate (approve/reject)
+document.addEventListener('alumni-moderate',e=>task(async()=>{
+ await api('moderate',{method:'POST',authenticated:true,body:{id:e.detail.id,version:e.detail.version,status:e.detail.status}});
+ $('admin-status').textContent=e.detail.status==='approved'?'Alumni application approved. Profile is now public.':'Alumni application rejected. Notification email sent to applicant.';
+ await loadAlumniReview();
+}));
+$('alumni-refresh')?.addEventListener('click',()=>task(()=>loadAlumniReview()));
+$('alumni-review-more')?.addEventListener('click',()=>task(()=>loadAlumniReview(true)));
 $('users-refresh').onclick=()=>task(()=>loadUsers());$('users-more').onclick=()=>task(()=>loadUsers(true));
 // loadUsers already shows the API error message in admin-status via task().
 // The 503 from the server now carries a friendly 'Could not load the user
 // list...' message instead of a bare 500, so editors see what to do next.
-document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>task(async()=>{document.querySelectorAll('.manage-panel').forEach(p=>p.hidden=p.id!==b.dataset.panel);document.querySelectorAll('.admin-tabs button').forEach(btn=>btn.classList.toggle('active',btn===b));if(b.dataset.panel==='photos-panel')await loadPhotos();if(b.dataset.panel==='inbox-panel')await inbox();if(b.dataset.panel==='users-panel')await loadUsers();$('admin-status').textContent='Ready.';}));
+document.querySelectorAll('[data-panel]').forEach(b=>b.onclick=()=>task(async()=>{document.querySelectorAll('.manage-panel').forEach(p=>p.hidden=p.id!==b.dataset.panel);document.querySelectorAll('.admin-tabs button').forEach(btn=>btn.classList.toggle('active',btn===b));if(b.dataset.panel==='photos-panel')await loadPhotos();if(b.dataset.panel==='inbox-panel')await inbox();if(b.dataset.panel==='users-panel')await loadUsers();if(b.dataset.panel==='alumni-panel')await loadAlumniReview();$('admin-status').textContent='Ready.';}));
 // Mark the Content tab as active on initial load.
 document.querySelector('.admin-tabs button[data-panel="content-panel"]')?.classList.add('active');
 await task(async()=>{const user=await api('me',{authenticated:true});if(!['admin','editor'].includes(user.role))throw new Error('Your account has no management role. Ask the society owner to grant access.');state.role=user.role;state.uploadsEnabled=user.uploadsEnabled===true;$('admin-panel').hidden=false;document.querySelectorAll('[data-admin-only]').forEach(e=>e.hidden=user.role!=='admin');editor();await loadContent();$('admin-status').textContent='Signed in as '+user.role+'.';});

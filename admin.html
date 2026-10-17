@@ -44,6 +44,7 @@
                 <button data-panel="photos-panel" data-admin-only><i class="fas fa-image"></i> Website photos</button>
                 <button data-panel="users-panel" data-admin-only><i class="fas fa-users"></i> Users &amp; roles</button>
                 <button data-panel="inbox-panel" data-admin-only><i class="fas fa-inbox"></i> Private inbox</button>
+                <button data-panel="alumni-panel" data-admin-only><i class="fas fa-user-graduate"></i> Alumni Review</button>
             </div>
 
             <!-- 1. CONTENT PANEL -->
@@ -163,6 +164,23 @@
                 <button id="inbox-refresh" class="secondary-button mb-4"><i class="fas fa-rotate"></i> Refresh inbox</button>
                 <div id="inbox-list" class="space-y-4"></div>
                 <button id="inbox-more" hidden class="secondary-button mt-4 w-full justify-center"><i class="fas fa-chevron-down"></i> Load more</button>
+            </section>
+
+            <!-- 5. ALUMNI REVIEW PANEL -->
+            <section id="alumni-panel" class="manage-panel" hidden>
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold">Alumni Review</h2>
+                    <p class="text-slate-600 mt-1">Review alumni directory submissions. Approved profiles appear on the public Alumni Directory. Rejected applicants receive an automatic notification email.</p>
+                </div>
+                <button id="alumni-refresh" class="secondary-button mb-4"><i class="fas fa-rotate"></i> Refresh</button>
+                <!-- Sub-tabs: Pending / Approved / Rejected -->
+                <div class="flex gap-2 mb-4 flex-wrap">
+                    <button id="alumni-tab-pending" class="secondary-button" data-alumni-status="pending" style="background:linear-gradient(135deg,#6366f1 0%,#3b82f6 100%);color:white;border:none;">Pending (<span id="alumni-count-pending">0</span>)</button>
+                    <button id="alumni-tab-approved" class="secondary-button" data-alumni-status="approved">Approved (<span id="alumni-count-approved">0</span>)</button>
+                    <button id="alumni-tab-rejected" class="secondary-button" data-alumni-status="rejected">Rejected (<span id="alumni-count-rejected">0</span>)</button>
+                </div>
+                <div id="alumni-review-list" class="space-y-4"></div>
+                <button id="alumni-review-more" hidden class="secondary-button mt-4 w-full justify-center"><i class="fas fa-chevron-down"></i> Load more</button>
             </section>
 
         </div>
