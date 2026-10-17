@@ -22,7 +22,7 @@ export const settingFields = {hero:'Homepage banner',hod:'HOD portrait',convenie
 // Convenier blocks on the homepage are data-driven instead of being hardcoded
 // into index.html. Each person gets a name, title, message AND a longer
 // biography shown in a modal when their photo is clicked.
-export const settingTextFields = {hodName:'HOD name',hodTitle:'HOD title',hodMessage:'HOD welcome message',hodBio:'HOD biography (shown when photo is clicked)',convenierName:'Convenier name',convenierTitle:'Convenier title',convenierMessage:'Convenier message',convenierBio:'Convenier biography (shown when photo is clicked)'};
+export const settingTextFields = {hodName:'HOD name',hodTitle:'HOD title',hodMessage:'HOD welcome message',hodBio:'HOD biography (shown when photo is clicked)',hodLink:'HOD faculty page URL (shown as "For More Details" link)',convenierName:'Convenier name',convenierTitle:'Convenier title',convenierMessage:'Convenier message',convenierBio:'Convenier biography (shown when photo is clicked)',convenierLink:'Convenier faculty page URL (shown as "For More Details" link)'};
 // Featured-people tabs rendered on the landing page. Order here controls on-page order.
 // The values are the labels shown in the UI; the keys are stored in the `group` field.
 export const featuredGroups = {hod:'HOD & Department',director:'Director & Faculty',patron:'Patrons',dean:'Dean Office'};

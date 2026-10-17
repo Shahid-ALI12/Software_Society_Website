@@ -181,9 +181,22 @@ function openSettingsBioModal(who){
   title:who==='hod'?(t.hodName||'HOD'):(t.convenierName||'Convenier'),
   role:who==='hod'?(t.hodTitle||'Head of Department'):(t.convenierTitle||'Society Convenier'),
   bio:who==='hod'?t.hodBio:t.convenierBio,
-  image:p.url,alt:p.alt
+  image:p.url,alt:p.alt,
+  link:who==='hod'?t.hodLink:t.convenierLink
  };
- openBioModal(member);
+ const content=$('bioModalContent');if(!content)return;
+ content.innerHTML=`
+  <div class="flex flex-col items-center text-center gap-3 pb-4 border-b border-slate-200 dark:border-slate-800">
+   <div class="w-36 h-36 sm:w-40 sm:h-40 rounded-full overflow-hidden shadow-xl">${member.image?`<img src="${esc(safeImage(member.image))}" alt="${esc(member.alt||member.title)}" class="w-full h-full object-cover">`:`<div class="w-full h-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-4xl"><i class="fas fa-user"></i></div>`}</div>
+   <div>
+    <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">${esc(member.title)}</h2>
+    <p class="text-sm text-indigo-600 dark:text-indigo-400 font-semibold mt-1">${esc(member.role)}</p>
+   </div>
+  </div>
+  <div class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">${member.bio?esc(member.bio):'No biography available yet for this member.'}</div>
+  ${member.link?`<div class="pt-4 border-t border-slate-200 dark:border-slate-800 text-center"><p class="text-xs text-slate-500 dark:text-slate-400 mb-1">For More Details You can visit at:</p><a href="${esc(member.link)}" target="_blank" rel="noopener noreferrer" class="text-indigo-600 dark:text-indigo-400 text-sm font-semibold hover:underline break-all">${esc(member.link)}</a></div>`:''}
+ `;
+ openModal('bioModal');
 }
 function switchTab(tab){document.querySelectorAll('.tab-content').forEach(e=>e.classList.toggle('active',e.id==='tab-'+tab));document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.toggle('active',b.dataset.target===tab);b.setAttribute('aria-current',b.dataset.target===tab?'page':'false');});$('mobileMenu').classList.add('hidden');$('menuToggle').setAttribute('aria-expanded','false');window.scrollTo({top:0,behavior:'smooth'});
  // Push tab changes to history so the phone's native back button (and our
