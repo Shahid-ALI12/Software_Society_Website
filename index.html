@@ -93,16 +93,13 @@
             50% { transform: scale(1.08); opacity: 1; }
         }
 
-        /* Inner logo card with subtle shimmer sweep */
+        /* Inner logo card — transparent so the logo's own background shows */
         #brand-loader .logo-card {
             position: relative;
             width: 132px; height: 132px;
             border-radius: 22px;
-            background: linear-gradient(145deg, #1d4ed8 0%, #1e3a8a 100%);
+            background: transparent;
             display: flex; align-items: center; justify-content: center;
-            box-shadow:
-                0 12px 30px rgba(37, 99, 235, 0.45),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
             overflow: hidden;
             animation: logo-pulse 1.6s ease-in-out infinite;
         }
@@ -786,7 +783,7 @@
                 
                 <!-- Logo & Branding -->
                 <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
-                    <img src="/assets/society-logo.png" alt="SE Society logo" class="nav-logo-chip w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-contain p-1.5">
+                    <img src="/assets/society-logo.png" alt="SE Society logo" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-contain p-0.5">
                     <div>
                         <div class="flex items-center space-x-2">
                             <span class="font-extrabold text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white">SE SOCIETY</span>
