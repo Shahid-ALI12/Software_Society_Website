@@ -37,8 +37,25 @@ export function createHandler({getServices,limit,siteOrigin,production=false,upl
    const reads=['public','me','list','inbox','settings-read','users'];
    if(![...reads,'content','delete','settings','submission','moderate','upload','assign-role'].includes(action))throw new RequestError(404,'not_found','Endpoint not found.');
    if((reads.includes(action)?'GET':'POST')!==request.method)return new Response(null,{status:405,headers:{Allow:reads.includes(action)?'GET':'POST','Cache-Control':'no-store'}});
-   // Bearer authentication; reject cross-origin browser mutations. Non-browser clients still require valid tokens.
-   if(request.method==='POST'&&request.headers.get('origin')&&request.headers.get('origin')!==siteOrigin)throw new RequestError(403,'origin_not_allowed','This origin cannot submit requests.');
+   // Bearer authentication; reject cross-origin browser mutations.
+   // Allow the configured site origin AND any Vercel deployment URL for the
+   // same project (preview deployments, etc.) so the check doesn't break
+   // when the URL changes.
+   if(request.method==='POST'){
+    const origin=request.headers.get('origin');
+    if(origin){
+     let allowed=false;
+     // Exact match
+     if(origin===siteOrigin)allowed=true;
+     // Match without trailing slash
+     if(origin.replace(/\/$/,'')===siteOrigin.replace(/\/$/,''))allowed=true;
+     // Allow any Vercel deployment for this project (softwarewebsite-*.vercel.app)
+     try{const o=new URL(origin);if(o.hostname.endsWith('.vercel.app')&&o.hostname.startsWith('softwarewebsite'))allowed=true;}catch{}
+     // Allow localhost for development
+     try{const o=new URL(origin);if(o.hostname==='localhost'||o.hostname==='127.0.0.1')allowed=true;}catch{}
+     if(!allowed)throw new RequestError(403,'origin_not_allowed','This origin cannot submit requests. Origin: '+origin);
+    }
+   }
    // Vercel overwrites this header at its ingress; never trust generic X-Forwarded-For.
    const ip=production?(request.headers.get('x-vercel-forwarded-for')||'unknown').split(',')[0].trim():'development';
    await limit('ingress:'+ip,600,60);
