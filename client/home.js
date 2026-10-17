@@ -90,20 +90,16 @@ function loadCabinet(){
  // Render President (top of chart) — photo only, name/role hidden until hover
  const presWrap=$('cabinetPresident');if(presWrap){presWrap.replaceChildren();
   if(president){
-   presWrap.innerHTML=`<div class="cabinet-president"><div class="cab-photo-wrap"><div class="crown"><i class="fas fa-crown"></i></div><div class="avatar-ring">${image(president,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(president.title)}</div><div class="role-label">${esc(president.role)}</div></div></div></div>`;
+   presWrap.innerHTML=`<div class="cabinet-president"><div class="cab-photo-wrap"><div class="avatar-ring">${image(president,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(president.title)}</div><div class="role-label">${esc(president.role)}</div></div></div></div>`;
   }
  }
 
- // Render connectors + Top-4 row — photos only, name/role hidden until hover
- const connV=$('cabinetConnector');const connH=$('cabinetConnectorH');const top4Wrap=$('cabinetTop4');
- if(top4.length){
-  if(connV)connV.hidden=false;if(connH)connH.hidden=false;
-  if(top4Wrap){top4Wrap.replaceChildren();
+ // Render Top-4 row — photos only, name/role hidden until hover
+ const top4Wrap=$('cabinetTop4');
+ if(top4Wrap){top4Wrap.replaceChildren();
+  if(top4.length){
    top4Wrap.innerHTML=top4.map(m=>`<div class="cab-photo-wrap"><div class="avatar-ring">${image(m,'w-full h-full')}</div><div class="cab-info"><div class="name">${esc(m.title)}</div><div class="role-label">${esc(m.role)}</div></div></div>`).join('');
   }
- }else{
-  if(connV)connV.hidden=true;if(connH)connH.hidden=true;
-  if(top4Wrap)top4Wrap.replaceChildren();
  }
 
  // Department Heads (exec group) — photos only, name/role hidden until hover

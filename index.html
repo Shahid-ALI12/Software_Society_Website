@@ -206,7 +206,7 @@
 
         /* ===== Cabinet hierarchy / org-chart layout =====
            Photos-only by default. Name + role slide up on hover.
-           No card backgrounds, no borders — clean and visual. */
+           No card backgrounds, no borders, no connectors, no crown — clean. */
         .cabinet-hierarchy { display: flex; flex-direction: column; align-items: center; gap: 0; }
 
         /* Shared hover-reveal info block */
@@ -225,68 +225,46 @@
             color: #4f46e5;
         }
         .cab-photo-wrap { position: relative; cursor: pointer; }
+        /* Avatar ring: no coloured border — plain circle, just a soft shadow. */
         .cab-photo-wrap .avatar-ring {
-            padding: 3px; border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+            padding: 0; border-radius: 50%;
+            background: transparent;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.12);
         }
         .cab-photo-wrap .avatar-ring img { border-radius: 50%; width: 100%; height: 100%; object-fit: cover; display: block; }
-        .cab-photo-wrap:hover .avatar-ring { transform: scale(1.06); box-shadow: 0 10px 24px -4px rgba(99, 102, 241, 0.35); }
+        .cab-photo-wrap:hover .avatar-ring { transform: scale(1.06); box-shadow: 0 10px 24px -4px rgba(99, 102, 241, 0.3); }
         .cab-photo-wrap:hover .cab-info { opacity: 1; transform: translateY(0); }
 
         /* President — top of chart, biggest photo */
         .cabinet-president {
             display: flex; flex-direction: column; align-items: center;
-            padding-bottom: 28px;
+            padding-bottom: 36px;
         }
         .cabinet-president .cab-photo-wrap .avatar-ring {
-            width: 180px; height: 180px;
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            padding: 4px;
+            width: 220px; height: 220px;
         }
-        .cabinet-president .cab-photo-wrap:hover .avatar-ring { box-shadow: 0 14px 30px -4px rgba(217, 119, 6, 0.45); }
-        .cabinet-president .crown {
-            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-            width: 36px; height: 36px; border-radius: 50%;
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-size: 14px; z-index: 2;
-            box-shadow: 0 4px 10px -2px rgba(217, 119, 6, 0.5);
-        }
-        .cabinet-president .cab-info .name { font-size: 16px; }
+        .cabinet-president .cab-info .name { font-size: 17px; }
         .cabinet-president .cab-info .role-label {
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #92400e; font-size: 11px;
         }
 
-        /* Vertical connector line from president down */
-        .cabinet-connector-v {
-            width: 3px; height: 28px;
-            background: linear-gradient(180deg, #f59e0b 0%, #6366f1 100%);
-            border-radius: 2px;
-        }
-        /* Horizontal connector for the top-4 row */
-        .cabinet-connector-h {
-            width: 100%; max-width: 800px; height: 3px;
-            background: linear-gradient(90deg, transparent 0%, #6366f1 15%, #6366f1 85%, transparent 100%);
-            border-radius: 2px;
-        }
-
         /* Top-4 row (VP, Co-President, Chairman, Gen Sec) */
         .cabinet-top4 {
             display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 28px 20px; width: 100%; max-width: 900px;
-            padding: 24px 0;
+            gap: 36px 24px; width: 100%; max-width: 1000px;
+            padding: 8px 0 12px;
         }
         @media (min-width: 768px) { .cabinet-top4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
         .cabinet-top4 .cab-photo-wrap { display: flex; flex-direction: column; align-items: center; }
-        .cabinet-top4 .cab-photo-wrap .avatar-ring { width: 130px; height: 130px; }
+        .cabinet-top4 .cab-photo-wrap .avatar-ring { width: 160px; height: 160px; }
 
         /* Section heading for heads + general */
         .cabinet-section-head {
             display: flex; align-items: center; gap: 10px;
             font-size: 18px; font-weight: 700; color: #0f172a;
-            margin-top: 36px; margin-bottom: 20px;
+            margin-top: 40px; margin-bottom: 24px;
             padding-top: 24px; border-top: 1px solid #e2e8f0;
             width: 100%;
         }
@@ -299,24 +277,24 @@
         /* Heads grid (exec) */
         .cabinet-heads-grid {
             display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 28px 16px; width: 100%;
+            gap: 32px 16px; width: 100%;
         }
         @media (min-width: 640px) { .cabinet-heads-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
         @media (min-width: 768px) { .cabinet-heads-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
         @media (min-width: 1024px) { .cabinet-heads-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
         .cabinet-heads-grid .cab-photo-wrap { display: flex; flex-direction: column; align-items: center; }
-        .cabinet-heads-grid .cab-photo-wrap .avatar-ring { width: 96px; height: 96px; }
+        .cabinet-heads-grid .cab-photo-wrap .avatar-ring { width: 120px; height: 120px; }
         .cabinet-heads-grid .cab-info .name { font-size: 13px; }
 
         /* General body grid */
         .cabinet-general-grid {
             display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 24px 12px; width: 100%;
+            gap: 28px 14px; width: 100%;
         }
         @media (min-width: 640px) { .cabinet-general-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
         @media (min-width: 768px) { .cabinet-general-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
         .cabinet-general-grid .cab-photo-wrap { display: flex; flex-direction: column; align-items: center; }
-        .cabinet-general-grid .cab-photo-wrap .avatar-ring { width: 72px; height: 72px; }
+        .cabinet-general-grid .cab-photo-wrap .avatar-ring { width: 92px; height: 92px; }
         .cabinet-general-grid .cab-info .name { font-size: 12px; }
         .cabinet-general-grid .cab-info .role-label { font-size: 9px; padding: 1px 6px; }
 
@@ -983,9 +961,7 @@
                 <!-- President (top of chart) -->
                 <div id="cabinetPresident"></div>
 
-                <!-- Connector + Top-4 row (VP, Co-President, Chairman, Gen Sec) -->
-                <div id="cabinetConnector" class="cabinet-connector-v" hidden></div>
-                <div id="cabinetConnectorH" class="cabinet-connector-h" hidden></div>
+                <!-- Top-4 row (VP, Co-President, Chairman, Gen Sec) -->
                 <div id="cabinetTop4" class="cabinet-top4"></div>
 
             </div>
