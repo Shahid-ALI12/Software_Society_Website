@@ -294,6 +294,25 @@
             .cabinet-row[data-row="6"] .cab-photo-wrap .avatar-ring { width: 100px; height: 100px; }
         }
 
+        /* Cabinet rows — scroll reveal animation (same as .reveal-up) */
+        .cabinet-row {
+            opacity: 0; transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .cabinet-row.is-visible {
+            opacity: 1; transform: translateY(0);
+        }
+        .cabinet-section-head {
+            opacity: 0; transform: translateY(16px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .cabinet-section-head.is-visible {
+            opacity: 1; transform: translateY(0);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .cabinet-row, .cabinet-section-head { opacity: 1; transform: none; transition: none; }
+        }
+
         /* Section heading for heads + general */
         .cabinet-section-head {
             display: flex; align-items: center; gap: 10px;

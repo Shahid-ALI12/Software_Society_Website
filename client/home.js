@@ -50,6 +50,19 @@ const card='bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 d
 function image(data,classes='w-full h-56 sm:h-64 object-cover'){const url=safeImage(data.image);return url?`<img src="${esc(url)}" alt="${esc(data.alt||data.title)}" loading="lazy" decoding="async" class="${classes}">`:'';}
 function content(kind){return state.content[kind].map(item=>({...item.data,id:item.id}));}
 function render(){renderHome();renderEvents();renderNotices();loadCabinet();renderAlumni();renderFeatured();initRevealOnScroll();}
+// Cabinet rows + section heads also get scroll reveal — call AFTER loadCabinet
+// has rendered the DOM, so the observer picks them up.
+function initCabinetReveal(){
+ const targets=document.querySelectorAll('.cabinet-row, .cabinet-section-head');if(!targets.length)return;
+ if(!('IntersectionObserver' in window)){targets.forEach(t=>t.classList.add('is-visible'));return;}
+ const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+   if(e.isIntersecting){e.target.classList.add('is-visible');}
+   else{e.target.classList.remove('is-visible');}
+  });
+ },{rootMargin:'-8% 0px -8% 0px',threshold:0.12});
+ targets.forEach(t=>io.observe(t));
+}
 function renderHome(){
  $('home-session')&&($('home-session').textContent='Session '+state.session+' Society Leadership');
  // Show only 3 members on the homepage Core Executive Body strip.
@@ -272,7 +285,7 @@ try{
   state.cursors['cabinet']=null;
   const mb=$('more-cabinet');if(mb)mb.hidden=true;
  }
- state.live=true;$('cabinetSessionSelect').value=state.session;render();document.querySelectorAll('button[type="submit"]').forEach(b=>b.disabled=false);
+ state.live=true;$('cabinetSessionSelect').value=state.session;render();initCabinetReveal();document.querySelectorAll('button[type="submit"]').forEach(b=>b.disabled=false);
  const ds=$('data-status');if(ds) ds.textContent='Society content is connected. Sign in with a verified email to send submissions.';
 }catch{
  const ds=$('data-status');if(ds) ds.textContent='Website preview — showing sample content while the database connection is being configured. Submissions are currently unavailable.';
